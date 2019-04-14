@@ -16,7 +16,11 @@ For a given source node in the graph, the algorithm finds the shortest path betw
 | Java          | general-purpose programming language that is class-based, object-oriented, and specifically designed to have as few implementation dependencies as possible |    
 | Python        | interpreted, high-level, general-purpose programming language.      |   
 | Javascript    | lightweight, interpreted, object-oriented language with first-class functions, and is best known as the scripting language for Web pages |  
-| Ruby          | dynamic, interpreted, reflective, object-oriented, general-purpose programming language      |   
+| Ruby          | dynamic, interpreted, reflective, object-oriented, general-purpose programming language      |  
+
+#### Implementation Details
+We intend to create a bash script that reads the execution time directly from the system in order to avoid 
+irregularities due to the target languages time counting. Multiple time readings will be saved and the compared to obtain performance results.
 
 ## Group Members
 * Daniel Machado
