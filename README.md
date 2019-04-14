@@ -1,10 +1,5 @@
 ## Theme: Brenchmark Dijkstra Algorithm
 
-## Group Members
-* Daniel Machado
-* Gonçalo Moreno
-* Sofia Alves
-
 ## Approach
 
 ### Algorithm Description
@@ -14,3 +9,16 @@ For a given source node in the graph, the algorithm finds the shortest path betw
 
 ### Target Languages
 
+| Languages     | Description     | 
+| ------------- |:-------------:| 
+| C++           | right-aligned | 
+| C             | centered      |  
+| Java          | are neat      |    
+| Python        | are neat      |   
+| Javascript    | are neat      |  
+| Ruby          | are neat      |   
+
+## Group Members
+* Daniel Machado
+* Gonçalo Moreno
+* Sofia Alves
