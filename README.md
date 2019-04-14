@@ -10,7 +10,7 @@ For a given source node in the graph, the algorithm finds the shortest path betw
 #### Target Languages
 
 | Languages     | Description     | 
-| ------------- |:-------------:| 
+| ------------- | --------------- | 
 | C++           | general-purpose programming language which imperative, object-oriented and generic programming features, while also providing facilities for low-level memory manipulation| 
 | C             | low-level imperative computer programming language, supporting structured programming, lexical variable scope and recursion |  
 | Java          | general-purpose programming language that is class-based, object-oriented, and specifically designed to have as few implementation dependencies as possible |    
