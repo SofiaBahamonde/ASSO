@@ -26,7 +26,7 @@ During our classes we have already some functionalities implemented, such as:
 * Support (un)limited Undo / Redo of all operations;
 
 
-So, for our project we intend to do the following ones:
+So, for <**our project** we intend to do the following ones:
 
 * Add Identifiers to the shapes;
 * Extract the logic of the Undo/Redo to a generic UndoManager
