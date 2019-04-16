@@ -1,26 +1,39 @@
-## Theme: Brenchmark Dijkstra Algorithm
+## Theme: Case-Study - SimpleDraw
 
 ## Approach
 
-#### Algorithm Description
-Dijkstra's algorithm  is an algorithm for finding the shortest paths between nodes in a graph, which may represent, for example, road networks. It was conceived by computer scientist Edsger W. Dijkstra in 1956 and published three years later.
+#### Simple Draw
 
-For a given source node in the graph, the algorithm finds the shortest path between that node and every other. It can also be used for finding the shortest paths from a single node to a single destination node by stopping the algorithm once the shortest path to the destination node has been determined. 
+SimpleDraw is a very simple  graphical editor to draw basic geometric objects, manipulate and persist them. In order to implement this graphical editor we should look at some considerations:
 
-#### Target Languages
-
-| Languages     | Description     | 
-| ------------- | --------------- | 
-| C++           | general-purpose programming language which imperative, object-oriented and generic programming features, while also providing facilities for low-level memory manipulation| 
-| C             | low-level imperative computer programming language, supporting structured programming, lexical variable scope and recursion |  
-| Java          | general-purpose programming language that is class-based, object-oriented, and specifically designed to have as few implementation dependencies as possible |    
-| Python        | interpreted, high-level, general-purpose programming language.      |   
-| Javascript    | lightweight, interpreted, object-oriented language with first-class functions, and is best known as the scripting language for Web pages |  
-| Ruby          | dynamic, interpreted, reflective, object-oriented, general-purpose programming language      |  
-
+* Use HTML-related technologies (SVG and Canvas)
+* All client-side (running in the browser)
+* Typescript instead of pure javascript 
+* Zero-dependencies for the engine (i.e. d3)
+* Libraries for non-engine stuff only (i.e. sass, bootstrap)
+ 
 #### Implementation Details
-We intend to create a bash script that reads the execution time directly from the system in order to avoid 
-irregularities due to the target languages time counting. Multiple time readings will be saved and the compared to obtain performance results.
+
+During our classes we have already some functionalities implemented, such as:
+
+* SimpleDraw is based on the notion of documents;
+• Documents are rendered either in SVG or HTMLCanvas;
+• Multiple views of the same model;
+• Two interaction modes: point-n-click and REPLs.
+• Support persistence in multiple formats (TXT, XML, BIN);
+• Extendible with different objects (triangles, arrows…);
+• Extendible with new tools (rotate, translate, grid…);
+• Support (un)limited Undo / Redo of all operations;
+
+
+So, for our project we intend to do the following ones:
+
+* Add Identifiers to the shapes;
+* Extract the logic of the Undo/Redo to a generic UndoManager
+* Support groups and selections based on: (a) programmatic references, or (b) a bounding box
+* Document layers ('n' layers, where the visibility of 'n+1' is always 'on top' of 'n')
+* Viewports transformation (for example, by specifying the bounding box of a Render)
+* Play around with new shapes, tools, styles and other stuff
 
 ## Group Members
 * Daniel Machado
