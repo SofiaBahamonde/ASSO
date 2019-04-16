@@ -17,7 +17,7 @@ SimpleDraw is a very simple  graphical editor to draw basic geometric objects, m
 During our classes we have already some functionalities implemented, such as:
 
 * SimpleDraw is based on the notion of documents;
-+ Documents are rendered either in SVG or HTMLCanvas;
+* Documents are rendered either in SVG or HTMLCanvas;
 * Multiple views of the same model;
 * Two interaction modes: point-n-click and REPLs.
 * Support persistence in multiple formats (TXT, XML, BIN);
