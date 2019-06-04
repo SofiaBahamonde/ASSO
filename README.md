@@ -1,5 +1,11 @@
 ## Theme: Case-Study - SimpleDraw
 
+## Installing and Running
+
+First run `npm install`
+then run `npm run broswer`
+You should open in a browser the index.html file that contains the simpledraw commands executed.
+
 ## Approach
 
 #### Simple Draw
