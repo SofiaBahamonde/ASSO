@@ -6,7 +6,7 @@ First run `npm install`
 then run `npm run broswer`
 You should open in a browser the index.html file that contains the simpledraw commands executed.
 
-## Develpper Documentation
+## Developer Documentation
 
 When you run from npm the main is `script.ts` this script will draw a circle and two rectangles.
 To start developing first start editing this script.
