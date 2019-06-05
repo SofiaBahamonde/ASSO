@@ -3,13 +3,42 @@
 <head>
     <title>SimpleDraw</title>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="index.css">
 </head>
 
 <body>
-    <canvas id="canvas" width="200" height="200" style="border: 1px solid red;"></canvas>
-    <svg id="svgcanvas" width="200" height="200" style="border: 1px solid blue;">
-    </svg>
+
+<header>
+
+    <p> 
+        SimpleDraw, a simple drawing web application for ASSO.
+    </p>
+
+</header>
+
+
+    <div class="flex-container">
     
+    <div style="flex-shrink: 0" id="canvas">
+    
+        <canvas id="canvas" width="400" height="400" style="border: 1px solid red;">
+        </canvas>
+    
+        <svg id="svgcanvas" width="400" height="400" style="border: 1px solid blue;">
+        </svg>
+    
+    </div>
+
+    <div id="toolbox">
+        <p> This is the toolbox that will contain all the tools and avaiable actions.</p>
+    </div>
+
+    </div>
+
+    <div id="layers">
+        <p> Layers Panel</p>
+    </div>
+
     <script src="dist/bundle.js"></script>
 </body>
 </html>
