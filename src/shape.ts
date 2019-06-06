@@ -19,3 +19,9 @@ export class Circle extends Shape {
         super(x, y)
     }
 }
+
+export class Triangle extends Shape {
+    constructor(public x: number, public y: number, public x2: number, public y2: number, public x3: number, public y3: number,) {
+        super(x, y)
+    }
+}
