@@ -25,3 +25,9 @@ export class Triangle extends Shape {
         super(x, y)
     }
 }
+
+export class Polygon extends Shape {
+    constructor(public x: number, public y: number, public points: Array<number>) {
+        super(x, y)
+    }
+}

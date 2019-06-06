@@ -35,6 +35,15 @@ class CreateCircleAction extends CreateShapeAction {
     }
 }
 exports.CreateCircleAction = CreateCircleAction;
+class CreatePolygonAction extends CreateShapeAction {
+    constructor(doc, x, y, points) {
+        super(doc, new shape_1.Polygon(x, y, points));
+        this.x = x;
+        this.y = y;
+        this.points = points;
+    }
+}
+exports.CreatePolygonAction = CreatePolygonAction;
 class CreateRectangleAction extends CreateShapeAction {
     constructor(doc, x, y, width, height) {
         super(doc, new shape_1.Rectangle(x, y, width, height));

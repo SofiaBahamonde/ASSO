@@ -49,6 +49,15 @@ class CanvasRender {
                 this.ctx.lineTo(shape.x, shape.y);
                 this.ctx.stroke();
             }
+            else if (shape instanceof shape_1.Polygon) {
+                this.ctx.beginPath();
+                this.ctx.moveTo(shape.points[0], shape.points[1]);
+                for (var item = 2; item < shape.points.length - 1; item += 2) {
+                    this.ctx.lineTo(shape.points[item], shape.points[item + 1]);
+                }
+                this.ctx.closePath();
+                this.ctx.stroke();
+            }
         }
     }
 }

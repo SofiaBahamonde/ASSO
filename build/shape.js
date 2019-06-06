@@ -42,4 +42,13 @@ class Triangle extends Shape {
     }
 }
 exports.Triangle = Triangle;
+class Polygon extends Shape {
+    constructor(x, y, points) {
+        super(x, y);
+        this.x = x;
+        this.y = y;
+        this.points = points;
+    }
+}
+exports.Polygon = Polygon;
 //# sourceMappingURL=shape.js.map

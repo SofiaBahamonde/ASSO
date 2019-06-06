@@ -1,5 +1,5 @@
 import { Shape } from './shape'
-import { Action, CreateCircleAction, CreateRectangleAction, CreateTriangleAction, TranslateAction } from './actions'
+import { Action, CreateCircleAction, CreateRectangleAction, CreateTriangleAction, CreatePolygonAction, TranslateAction } from './actions'
 import { Render } from './render';
 import { UndoManager } from "./undo";
 
@@ -39,6 +39,10 @@ export class SimpleDrawDocument {
 
     createTriangle(x: number, y: number, x2: number, y2: number, x3: number, y3: number): Shape {
       return this.do(new CreateTriangleAction(this, x, y, x2, y2, x3, y3))
+    }
+
+    createPolygon(x: number, y: number, points: Array<number>): Shape {
+      return this.do(new CreatePolygonAction(this, x, y, points))
     }
 
 

@@ -33,6 +33,9 @@ class SimpleDrawDocument {
     createTriangle(x, y, x2, y2, x3, y3) {
         return this.do(new actions_1.CreateTriangleAction(this, x, y, x2, y2, x3, y3));
     }
+    createPolygon(x, y, points) {
+        return this.do(new actions_1.CreatePolygonAction(this, x, y, points));
+    }
     translate(s, xd, yd) {
         return this.do(new actions_1.TranslateAction(this, s, xd, yd));
     }

@@ -36,6 +36,15 @@ class CreateCircleAction extends CreateShapeAction {
     }
 }
 exports.CreateCircleAction = CreateCircleAction;
+class CreatePolygonAction extends CreateShapeAction {
+    constructor(doc, x, y, points) {
+        super(doc, new shape_1.Polygon(x, y, points));
+        this.x = x;
+        this.y = y;
+        this.points = points;
+    }
+}
+exports.CreatePolygonAction = CreatePolygonAction;
 class CreateRectangleAction extends CreateShapeAction {
     constructor(doc, x, y, width, height) {
         super(doc, new shape_1.Rectangle(x, y, width, height));
@@ -102,6 +111,9 @@ class SimpleDrawDocument {
     createTriangle(x, y, x2, y2, x3, y3) {
         return this.do(new actions_1.CreateTriangleAction(this, x, y, x2, y2, x3, y3));
     }
+    createPolygon(x, y, points) {
+        return this.do(new actions_1.CreatePolygonAction(this, x, y, points));
+    }
     translate(s, xd, yd) {
         return this.do(new actions_1.TranslateAction(this, s, xd, yd));
     }
@@ -160,6 +172,15 @@ class CanvasRender {
                 this.ctx.lineTo(shape.x, shape.y);
                 this.ctx.stroke();
             }
+            else if (shape instanceof shape_1.Polygon) {
+                this.ctx.beginPath();
+                this.ctx.moveTo(shape.points[0], shape.points[1]);
+                for (var item = 2; item < shape.points.length - 1; item += 2) {
+                    this.ctx.lineTo(shape.points[item], shape.points[item + 1]);
+                }
+                this.ctx.closePath();
+                this.ctx.stroke();
+            }
         }
     }
 }
@@ -177,6 +198,7 @@ const c1 = sdd.createCircle(100, 100, 30);
 const r1 = sdd.createRectangle(10, 10, 80, 80);
 const r2 = sdd.createRectangle(30, 30, 40, 40);
 const t1 = sdd.createTriangle(100, 100, 200, 400, 300, 200);
+const p1 = sdd.createPolygon(0, 0, [200, 50, 250, 10, 400, 200, 200, 200]);
 /* const s1 = sdd.createSelection(c1, r1, r2)
 sdd.translate(s1, 10, 10) */
 console.log("Hello in Script.ts");
@@ -228,6 +250,15 @@ class Triangle extends Shape {
     }
 }
 exports.Triangle = Triangle;
+class Polygon extends Shape {
+    constructor(x, y, points) {
+        super(x, y);
+        this.x = x;
+        this.y = y;
+        this.points = points;
+    }
+}
+exports.Polygon = Polygon;
 
 },{}],6:[function(require,module,exports){
 "use strict";

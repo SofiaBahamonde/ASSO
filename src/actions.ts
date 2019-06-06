@@ -1,4 +1,4 @@
-import { Shape, Circle, Rectangle, Triangle } from './shape'
+import { Shape, Circle, Rectangle, Triangle, Polygon } from './shape'
 import { SimpleDrawDocument } from './document'
 
 export interface Action<T> {
@@ -28,6 +28,12 @@ export class CreateTriangleAction extends CreateShapeAction<Triangle> {
 export class CreateCircleAction extends CreateShapeAction<Circle> {
     constructor(doc: SimpleDrawDocument, private x: number, private y: number, private radius: number) {
         super(doc, new Circle(x, y, radius))
+    }
+}
+
+export class CreatePolygonAction extends CreateShapeAction<Polygon> {
+    constructor(doc: SimpleDrawDocument, private x: number, private y: number, private points: Array<number>) {
+        super(doc, new Polygon(x, y, points))
     }
 }
 
