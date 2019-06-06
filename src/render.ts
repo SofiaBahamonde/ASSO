@@ -21,6 +21,13 @@ export class SVGRender implements Render {
                 e.setAttribute('width', shape.width.toString())
                 e.setAttribute('height', shape.height.toString())
                 this.svg.appendChild(e)
+            } else if(shape instanceof Circle){
+                const c = document.createElementNS("http://www.w3.org/2000/svg", "circle")
+                c.setAttribute('style', 'stroke: black; fill: white')
+                c.setAttribute("cx",shape.x.toString())
+                c.setAttribute("cy",shape.y.toString())
+                c.setAttribute("r",shape.radius.toString())
+                this.svg.appendChild(c)
             }
         }
     }
@@ -48,9 +55,6 @@ export class CanvasRender implements Render {
                 this.ctx.lineTo(shape.x,shape.y)
                 this.ctx.stroke()
             }
-            
-
-
         }
     }
 }

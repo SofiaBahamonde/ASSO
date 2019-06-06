@@ -127,6 +127,14 @@ class SVGRender {
                 e.setAttribute('height', shape.height.toString());
                 this.svg.appendChild(e);
             }
+            else if (shape instanceof shape_1.Circle) {
+                const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                c.setAttribute('style', 'stroke: black; fill: white');
+                c.setAttribute("cx", shape.x.toString());
+                c.setAttribute("cy", shape.y.toString());
+                c.setAttribute("r", shape.radius.toString());
+                this.svg.appendChild(c);
+            }
         }
     }
 }
@@ -165,7 +173,7 @@ const render_1 = require("./render");
 const canvasrender = new render_1.CanvasRender();
 const svgrender = new render_1.SVGRender();
 const sdd = new document_1.SimpleDrawDocument();
-const c1 = sdd.createCircle(50, 50, 30);
+const c1 = sdd.createCircle(100, 100, 30);
 const r1 = sdd.createRectangle(10, 10, 80, 80);
 const r2 = sdd.createRectangle(30, 30, 40, 40);
 const t1 = sdd.createTriangle(100, 100, 200, 400, 300, 200);

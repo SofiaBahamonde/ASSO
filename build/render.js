@@ -16,6 +16,14 @@ class SVGRender {
                 e.setAttribute('height', shape.height.toString());
                 this.svg.appendChild(e);
             }
+            else if (shape instanceof shape_1.Circle) {
+                const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                c.setAttribute('style', 'stroke: black; fill: white');
+                c.setAttribute("cx", shape.x.toString());
+                c.setAttribute("cy", shape.y.toString());
+                c.setAttribute("r", shape.radius.toString());
+                this.svg.appendChild(c);
+            }
         }
     }
 }
