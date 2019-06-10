@@ -20,35 +20,36 @@ abstract class CreateShapeAction<S extends Shape> implements Action<S> {
 }
 
 export class CreateTriangleAction extends CreateShapeAction<Triangle> {
-    constructor(doc: SimpleDrawDocument, private x: number, private y: number, private x2: number, private y2: number,private x3: number, private y3: number) {
-        super(doc, new Triangle(x, y,x2,y2,x3,y3))
+    constructor(doc: SimpleDrawDocument, private points: Array<number>) {
+        super(doc, new Triangle(points))
     }
 }
 
 export class CreateCircleAction extends CreateShapeAction<Circle> {
-    constructor(doc: SimpleDrawDocument, private x: number, private y: number, private radius: number) {
-        super(doc, new Circle(x, y, radius))
+    constructor(doc: SimpleDrawDocument, private  points: Array<number>, private radius: number) {
+        super(doc, new Circle(points, radius))
     }
 }
 
 export class CreatePolygonAction extends CreateShapeAction<Polygon> {
-    constructor(doc: SimpleDrawDocument, private x: number, private y: number, private points: Array<number>) {
-        super(doc, new Polygon(x, y, points))
+    constructor(doc: SimpleDrawDocument, private points: Array<number>) {
+        super(doc, new Polygon(points))
     }
 }
 
 export class CreateRectangleAction extends CreateShapeAction<Rectangle> {
-    constructor(doc: SimpleDrawDocument, private x: number, private y: number, private width: number, private height: number) {
-        super(doc, new Rectangle(x, y, width, height))
+    constructor(doc: SimpleDrawDocument, private  points: Array<number>, private width: number, private height: number) {
+        super(doc, new Rectangle(points,width, height))
     }
 }
-
+/*
 export class TranslateAction implements Action<void> {
     oldX: number
     oldY: number
 
     constructor(private doc: SimpleDrawDocument, public shape: Shape, private xd: number, private yd: number) { }
 
+    
     do(): void {
         this.oldX = this.shape.x
         this.oldY = this.shape.y
@@ -60,4 +61,4 @@ export class TranslateAction implements Action<void> {
         this.shape.y = this.oldY
        // this.shape.translate(-this.xd, -this.yd)
     }
-}
+}*/

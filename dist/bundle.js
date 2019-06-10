@@ -16,64 +16,56 @@ class CreateShapeAction {
     }
 }
 class CreateTriangleAction extends CreateShapeAction {
-    constructor(doc, x, y, x2, y2, x3, y3) {
-        super(doc, new shape_1.Triangle(x, y, x2, y2, x3, y3));
-        this.x = x;
-        this.y = y;
-        this.x2 = x2;
-        this.y2 = y2;
-        this.x3 = x3;
-        this.y3 = y3;
+    constructor(doc, points) {
+        super(doc, new shape_1.Triangle(points));
+        this.points = points;
     }
 }
 exports.CreateTriangleAction = CreateTriangleAction;
 class CreateCircleAction extends CreateShapeAction {
-    constructor(doc, x, y, radius) {
-        super(doc, new shape_1.Circle(x, y, radius));
-        this.x = x;
-        this.y = y;
+    constructor(doc, points, radius) {
+        super(doc, new shape_1.Circle(points, radius));
+        this.points = points;
         this.radius = radius;
     }
 }
 exports.CreateCircleAction = CreateCircleAction;
 class CreatePolygonAction extends CreateShapeAction {
-    constructor(doc, x, y, points) {
-        super(doc, new shape_1.Polygon(x, y, points));
-        this.x = x;
-        this.y = y;
+    constructor(doc, points) {
+        super(doc, new shape_1.Polygon(points));
         this.points = points;
     }
 }
 exports.CreatePolygonAction = CreatePolygonAction;
 class CreateRectangleAction extends CreateShapeAction {
-    constructor(doc, x, y, width, height) {
-        super(doc, new shape_1.Rectangle(x, y, width, height));
-        this.x = x;
-        this.y = y;
+    constructor(doc, points, width, height) {
+        super(doc, new shape_1.Rectangle(points, width, height));
+        this.points = points;
         this.width = width;
         this.height = height;
     }
 }
 exports.CreateRectangleAction = CreateRectangleAction;
-class TranslateAction {
-    constructor(doc, shape, xd, yd) {
-        this.doc = doc;
-        this.shape = shape;
-        this.xd = xd;
-        this.yd = yd;
+/*
+export class TranslateAction implements Action<void> {
+    oldX: number
+    oldY: number
+
+    constructor(private doc: SimpleDrawDocument, public shape: Shape, private xd: number, private yd: number) { }
+
+    
+    do(): void {
+        this.oldX = this.shape.x
+        this.oldY = this.shape.y
+        this.shape.translate(this.xd, this.yd)
     }
-    do() {
-        this.oldX = this.shape.x;
-        this.oldY = this.shape.y;
-        this.shape.translate(this.xd, this.yd);
-    }
+
     undo() {
-        this.shape.x = this.oldX;
-        this.shape.y = this.oldY;
-        // this.shape.translate(-this.xd, -this.yd)
+        this.shape.x = this.oldX
+        this.shape.y = this.oldY
+       // this.shape.translate(-this.xd, -this.yd)
     }
-}
-exports.TranslateAction = TranslateAction;
+}*/ 
 
 },{"./shape":5}],2:[function(require,module,exports){
 "use strict";
@@ -84,6 +76,9 @@ class SimpleDrawDocument {
     constructor() {
         this.objects = new Array();
         this.undoManager = new undo_1.UndoManager();
+        // translate(s: Shape, xd: number, yd: number): void {
+        //     return this.do(new TranslateAction(this, s, xd, yd))
+        // }
     }
     undo() {
         this.undoManager.undo();
@@ -102,20 +97,17 @@ class SimpleDrawDocument {
         this.undoManager.onActionDone(a);
         return a.do();
     }
-    createRectangle(x, y, width, height) {
-        return this.do(new actions_1.CreateRectangleAction(this, x, y, width, height));
+    createRectangle(points, width, height) {
+        return this.do(new actions_1.CreateRectangleAction(this, points, width, height));
     }
-    createCircle(x, y, radius) {
-        return this.do(new actions_1.CreateCircleAction(this, x, y, radius));
+    createCircle(points, radius) {
+        return this.do(new actions_1.CreateCircleAction(this, points, radius));
     }
-    createTriangle(x, y, x2, y2, x3, y3) {
-        return this.do(new actions_1.CreateTriangleAction(this, x, y, x2, y2, x3, y3));
+    createTriangle(points) {
+        return this.do(new actions_1.CreateTriangleAction(this, points));
     }
-    createPolygon(x, y, points) {
-        return this.do(new actions_1.CreatePolygonAction(this, x, y, points));
-    }
-    translate(s, xd, yd) {
-        return this.do(new actions_1.TranslateAction(this, s, xd, yd));
+    createPolygon(points) {
+        return this.do(new actions_1.CreatePolygonAction(this, points));
     }
 }
 exports.SimpleDrawDocument = SimpleDrawDocument;
@@ -133,8 +125,8 @@ class SVGRender {
             if (shape instanceof shape_1.Rectangle) {
                 const e = document.createElementNS("http://www.w3.org/2000/svg", "rect");
                 e.setAttribute('style', 'stroke: black; fill: white');
-                e.setAttribute('x', shape.x.toString());
-                e.setAttribute('y', shape.y.toString());
+                e.setAttribute('x', shape.points[0].toString());
+                e.setAttribute('y', shape.points[1].toString());
                 e.setAttribute('width', shape.width.toString());
                 e.setAttribute('height', shape.height.toString());
                 this.svg.appendChild(e);
@@ -142,8 +134,8 @@ class SVGRender {
             else if (shape instanceof shape_1.Circle) {
                 const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                 c.setAttribute('style', 'stroke: black; fill: white');
-                c.setAttribute("cx", shape.x.toString());
-                c.setAttribute("cy", shape.y.toString());
+                c.setAttribute("cx", shape.points[0].toString());
+                c.setAttribute("cy", shape.points[1].toString());
                 c.setAttribute("r", shape.radius.toString());
                 this.svg.appendChild(c);
             }
@@ -159,17 +151,17 @@ class CanvasRender {
     draw(...objs) {
         for (const shape of objs) {
             if (shape instanceof shape_1.Circle) {
-                this.ctx.ellipse(shape.x, shape.y, shape.radius, shape.radius, 0, 0, 2 * Math.PI);
+                this.ctx.ellipse(shape.points[0], shape.points[1], shape.radius, shape.radius, 0, 0, 2 * Math.PI);
                 this.ctx.stroke();
             }
             else if (shape instanceof shape_1.Rectangle) {
-                this.ctx.strokeRect(shape.x, shape.y, shape.width, shape.height);
+                this.ctx.strokeRect(shape.points[0], shape.points[0], shape.width, shape.height);
             }
             else if (shape instanceof shape_1.Triangle) {
-                this.ctx.moveTo(shape.x, shape.y);
-                this.ctx.lineTo(shape.x2, shape.y2);
-                this.ctx.lineTo(shape.x3, shape.y3);
-                this.ctx.lineTo(shape.x, shape.y);
+                this.ctx.moveTo(shape.points[0], shape.points[1]);
+                this.ctx.lineTo(shape.points[2], shape.points[3]);
+                this.ctx.lineTo(shape.points[4], shape.points[5]);
+                this.ctx.lineTo(shape.points[0], shape.points[1]);
                 this.ctx.stroke();
             }
             else if (shape instanceof shape_1.Polygon) {
@@ -194,11 +186,11 @@ const render_1 = require("./render");
 const canvasrender = new render_1.CanvasRender();
 const svgrender = new render_1.SVGRender();
 const sdd = new document_1.SimpleDrawDocument();
-const c1 = sdd.createCircle(100, 100, 30);
-const r1 = sdd.createRectangle(10, 10, 80, 80);
-const r2 = sdd.createRectangle(30, 30, 40, 40);
-const t1 = sdd.createTriangle(100, 100, 200, 400, 300, 200);
-const p1 = sdd.createPolygon(0, 0, [200, 50, 250, 10, 400, 200, 200, 200]);
+const c1 = sdd.createCircle([100, 100], 30);
+const r1 = sdd.createRectangle([10, 10], 80, 80);
+const r2 = sdd.createRectangle([30, 30], 40, 40);
+const t1 = sdd.createTriangle([150, 100, 200, 400, 300, 200]);
+const p1 = sdd.createPolygon([200, 50, 250, 10, 400, 200, 200, 200]);
 /* const s1 = sdd.createSelection(c1, r1, r2)
 sdd.translate(s1, 10, 10) */
 console.log("Hello in Script.ts");
@@ -209,52 +201,38 @@ sdd.draw(svgrender);
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Shape {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-    }
-    translate(xd, yd) {
-        this.x += xd;
-        this.y += yd;
+    constructor(points) {
+        this.points = points;
     }
 }
 exports.Shape = Shape;
 class Rectangle extends Shape {
-    constructor(x, y, width, height) {
-        super(x, y);
-        this.x = x;
-        this.y = y;
+    constructor(points, width, height) {
+        super(points);
+        this.points = points;
         this.width = width;
         this.height = height;
     }
 }
 exports.Rectangle = Rectangle;
 class Circle extends Shape {
-    constructor(x, y, radius) {
-        super(x, y);
-        this.x = x;
-        this.y = y;
+    constructor(points, radius) {
+        super(points);
+        this.points = points;
         this.radius = radius;
     }
 }
 exports.Circle = Circle;
 class Triangle extends Shape {
-    constructor(x, y, x2, y2, x3, y3) {
-        super(x, y);
-        this.x = x;
-        this.y = y;
-        this.x2 = x2;
-        this.y2 = y2;
-        this.x3 = x3;
-        this.y3 = y3;
+    constructor(points) {
+        super(points);
+        this.points = points;
     }
 }
 exports.Triangle = Triangle;
 class Polygon extends Shape {
-    constructor(x, y, points) {
-        super(x, y);
-        this.x = x;
-        this.y = y;
+    constructor(points) {
+        super(points);
         this.points = points;
     }
 }

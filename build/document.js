@@ -6,6 +6,9 @@ class SimpleDrawDocument {
     constructor() {
         this.objects = new Array();
         this.undoManager = new undo_1.UndoManager();
+        // translate(s: Shape, xd: number, yd: number): void {
+        //     return this.do(new TranslateAction(this, s, xd, yd))
+        // }
     }
     undo() {
         this.undoManager.undo();
@@ -24,20 +27,17 @@ class SimpleDrawDocument {
         this.undoManager.onActionDone(a);
         return a.do();
     }
-    createRectangle(x, y, width, height) {
-        return this.do(new actions_1.CreateRectangleAction(this, x, y, width, height));
+    createRectangle(points, width, height) {
+        return this.do(new actions_1.CreateRectangleAction(this, points, width, height));
     }
-    createCircle(x, y, radius) {
-        return this.do(new actions_1.CreateCircleAction(this, x, y, radius));
+    createCircle(points, radius) {
+        return this.do(new actions_1.CreateCircleAction(this, points, radius));
     }
-    createTriangle(x, y, x2, y2, x3, y3) {
-        return this.do(new actions_1.CreateTriangleAction(this, x, y, x2, y2, x3, y3));
+    createTriangle(points) {
+        return this.do(new actions_1.CreateTriangleAction(this, points));
     }
-    createPolygon(x, y, points) {
-        return this.do(new actions_1.CreatePolygonAction(this, x, y, points));
-    }
-    translate(s, xd, yd) {
-        return this.do(new actions_1.TranslateAction(this, s, xd, yd));
+    createPolygon(points) {
+        return this.do(new actions_1.CreatePolygonAction(this, points));
     }
 }
 exports.SimpleDrawDocument = SimpleDrawDocument;

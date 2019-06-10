@@ -1,52 +1,38 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Shape {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-    }
-    translate(xd, yd) {
-        this.x += xd;
-        this.y += yd;
+    constructor(points) {
+        this.points = points;
     }
 }
 exports.Shape = Shape;
 class Rectangle extends Shape {
-    constructor(x, y, width, height) {
-        super(x, y);
-        this.x = x;
-        this.y = y;
+    constructor(points, width, height) {
+        super(points);
+        this.points = points;
         this.width = width;
         this.height = height;
     }
 }
 exports.Rectangle = Rectangle;
 class Circle extends Shape {
-    constructor(x, y, radius) {
-        super(x, y);
-        this.x = x;
-        this.y = y;
+    constructor(points, radius) {
+        super(points);
+        this.points = points;
         this.radius = radius;
     }
 }
 exports.Circle = Circle;
 class Triangle extends Shape {
-    constructor(x, y, x2, y2, x3, y3) {
-        super(x, y);
-        this.x = x;
-        this.y = y;
-        this.x2 = x2;
-        this.y2 = y2;
-        this.x3 = x3;
-        this.y3 = y3;
+    constructor(points) {
+        super(points);
+        this.points = points;
     }
 }
 exports.Triangle = Triangle;
 class Polygon extends Shape {
-    constructor(x, y, points) {
-        super(x, y);
-        this.x = x;
-        this.y = y;
+    constructor(points) {
+        super(points);
         this.points = points;
     }
 }

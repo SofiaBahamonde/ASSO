@@ -1,5 +1,5 @@
 import { Shape } from './shape'
-import { Action, CreateCircleAction, CreateRectangleAction, CreateTriangleAction, CreatePolygonAction, TranslateAction } from './actions'
+import { Action, CreateCircleAction, CreateRectangleAction, CreateTriangleAction, CreatePolygonAction } from './actions'
 import { Render } from './render';
 import { UndoManager } from "./undo";
 
@@ -29,24 +29,24 @@ export class SimpleDrawDocument {
     return a.do();
   }
 
-    createRectangle(x: number, y: number, width: number, height: number): Shape {
-        return this.do(new CreateRectangleAction(this, x, y, width, height))
+    createRectangle(points: Array<number>, width: number, height: number): Shape {
+        return this.do(new CreateRectangleAction(this, points, width, height))
     }
 
-    createCircle(x: number, y: number, radius: number): Shape {
-        return this.do(new CreateCircleAction(this, x, y, radius))
+    createCircle(points: Array<number>, radius: number): Shape {
+        return this.do(new CreateCircleAction(this, points, radius))
     }
 
-    createTriangle(x: number, y: number, x2: number, y2: number, x3: number, y3: number): Shape {
-      return this.do(new CreateTriangleAction(this, x, y, x2, y2, x3, y3))
+    createTriangle(points: Array<number>): Shape {
+      return this.do(new CreateTriangleAction(this, points))
     }
 
-    createPolygon(x: number, y: number, points: Array<number>): Shape {
-      return this.do(new CreatePolygonAction(this, x, y, points))
+    createPolygon( points: Array<number>): Shape {
+      return this.do(new CreatePolygonAction(this, points))
     }
 
 
-    translate(s: Shape, xd: number, yd: number): void {
-        return this.do(new TranslateAction(this, s, xd, yd))
-    }
+    // translate(s: Shape, xd: number, yd: number): void {
+    //     return this.do(new TranslateAction(this, s, xd, yd))
+    // }
 }

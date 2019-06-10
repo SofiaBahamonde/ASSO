@@ -15,62 +15,54 @@ class CreateShapeAction {
     }
 }
 class CreateTriangleAction extends CreateShapeAction {
-    constructor(doc, x, y, x2, y2, x3, y3) {
-        super(doc, new shape_1.Triangle(x, y, x2, y2, x3, y3));
-        this.x = x;
-        this.y = y;
-        this.x2 = x2;
-        this.y2 = y2;
-        this.x3 = x3;
-        this.y3 = y3;
+    constructor(doc, points) {
+        super(doc, new shape_1.Triangle(points));
+        this.points = points;
     }
 }
 exports.CreateTriangleAction = CreateTriangleAction;
 class CreateCircleAction extends CreateShapeAction {
-    constructor(doc, x, y, radius) {
-        super(doc, new shape_1.Circle(x, y, radius));
-        this.x = x;
-        this.y = y;
+    constructor(doc, points, radius) {
+        super(doc, new shape_1.Circle(points, radius));
+        this.points = points;
         this.radius = radius;
     }
 }
 exports.CreateCircleAction = CreateCircleAction;
 class CreatePolygonAction extends CreateShapeAction {
-    constructor(doc, x, y, points) {
-        super(doc, new shape_1.Polygon(x, y, points));
-        this.x = x;
-        this.y = y;
+    constructor(doc, points) {
+        super(doc, new shape_1.Polygon(points));
         this.points = points;
     }
 }
 exports.CreatePolygonAction = CreatePolygonAction;
 class CreateRectangleAction extends CreateShapeAction {
-    constructor(doc, x, y, width, height) {
-        super(doc, new shape_1.Rectangle(x, y, width, height));
-        this.x = x;
-        this.y = y;
+    constructor(doc, points, width, height) {
+        super(doc, new shape_1.Rectangle(points, width, height));
+        this.points = points;
         this.width = width;
         this.height = height;
     }
 }
 exports.CreateRectangleAction = CreateRectangleAction;
-class TranslateAction {
-    constructor(doc, shape, xd, yd) {
-        this.doc = doc;
-        this.shape = shape;
-        this.xd = xd;
-        this.yd = yd;
+/*
+export class TranslateAction implements Action<void> {
+    oldX: number
+    oldY: number
+
+    constructor(private doc: SimpleDrawDocument, public shape: Shape, private xd: number, private yd: number) { }
+
+    
+    do(): void {
+        this.oldX = this.shape.x
+        this.oldY = this.shape.y
+        this.shape.translate(this.xd, this.yd)
     }
-    do() {
-        this.oldX = this.shape.x;
-        this.oldY = this.shape.y;
-        this.shape.translate(this.xd, this.yd);
-    }
+
     undo() {
-        this.shape.x = this.oldX;
-        this.shape.y = this.oldY;
-        // this.shape.translate(-this.xd, -this.yd)
+        this.shape.x = this.oldX
+        this.shape.y = this.oldY
+       // this.shape.translate(-this.xd, -this.yd)
     }
-}
-exports.TranslateAction = TranslateAction;
+}*/ 
 //# sourceMappingURL=actions.js.map
