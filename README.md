@@ -40,7 +40,11 @@ During our classes we have already some functionalities implemented, such as:
 
 So, for **our project** we intend to do the following ones:
 
-* Add Identifiers to the shapes;
+* Drag to select multiple objects
+* Viewport tools (translate, zoom)
+* Different view styles per viewport (wireframe, color)
+* Two interaction modes: point-n-click and REPLs
+* Add Identifiers to the shapes
 * Extract the logic of the Undo/Redo to a generic UndoManager
 * Support groups and selections based on: (a) programmatic references, or (b) a bounding box
 * Document layers ('n' layers, where the visibility of 'n+1' is always 'on top' of 'n')
