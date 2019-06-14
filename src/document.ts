@@ -1,5 +1,5 @@
 import { Shape } from './shape'
-import { Action, CreateCircleAction, CreateRectangleAction, CreateTriangleAction, CreatePolygonAction } from './actions'
+import { Action, CreateCircleAction, CreateRectangleAction, CreateTriangleAction, CreatePolygonAction, TranslateAction, RotationAction } from './actions'
 import { Render } from './render';
 import { UndoManager } from "./undo";
 
@@ -46,7 +46,11 @@ export class SimpleDrawDocument {
     }
 
 
-    // translate(s: Shape, xd: number, yd: number): void {
-    //     return this.do(new TranslateAction(this, s, xd, yd))
-    // }
+    translate(s: Shape, xd: number, yd: number): void {
+        return this.do(new TranslateAction(this, s, xd, yd))
+    }
+
+    rotate(s: Shape, angle: number): void {
+      return this.do(new RotationAction(this, s, angle))
+  }
 }

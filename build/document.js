@@ -6,9 +6,6 @@ class SimpleDrawDocument {
     constructor() {
         this.objects = new Array();
         this.undoManager = new undo_1.UndoManager();
-        // translate(s: Shape, xd: number, yd: number): void {
-        //     return this.do(new TranslateAction(this, s, xd, yd))
-        // }
     }
     undo() {
         this.undoManager.undo();
@@ -38,6 +35,12 @@ class SimpleDrawDocument {
     }
     createPolygon(points) {
         return this.do(new actions_1.CreatePolygonAction(this, points));
+    }
+    translate(s, xd, yd) {
+        return this.do(new actions_1.TranslateAction(this, s, xd, yd));
+    }
+    rotate(s, angle) {
+        return this.do(new actions_1.RotationAction(this, s, angle));
     }
 }
 exports.SimpleDrawDocument = SimpleDrawDocument;

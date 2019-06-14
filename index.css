@@ -13,10 +13,11 @@
     background-color: lightgray;
     margin-bottom: 0px;
     max-width: 325px;
+    padding: 1em;
 }
 
 #toolbox p{
-    text-align: center;
+    text-align: left;
     padding: 10px;
 }
 

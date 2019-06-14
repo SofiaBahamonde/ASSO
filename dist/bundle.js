@@ -46,26 +46,41 @@ class CreateRectangleAction extends CreateShapeAction {
     }
 }
 exports.CreateRectangleAction = CreateRectangleAction;
-/*
-export class TranslateAction implements Action<void> {
-    oldX: number
-    oldY: number
-
-    constructor(private doc: SimpleDrawDocument, public shape: Shape, private xd: number, private yd: number) { }
-
-    
-    do(): void {
-        this.oldX = this.shape.x
-        this.oldY = this.shape.y
-        this.shape.translate(this.xd, this.yd)
+class TranslateAction {
+    constructor(doc, shape, xd, yd) {
+        this.doc = doc;
+        this.shape = shape;
+        this.xd = xd;
+        this.yd = yd;
     }
-
+    do() {
+        //this.oldX = this.shape.x
+        //this.oldY = this.shape.y
+        this.shape.translate(this.xd, this.yd);
+    }
     undo() {
-        this.shape.x = this.oldX
-        this.shape.y = this.oldY
-       // this.shape.translate(-this.xd, -this.yd)
+        // this.shape.x = this.oldX
+        // this.shape.y = this.oldY
+        // this.shape.translate(-this.xd, -this.yd)
     }
-}*/ 
+}
+exports.TranslateAction = TranslateAction;
+class RotationAction {
+    constructor(doc, shape, angle) {
+        this.doc = doc;
+        this.shape = shape;
+        this.angle = angle;
+    }
+    do() {
+        this.shape.rotate(this.angle);
+    }
+    undo() {
+        // this.shape.x = this.oldX
+        // this.shape.y = this.oldY
+        // this.shape.translate(-this.xd, -this.yd)
+    }
+}
+exports.RotationAction = RotationAction;
 
 },{"./shape":5}],2:[function(require,module,exports){
 "use strict";
@@ -76,9 +91,6 @@ class SimpleDrawDocument {
     constructor() {
         this.objects = new Array();
         this.undoManager = new undo_1.UndoManager();
-        // translate(s: Shape, xd: number, yd: number): void {
-        //     return this.do(new TranslateAction(this, s, xd, yd))
-        // }
     }
     undo() {
         this.undoManager.undo();
@@ -108,6 +120,12 @@ class SimpleDrawDocument {
     }
     createPolygon(points) {
         return this.do(new actions_1.CreatePolygonAction(this, points));
+    }
+    translate(s, xd, yd) {
+        return this.do(new actions_1.TranslateAction(this, s, xd, yd));
+    }
+    rotate(s, angle) {
+        return this.do(new actions_1.RotationAction(this, s, angle));
     }
 }
 exports.SimpleDrawDocument = SimpleDrawDocument;
@@ -190,9 +208,11 @@ const c1 = sdd.createCircle([100, 100], 30);
 const r1 = sdd.createRectangle([10, 10], 80, 80);
 const r2 = sdd.createRectangle([30, 30], 40, 40);
 const t1 = sdd.createTriangle([150, 100, 200, 400, 300, 200]);
+const t2 = sdd.createTriangle([50, 50, 70, 70, 90, 50]);
 const p1 = sdd.createPolygon([200, 50, 250, 10, 400, 200, 200, 200]);
-/* const s1 = sdd.createSelection(c1, r1, r2)
-sdd.translate(s1, 10, 10) */
+//const s1 = sdd.createSelection(c1, r1, r2)
+sdd.translate(p1, 10, 10);
+sdd.rotate(t2, Math.PI / 3);
 console.log("Hello in Script.ts");
 sdd.draw(canvasrender);
 sdd.draw(svgrender);
@@ -203,6 +223,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class Shape {
     constructor(points) {
         this.points = points;
+    }
+    //translation with array of points 
+    translate(xd, yd) {
+        for (var item = 0; item < this.points.length - 1; item += 2) {
+            this.points[item] += xd;
+            this.points[item + 1] += yd;
+        }
+    }
+    rotate(angle) {
+        for (var item = 0; item < this.points.length - 1; item += 2) {
+            // this.points[item] = Math.cos(angle) - Math.sin(angle) + this.points[item]*(1-Math.cos(angle))+this.points[item+1]*Math.sin(angle)
+            //this.points[item+1] =  Math.sin(angle) + Math.cos(angle) + this.points[item+1]*(1-Math.cos(angle))-this.points[item+1]*Math.sin(angle)
+            this.points[item] = this.points[item] * Math.cos(angle) - this.points[item + 1] * Math.sin(angle);
+            this.points[item + 1] = this.points[item + 1] * Math.sin(angle) + this.points[item] * Math.cos(angle);
+        }
     }
 }
 exports.Shape = Shape;

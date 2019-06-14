@@ -45,24 +45,39 @@ class CreateRectangleAction extends CreateShapeAction {
     }
 }
 exports.CreateRectangleAction = CreateRectangleAction;
-/*
-export class TranslateAction implements Action<void> {
-    oldX: number
-    oldY: number
-
-    constructor(private doc: SimpleDrawDocument, public shape: Shape, private xd: number, private yd: number) { }
-
-    
-    do(): void {
-        this.oldX = this.shape.x
-        this.oldY = this.shape.y
-        this.shape.translate(this.xd, this.yd)
+class TranslateAction {
+    constructor(doc, shape, xd, yd) {
+        this.doc = doc;
+        this.shape = shape;
+        this.xd = xd;
+        this.yd = yd;
     }
-
+    do() {
+        //this.oldX = this.shape.x
+        //this.oldY = this.shape.y
+        this.shape.translate(this.xd, this.yd);
+    }
     undo() {
-        this.shape.x = this.oldX
-        this.shape.y = this.oldY
-       // this.shape.translate(-this.xd, -this.yd)
+        // this.shape.x = this.oldX
+        // this.shape.y = this.oldY
+        // this.shape.translate(-this.xd, -this.yd)
     }
-}*/ 
+}
+exports.TranslateAction = TranslateAction;
+class RotationAction {
+    constructor(doc, shape, angle) {
+        this.doc = doc;
+        this.shape = shape;
+        this.angle = angle;
+    }
+    do() {
+        this.shape.rotate(this.angle);
+    }
+    undo() {
+        // this.shape.x = this.oldX
+        // this.shape.y = this.oldY
+        // this.shape.translate(-this.xd, -this.yd)
+    }
+}
+exports.RotationAction = RotationAction;
 //# sourceMappingURL=actions.js.map
