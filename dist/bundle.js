@@ -67,7 +67,7 @@ export class TranslateAction implements Action<void> {
     }
 }*/ 
 
-},{"./shape":5}],2:[function(require,module,exports){
+},{"./shape":6}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const actions_1 = require("./actions");
@@ -112,7 +112,64 @@ class SimpleDrawDocument {
 }
 exports.SimpleDrawDocument = SimpleDrawDocument;
 
-},{"./actions":1,"./undo":6}],3:[function(require,module,exports){
+},{"./actions":1,"./undo":7}],3:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var Interpreter;
+(function (Interpreter) {
+    class Context {
+        constructor(doc, can, svg, commands) {
+            this.document = doc;
+            this.canvas = can;
+            this.svg = svg;
+            this.command = commands.split(" ");
+        }
+    }
+    Interpreter.Context = Context;
+    class TerminalExpression {
+    }
+    class RectangleArgumentsExpression extends TerminalExpression {
+        interpret(context) {
+            let x = parseInt(context.command[2]);
+            let y = parseInt(context.command[3]);
+            let width = parseInt(context.command[4]);
+            let height = parseInt(context.command[5]);
+            context.document.createRectangle([x, y], width, height);
+            context.document.draw(context.canvas);
+            context.document.draw(context.svg);
+        }
+    }
+    Interpreter.RectangleArgumentsExpression = RectangleArgumentsExpression;
+    class NonterminalExpression {
+    }
+    class CommandExpression extends NonterminalExpression {
+        interpret(context) {
+            switch (context.command[0]) {
+                case 'draw':
+                    let objectExpression = new ObjectExpression();
+                    objectExpression.interpret(context);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    Interpreter.CommandExpression = CommandExpression;
+    class ObjectExpression extends NonterminalExpression {
+        interpret(context) {
+            switch (context.command[1]) {
+                case 'rectangle':
+                    let rectangleExpression = new RectangleArgumentsExpression();
+                    rectangleExpression.interpret(context);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+})(Interpreter = exports.Interpreter || (exports.Interpreter = {}));
+
+},{}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const shape_1 = require("./shape");
@@ -178,26 +235,38 @@ class CanvasRender {
 }
 exports.CanvasRender = CanvasRender;
 
-},{"./shape":5}],4:[function(require,module,exports){
+},{"./shape":6}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const document_1 = require("./document");
 const render_1 = require("./render");
+const interperter_1 = require("./interperter");
 const canvasrender = new render_1.CanvasRender();
 const svgrender = new render_1.SVGRender();
 const sdd = new document_1.SimpleDrawDocument();
-const c1 = sdd.createCircle([100, 100], 30);
-const r1 = sdd.createRectangle([10, 10], 80, 80);
-const r2 = sdd.createRectangle([30, 30], 40, 40);
-const t1 = sdd.createTriangle([150, 100, 200, 400, 300, 200]);
-const p1 = sdd.createPolygon([200, 50, 250, 10, 400, 200, 200, 200]);
+// const c1 = sdd.createCircle([100, 100], 30)
+// const r1 = sdd.createRectangle([10, 10], 80, 80)
+// const r2 = sdd.createRectangle([30, 30], 40, 40)
+// const t1 = sdd.createTriangle([150, 100, 200, 400, 300, 200])
+// const p1 = sdd.createPolygon([ 200,50, 250,10, 400,200, 200,200 ])
 /* const s1 = sdd.createSelection(c1, r1, r2)
 sdd.translate(s1, 10, 10) */
 console.log("Hello in Script.ts");
-sdd.draw(canvasrender);
-sdd.draw(svgrender);
+var button = document.getElementById("submit");
+var input = document.getElementById("console-input");
+if (button) {
+    button.addEventListener("click", () => {
+        let command = input.value;
+        console.log(command);
+        let context = new interperter_1.Interpreter.Context(sdd, canvasrender, svgrender, command);
+        let expression = new interperter_1.Interpreter.CommandExpression();
+        expression.interpret(context);
+    });
+}
+// sdd.draw(canvasrender)
+// sdd.draw(svgrender)
 
-},{"./document":2,"./render":3}],5:[function(require,module,exports){
+},{"./document":2,"./interperter":3,"./render":4}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Shape {
@@ -238,7 +307,7 @@ class Polygon extends Shape {
 }
 exports.Polygon = Polygon;
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class UndoManager {
@@ -267,4 +336,4 @@ class UndoManager {
 }
 exports.UndoManager = UndoManager;
 
-},{}]},{},[4]);
+},{}]},{},[5]);
