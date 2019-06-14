@@ -46,8 +46,18 @@
 
     </div>
 
-    <div id="layers">
-        <p> Layers Panel</p>
+    <div class="flex-container">
+
+        <div id="layers" style="flex-shrink: 0" >
+            <p> Layers Panel</p>
+        </div>
+
+        <div id="command">
+            <form>
+                <textarea rows="4" cols="50" id="console-input"></textarea>
+                <button type='button' id="submit">submit</button> 
+            </form>
+        </div>
     </div>
 
     <script src="dist/bundle.js"></script>

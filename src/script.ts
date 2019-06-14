@@ -1,5 +1,6 @@
 import { SimpleDrawDocument } from './document'
 import { CanvasRender, SVGRender } from './render';
+import {Interpreter} from './interperter';
 
 const canvasrender = new CanvasRender()
 const svgrender = new SVGRender()
@@ -18,5 +19,17 @@ sdd.rotate(t2,Math.PI/3)
 
 console.log("Hello in Script.ts")
 
+var button = <HTMLButtonElement> document.getElementById("submit");
+var input = <HTMLInputElement> document.getElementById("console-input");
+
+if(button){
+    button.addEventListener("click", () => {
+        let command : string = input.value;
+        let context :Interpreter.Context = new Interpreter.Context(sdd, canvasrender, svgrender, command); 
+        let expression : Interpreter.CommandExpression = new Interpreter.CommandExpression(command[0]);
+        expression.interpret(context)
+    })
+}
+
 sdd.draw(canvasrender)
-sdd.draw(svgrender)
+ sdd.draw(svgrender)
