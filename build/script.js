@@ -19,9 +19,8 @@ var input = document.getElementById("console-input");
 if (button) {
     button.addEventListener("click", () => {
         let command = input.value;
-        console.log(command);
         let context = new interperter_1.Interpreter.Context(sdd, canvasrender, svgrender, command);
-        let expression = new interperter_1.Interpreter.CommandExpression();
+        let expression = new interperter_1.Interpreter.CommandExpression(command[0]);
         expression.interpret(context);
     });
 }

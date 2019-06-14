@@ -23,9 +23,8 @@ var input = <HTMLInputElement> document.getElementById("console-input");
 if(button){
     button.addEventListener("click", () => {
         let command : string = input.value;
-        console.log(command);
         let context :Interpreter.Context = new Interpreter.Context(sdd, canvasrender, svgrender, command); 
-        let expression : Interpreter.CommandExpression = new Interpreter.CommandExpression();
+        let expression : Interpreter.CommandExpression = new Interpreter.CommandExpression(command[0]);
         expression.interpret(context)
     })
 }

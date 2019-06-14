@@ -8,6 +8,7 @@ export namespace Interpreter {
         public canvas : CanvasRender;
         public svg : SVGRender
         public command : Array<string>;
+        
         constructor(doc : SimpleDrawDocument, can : CanvasRender, svg : SVGRender, commands : string){
             this.document = doc;
             this.canvas = can;
@@ -21,11 +22,8 @@ export namespace Interpreter {
         interpret(context: Context): void;
     }
 
-    abstract class TerminalExpression implements AbstractExpression {
-        public abstract interpret(context: Context): void 
-    }
+    export class RectangleExpression implements AbstractExpression{
 
-    export class RectangleArgumentsExpression extends TerminalExpression{
         public interpret(context: Context): void {
             
             let x = parseInt(context.command[2]) 
@@ -34,22 +32,25 @@ export namespace Interpreter {
             let height = parseInt(context.command[5])
 
             context.document.createRectangle([x, y], width, height)
-            context.document.draw(context.canvas);
-            context.document.draw(context.svg);
+ 
         }
     }
 
-    abstract class NonterminalExpression implements AbstractExpression {
-        public abstract interpret(context: Context): void;
-    }
+    export class CommandExpression implements AbstractExpression{
+        private command : String;
 
-    export class CommandExpression extends NonterminalExpression{
+        constructor(cmd : String) { 
+            this.command = cmd;
+        }
 
         public interpret(context: Context): void {
             switch (context.command[0]) {
                 case 'draw':  
-                    let objectExpression = new ObjectExpression()
+                    let objectExpression = new ShapeExpression(context.command[1])
                     objectExpression.interpret(context)
+
+                    context.document.draw(context.canvas);
+                    context.document.draw(context.svg);
                     break;
             
                 default:
@@ -58,11 +59,17 @@ export namespace Interpreter {
         }
     }
 
-    class ObjectExpression extends NonterminalExpression{
+    class ShapeExpression implements AbstractExpression{
+        private shape : String;
+
+        constructor(shape : String) { 
+            this.shape = shape;
+        }
+
         public interpret(context: Context): void {
-            switch (context.command[1]) {
+            switch (this.shape) {
                 case 'rectangle':
-                    let rectangleExpression = new RectangleArgumentsExpression()
+                    let rectangleExpression = new RectangleExpression()
                     rectangleExpression.interpret(context);  
                     break;
             
