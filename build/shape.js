@@ -12,11 +12,21 @@ class Shape {
         }
     }
     rotate(angle) {
+        var xc = 0;
+        var yc = 0;
+        for (var i = 0; i < this.points.length - 1; i += 2) {
+            xc += this.points[i];
+            yc += this.points[i + 1];
+        }
+        xc /= this.points.length / 2;
+        yc /= this.points.length / 2;
         for (var item = 0; item < this.points.length - 1; item += 2) {
-            // this.points[item] = Math.cos(angle) - Math.sin(angle) + this.points[item]*(1-Math.cos(angle))+this.points[item+1]*Math.sin(angle)
-            //this.points[item+1] =  Math.sin(angle) + Math.cos(angle) + this.points[item+1]*(1-Math.cos(angle))-this.points[item+1]*Math.sin(angle)
-            this.points[item] = this.points[item] * Math.cos(angle) - this.points[item + 1] * Math.sin(angle);
-            this.points[item + 1] = this.points[item + 1] * Math.sin(angle) + this.points[item] * Math.cos(angle);
+            var xt = this.points[item] - xc;
+            var yt = this.points[item + 1] - yc;
+            var xr = xt * Math.cos(angle) - yt * Math.sin(angle);
+            var yr = xt * Math.sin(angle) + yt * Math.cos(angle);
+            this.points[item] = xr + xc;
+            this.points[item + 1] = yr + yc;
         }
     }
 }

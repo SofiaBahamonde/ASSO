@@ -234,9 +234,9 @@ class SVGRender {
         var xmlns = "http://www.w3.org/2000/svg";
         var svgElem = document.createElementNS(xmlns, "svg");
         svgElem.setAttributeNS(null, "id", "svgcanvas");
-        svgElem.setAttributeNS(null, "width", '400');
-        svgElem.setAttributeNS(null, "height", '400');
-        svgElem.setAttributeNS(null, "style", "border: 1px solid blue;");
+        svgElem.setAttributeNS(null, "width", '300');
+        svgElem.setAttributeNS(null, "height", '300');
+        svgElem.setAttributeNS(null, "style", "border: 2px solid black; border-radius: 5px 5px 5px 5px/25px 25px 25px 5px;");
         this.svg.remove();
         document.getElementById("all_canvas").appendChild(svgElem);
         this.svg = document.getElementById('svgcanvas');
@@ -303,12 +303,14 @@ const sdd = new document_1.SimpleDrawDocument();
 // const c1 = sdd.createCircle([100, 100], 30)
 // const r1 = sdd.createRectangle([10, 10], 80, 80)
 // const r2 = sdd.createRectangle([30, 30], 40, 40)
-// const t1 = sdd.createTriangle([150, 100, 200, 400, 300, 200])
-// const t2 = sdd.createTriangle([50,50,70,70,90,50])
+// const t1 = sdd.createPolygon([150, 100, 200, 400, 300, 200])
+// const t2 = sdd.createPolygon([50,50,70,70,90,50])
+// const t3 = sdd.createPolygon([50,50,70,70,90,50])
 // const p1 = sdd.createPolygon([ 200,50, 250,10, 400,200, 200,200 ])
-//const s1 = sdd.createSelection(c1, r1, r2)
+// const s1 = sdd.createSelection(c1, r1, r2)
 // sdd.translate(p1, 10, 10) 
 // sdd.rotate(t2,Math.PI/3)
+// sdd.rotate(r1,Math.PI/3)
 var consoleBtn = document.getElementById("submit");
 var undoBtn = document.getElementById("undo");
 var redoBtn = document.getElementById("redo");
@@ -329,8 +331,8 @@ redoBtn.addEventListener("click", () => {
     sdd.draw(canvasrender);
     sdd.draw(svgrender);
 });
-// sdd.draw(canvasrender)
-// sdd.draw(svgrender)
+//  sdd.draw(canvasrender)
+//  sdd.draw(svgrender)
 
 },{"./document":2,"./interperter":3,"./render":4}],6:[function(require,module,exports){
 "use strict";
@@ -347,11 +349,21 @@ class Shape {
         }
     }
     rotate(angle) {
+        var xc = 0;
+        var yc = 0;
+        for (var i = 0; i < this.points.length - 1; i += 2) {
+            xc += this.points[i];
+            yc += this.points[i + 1];
+        }
+        xc /= this.points.length / 2;
+        yc /= this.points.length / 2;
         for (var item = 0; item < this.points.length - 1; item += 2) {
-            // this.points[item] = Math.cos(angle) - Math.sin(angle) + this.points[item]*(1-Math.cos(angle))+this.points[item+1]*Math.sin(angle)
-            //this.points[item+1] =  Math.sin(angle) + Math.cos(angle) + this.points[item+1]*(1-Math.cos(angle))-this.points[item+1]*Math.sin(angle)
-            this.points[item] = this.points[item] * Math.cos(angle) - this.points[item + 1] * Math.sin(angle);
-            this.points[item + 1] = this.points[item + 1] * Math.sin(angle) + this.points[item] * Math.cos(angle);
+            var xt = this.points[item] - xc;
+            var yt = this.points[item + 1] - yc;
+            var xr = xt * Math.cos(angle) - yt * Math.sin(angle);
+            var yr = xt * Math.sin(angle) + yt * Math.cos(angle);
+            this.points[item] = xr + xc;
+            this.points[item + 1] = yr + yc;
         }
     }
 }
