@@ -144,16 +144,6 @@ var Interpreter;
         }
     }
     Interpreter.Context = Context;
-    class RectangleExpression {
-        interpret(context) {
-            let x = parseInt(context.command[2]);
-            let y = parseInt(context.command[3]);
-            let width = parseInt(context.command[4]);
-            let height = parseInt(context.command[5]);
-            context.document.createRectangle([x, y], width, height);
-        }
-    }
-    Interpreter.RectangleExpression = RectangleExpression;
     class CommandExpression {
         constructor(cmd) {
             this.command = cmd;
@@ -179,14 +169,41 @@ var Interpreter;
         interpret(context) {
             switch (this.shape) {
                 case 'rectangle':
-                    let rectangleExpression = new RectangleExpression();
+                    let rectangleExpression = new RectangleExpression(context.command[2], context.command[3], context.command[4], context.command[5]);
                     rectangleExpression.interpret(context);
+                    break;
+                case 'circle':
+                    let circleExpression = new CircleExpression(context.command[2], context.command[3], context.command[4]);
+                    circleExpression.interpret(context);
                     break;
                 default:
                     break;
             }
         }
     }
+    class RectangleExpression {
+        constructor(x, y, width, height) {
+            this.x = parseInt(x);
+            this.y = parseInt(y);
+            this.width = parseInt(width);
+            this.height = parseInt(height);
+        }
+        interpret(context) {
+            context.document.createRectangle([this.x, this.y], this.width, this.height);
+        }
+    }
+    Interpreter.RectangleExpression = RectangleExpression;
+    class CircleExpression {
+        constructor(x, y, radius) {
+            this.x = parseInt(x);
+            this.y = parseInt(y);
+            this.radius = parseInt(radius);
+        }
+        interpret(context) {
+            context.document.createCircle([this.x, this.y], this.radius);
+        }
+    }
+    Interpreter.CircleExpression = CircleExpression;
 })(Interpreter = exports.Interpreter || (exports.Interpreter = {}));
 
 },{}],4:[function(require,module,exports){
@@ -264,16 +281,15 @@ const interperter_1 = require("./interperter");
 const canvasrender = new render_1.CanvasRender();
 const svgrender = new render_1.SVGRender();
 const sdd = new document_1.SimpleDrawDocument();
-const c1 = sdd.createCircle([100, 100], 30);
-const r1 = sdd.createRectangle([10, 10], 80, 80);
-const r2 = sdd.createRectangle([30, 30], 40, 40);
-const t1 = sdd.createTriangle([150, 100, 200, 400, 300, 200]);
-const t2 = sdd.createTriangle([50, 50, 70, 70, 90, 50]);
-const p1 = sdd.createPolygon([200, 50, 250, 10, 400, 200, 200, 200]);
+// const c1 = sdd.createCircle([100, 100], 30)
+// const r1 = sdd.createRectangle([10, 10], 80, 80)
+// const r2 = sdd.createRectangle([30, 30], 40, 40)
+// const t1 = sdd.createTriangle([150, 100, 200, 400, 300, 200])
+// const t2 = sdd.createTriangle([50,50,70,70,90,50])
+// const p1 = sdd.createPolygon([ 200,50, 250,10, 400,200, 200,200 ])
 //const s1 = sdd.createSelection(c1, r1, r2)
-sdd.translate(p1, 10, 10);
-sdd.rotate(t2, Math.PI / 3);
-console.log("Hello in Script.ts");
+// sdd.translate(p1, 10, 10) 
+// sdd.rotate(t2,Math.PI/3)
 var button = document.getElementById("submit");
 var input = document.getElementById("console-input");
 if (button) {
@@ -284,8 +300,8 @@ if (button) {
         expression.interpret(context);
     });
 }
-sdd.draw(canvasrender);
-sdd.draw(svgrender);
+// sdd.draw(canvasrender)
+// sdd.draw(svgrender)
 
 },{"./document":2,"./interperter":3,"./render":4}],6:[function(require,module,exports){
 "use strict";

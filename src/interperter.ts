@@ -18,25 +18,11 @@ export namespace Interpreter {
           
     }
     
-    interface AbstractExpression {
+    interface Expression {
         interpret(context: Context): void;
     }
 
-    export class RectangleExpression implements AbstractExpression{
-
-        public interpret(context: Context): void {
-            
-            let x = parseInt(context.command[2]) 
-            let y = parseInt(context.command[3]) 
-            let width = parseInt(context.command[4]) 
-            let height = parseInt(context.command[5])
-
-            context.document.createRectangle([x, y], width, height)
- 
-        }
-    }
-
-    export class CommandExpression implements AbstractExpression{
+    export class CommandExpression implements Expression{
         private command : String;
 
         constructor(cmd : String) { 
@@ -59,7 +45,7 @@ export namespace Interpreter {
         }
     }
 
-    class ShapeExpression implements AbstractExpression{
+    class ShapeExpression implements Expression{
         private shape : String;
 
         constructor(shape : String) { 
@@ -69,13 +55,54 @@ export namespace Interpreter {
         public interpret(context: Context): void {
             switch (this.shape) {
                 case 'rectangle':
-                    let rectangleExpression = new RectangleExpression()
+                    let rectangleExpression = new RectangleExpression(context.command[2], context.command[3], context.command[4], context.command[5]);
                     rectangleExpression.interpret(context);  
                     break;
-            
+
+                case 'circle':
+                    let circleExpression = new CircleExpression(context.command[2], context.command[3], context.command[4]);
+                    circleExpression.interpret(context); 
+                    break;
                 default:
                     break;
             }
+        }
+    }
+
+    export class RectangleExpression implements Expression{
+
+        private x : number;
+        private y : number;
+        private width : number;
+        private height : number;
+
+        constructor(x: string, y: string, width: string, height: string){
+            this.x = parseInt(x);
+            this.y = parseInt(y);
+            this.width = parseInt(width);
+            this.height = parseInt(height);
+        }
+
+        public interpret(context: Context): void {
+
+            context.document.createRectangle([this.x, this.y], this.width, this.height)
+ 
+        }
+    }
+
+    export class CircleExpression implements Expression{
+        private x : number;
+        private y : number;
+        private radius : number;
+
+        constructor(x: string, y: string, radius : string){
+            this.x = parseInt(x);
+            this.y = parseInt(y);
+            this.radius = parseInt (radius);
+        }
+
+        public interpret(context: Context): void{
+            context.document.createCircle([this.x, this.y], this.radius);
         }
     }
 }

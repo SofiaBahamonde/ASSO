@@ -11,16 +11,6 @@ var Interpreter;
         }
     }
     Interpreter.Context = Context;
-    class RectangleExpression {
-        interpret(context) {
-            let x = parseInt(context.command[2]);
-            let y = parseInt(context.command[3]);
-            let width = parseInt(context.command[4]);
-            let height = parseInt(context.command[5]);
-            context.document.createRectangle([x, y], width, height);
-        }
-    }
-    Interpreter.RectangleExpression = RectangleExpression;
     class CommandExpression {
         constructor(cmd) {
             this.command = cmd;
@@ -46,13 +36,40 @@ var Interpreter;
         interpret(context) {
             switch (this.shape) {
                 case 'rectangle':
-                    let rectangleExpression = new RectangleExpression();
+                    let rectangleExpression = new RectangleExpression(context.command[2], context.command[3], context.command[4], context.command[5]);
                     rectangleExpression.interpret(context);
+                    break;
+                case 'circle':
+                    let circleExpression = new CircleExpression(context.command[2], context.command[3], context.command[4]);
+                    circleExpression.interpret(context);
                     break;
                 default:
                     break;
             }
         }
     }
+    class RectangleExpression {
+        constructor(x, y, width, height) {
+            this.x = parseInt(x);
+            this.y = parseInt(y);
+            this.width = parseInt(width);
+            this.height = parseInt(height);
+        }
+        interpret(context) {
+            context.document.createRectangle([this.x, this.y], this.width, this.height);
+        }
+    }
+    Interpreter.RectangleExpression = RectangleExpression;
+    class CircleExpression {
+        constructor(x, y, radius) {
+            this.x = parseInt(x);
+            this.y = parseInt(y);
+            this.radius = parseInt(radius);
+        }
+        interpret(context) {
+            context.document.createCircle([this.x, this.y], this.radius);
+        }
+    }
+    Interpreter.CircleExpression = CircleExpression;
 })(Interpreter = exports.Interpreter || (exports.Interpreter = {}));
 //# sourceMappingURL=interperter.js.map
