@@ -29,38 +29,44 @@ export abstract class Shape {
 }
 
 export class Rectangle extends Shape{
-    static id: number =0;
+    static idCounter: number =0;
+    id: number;
 
     constructor(public points: Array<number>, public width: number, public height: number) {
         super(points)
+        this.id = Circle.idCounter++;
     }
 
     getID(): string {
-        return "rect_" + Rectangle.id++;
+        return "rect_" + this.id;
      }
 
 }
 
 export class Circle extends Shape {
-    static id: number =0;
+    static idCounter: number =0;
+    id: number;
 
     constructor(public points: Array<number>, public radius: number) {
-        super(points)
+        super(points);
+        this.id = Circle.idCounter++;
     }
 
     getID(): string {
-        return "circle_" + Circle.id++;
+        return "circle_" + this.id;
      }
 }
 
 export class Polygon extends Shape {
-    static id: number =0;
+    static idCounter: number =0;
+    id: number;
 
     constructor(public points: Array<number>) {
         super(points)
+        this.id = Circle.idCounter++;
     }
 
     getID(): string {
-        return "polygon_" + Polygon.id++;
+        return "polygon_" + this.id;
      }
 }

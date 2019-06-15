@@ -6,6 +6,7 @@ class SimpleDrawDocument {
     constructor() {
         this.objects = new Array();
         this.undoManager = new undo_1.UndoManager();
+        this.shapeDropbox = document.getElementById("shape-dropbox");
     }
     undo() {
         this.undoManager.undo();
@@ -18,7 +19,10 @@ class SimpleDrawDocument {
         render.draw(...this.objects);
     }
     add(r) {
-        console.log(r.getID());
+        var option = document.createElement("OPTION");
+        option.setAttribute("value", r.getID());
+        option.innerHTML = r.getID();
+        this.shapeDropbox.appendChild(option);
         this.objects.push(r);
     }
     do(a) {
