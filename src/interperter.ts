@@ -63,6 +63,17 @@ export namespace Interpreter {
                     let circleExpression = new CircleExpression(context.command[2], context.command[3], context.command[4]);
                     circleExpression.interpret(context); 
                     break;
+
+                case 'triangle':
+                    let triangleExpression = new PolygonExpression(context.command);
+                    triangleExpression.interpret(context);  
+                    break;
+                
+                case 'polygon':
+                    let polygonExpression = new PolygonExpression(context.command);
+                    polygonExpression.interpret(context);
+                    break;
+
                 default:
                     break;
             }
@@ -105,4 +116,26 @@ export namespace Interpreter {
             context.document.createCircle([this.x, this.y], this.radius);
         }
     }
+
+    export class PolygonExpression implements Expression{
+
+        protected points : Array<number>;
+
+        constructor(command : Array<string>){
+            this.points = [];
+
+            for(var i = 2; i < command.length; i++){
+                this.points.push(parseInt(command[i]));
+            }
+
+            console.log(this.points);
+        }
+
+        public interpret(context: Context): void {
+
+            context.document.createPolygon(this.points);
+ 
+        }
+    }
+
 }

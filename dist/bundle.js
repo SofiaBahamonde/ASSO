@@ -176,6 +176,14 @@ var Interpreter;
                     let circleExpression = new CircleExpression(context.command[2], context.command[3], context.command[4]);
                     circleExpression.interpret(context);
                     break;
+                case 'triangle':
+                    let triangleExpression = new PolygonExpression(context.command);
+                    triangleExpression.interpret(context);
+                    break;
+                case 'polygon':
+                    let polygonExpression = new PolygonExpression(context.command);
+                    polygonExpression.interpret(context);
+                    break;
                 default:
                     break;
             }
@@ -204,6 +212,19 @@ var Interpreter;
         }
     }
     Interpreter.CircleExpression = CircleExpression;
+    class PolygonExpression {
+        constructor(command) {
+            this.points = [];
+            for (var i = 2; i < command.length; i++) {
+                this.points.push(parseInt(command[i]));
+            }
+            console.log(this.points);
+        }
+        interpret(context) {
+            context.document.createPolygon(this.points);
+        }
+    }
+    Interpreter.PolygonExpression = PolygonExpression;
 })(Interpreter = exports.Interpreter || (exports.Interpreter = {}));
 
 },{}],4:[function(require,module,exports){

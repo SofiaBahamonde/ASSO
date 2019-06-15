@@ -1,4 +1,4 @@
-import { Shape, Circle, Rectangle, Triangle, Polygon } from './shape'
+import { Shape, Circle, Rectangle, Polygon } from './shape'
 import { SimpleDrawDocument } from './document'
 
 export interface Action<T> {
@@ -16,12 +16,6 @@ abstract class CreateShapeAction<S extends Shape> implements Action<S> {
 
     undo() {
         this.doc.objects = this.doc.objects.filter(o => o !== this.shape)
-    }
-}
-
-export class CreateTriangleAction extends CreateShapeAction<Triangle> {
-    constructor(doc: SimpleDrawDocument, private points: Array<number>) {
-        super(doc, new Triangle(points))
     }
 }
 

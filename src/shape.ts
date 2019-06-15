@@ -37,12 +37,6 @@ export class Circle extends Shape {
     }
 }
 
-export class Triangle extends Shape {
-    constructor(public points: Array<number>) {
-        super(points)
-    }
-}
-
 export class Polygon extends Shape {
     constructor(public points: Array<number>) {
         super(points)

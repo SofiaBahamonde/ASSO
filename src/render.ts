@@ -1,4 +1,4 @@
-import { Shape, Circle, Rectangle, Triangle, Polygon } from "./shape"
+import { Shape, Circle, Rectangle, Polygon } from "./shape"
 
 export interface Render {
     draw(...objs: Array<Shape>): void
@@ -48,12 +48,6 @@ export class CanvasRender implements Render {
                 this.ctx.stroke()
             } else if (shape instanceof Rectangle) {
                 this.ctx.strokeRect(shape.points[0], shape.points[0], shape.width, shape.height)   
-            } else if (shape instanceof Triangle) {
-                this.ctx.moveTo(shape.points[0],shape.points[1])
-                this.ctx.lineTo(shape.points[2],shape.points[3])
-                this.ctx.lineTo(shape.points[4],shape.points[5])
-                this.ctx.lineTo(shape.points[0],shape.points[1])
-                this.ctx.stroke()
             } else if (shape instanceof Polygon) {
 
                 this.ctx.beginPath()
