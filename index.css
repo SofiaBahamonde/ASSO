@@ -13,6 +13,7 @@
     background-color: lightgray;
     margin-bottom: 0px;
     max-width: 325px;
+    display: flex;
 }
 
 #toolbox p{
@@ -20,9 +21,21 @@
     padding: 10px;
 }
 
+
+#lowers{
+    margin-top: 2em;
+
+}
+
+#lowers div {
+    margin-left: 1em;
+
+}
+
 #layers {
     background-color: lightgray;
-    max-width: 15em;
+    min-width: 20em;
+    max-width: 35em;
     min-height: 80px;
     text-align: center;
 }

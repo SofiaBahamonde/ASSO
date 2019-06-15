@@ -1,14 +1,14 @@
 import { Shape } from './shape'
 import { Action, CreateCircleAction, CreateRectangleAction, CreateTriangleAction, CreatePolygonAction } from './actions'
-import { Render } from './render';
+import { Render, InterfaceRender } from './render';
 import { UndoManager } from "./undo";
-import { ToolBox } from 'toolbox';
+import { ToolBox } from './toolbox';
+import { InterfaceObj } from './interfaceobj';
 
 export class SimpleDrawDocument {
     objects = new Array<Shape>()
     undoManager = new UndoManager();
-
-    private toolbox:ToolBox
+    uielems = new Array<InterfaceObj>();
 
     undo() {
     this.undoManager.undo();
@@ -20,7 +20,13 @@ export class SimpleDrawDocument {
 
     draw(render: Render): void {
         // this.objects.forEach(o => o.draw(ctx))
+
         render.draw(...this.objects)
+    }
+
+    drawUI(uiRender: InterfaceRender){
+
+        uiRender.draw(...this.uielems)
     }
 
     add(r: Shape): void {
@@ -48,8 +54,43 @@ export class SimpleDrawDocument {
       return this.do(new CreatePolygonAction(this, points))
     }
 
+    addUIElem(elem:InterfaceObj){
+      
+
+      var found = Boolean(false)
+
+      this.uielems.forEach(element => {
+
+          if(element === elem){
+             found = true
+              element = elem
+          }
+
+      })
+
+      if(found == false){
+        this.uielems.push(elem)
+      }
+
+    }
+
     setToolBox(newtoolbox:ToolBox){
-      this.toolbox = newtoolbox
+
+      var found = Boolean(false)
+
+      this.uielems.forEach(element => {
+
+          if(element instanceof ToolBox){
+             found = true
+              element = newtoolbox
+          }
+
+      })
+
+      if(found == false){
+        this.uielems.push(newtoolbox)
+      }
+
     }
 
 

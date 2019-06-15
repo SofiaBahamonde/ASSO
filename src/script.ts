@@ -1,8 +1,9 @@
 import { SimpleDrawDocument } from './document'
-import { CanvasRender, SVGRender } from './render';
+import { CanvasRender, SVGRender, InterfaceRender } from './render';
 import {Interpreter} from './interperter';
 import { ToolBox } from './toolbox';
 import { MoveTool, PaintTool, ActionParam } from './tool';
+import { Layers } from './layer';
 
 function wait(ms:number){
     var start = new Date().getTime();
@@ -15,8 +16,7 @@ function wait(ms:number){
 
 const canvasrender = new CanvasRender()
 const svgrender = new SVGRender()
-
-
+const uirender = new InterfaceRender()
 
 
 const sdd = new SimpleDrawDocument()
@@ -31,6 +31,15 @@ toolbox.add(movetool)
 toolbox.add(painttool)
 
 sdd.setToolBox(toolbox)
+
+
+const layerui = new Layers()
+layerui.addLayernew()
+layerui.addLayernew()
+layerui.addLayernew()
+
+sdd.addUIElem(layerui)
+
 
 
 const c1 = sdd.createCircle([100, 100], 30)
@@ -62,3 +71,4 @@ if(button){
 
  sdd.draw(canvasrender)
  sdd.draw(svgrender)
+ sdd.drawUI(uirender)

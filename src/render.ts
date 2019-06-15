@@ -1,4 +1,54 @@
 import { Shape, Circle, Rectangle, Triangle, Polygon } from "./shape"
+import { InterfaceObj } from "./interfaceobj";
+import { ToolBox } from "./toolbox";
+import { Layers } from "./layer";
+
+
+export class InterfaceRender{
+    draw(...elems: Array<InterfaceObj>): void {
+
+           
+
+            for (const elem of elems) {
+                
+                if (elem instanceof ToolBox) {
+                    
+                    console.log("Drawing ToolBox")
+                    var toolbox_html = <HTMLElement>document.getElementById('toolbox')
+                    let tb_html = ""
+
+                    elem.getTools().forEach(tool => {
+                        
+                        tb_html += "<div> <p> " + tool.img_loc + " </p> </div>"
+
+                    });
+
+                    
+                    toolbox_html.innerHTML = tb_html
+
+            } else if(elem instanceof Layers){
+
+                console.log("Drawing Layers")
+
+                var layers_elem = <HTMLElement>document.getElementById('layers')
+                let layers_html = ""
+
+                elem.getLayers().forEach(layer => {
+                    
+                    layers_html += "<div> <p> Layer:  " + layer.pos + " </p> </div>"
+
+                });
+
+                
+                layers_elem.innerHTML = layers_html
+
+            } 
+
+        }
+
+
+    }
+}
 
 export interface Render {
     draw(...objs: Array<Shape>): void
