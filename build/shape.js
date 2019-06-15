@@ -28,7 +28,11 @@ class Rectangle extends Shape {
         this.width = width;
         this.height = height;
     }
+    getID() {
+        return "rect_" + Rectangle.id++;
+    }
 }
+Rectangle.id = 0;
 exports.Rectangle = Rectangle;
 class Circle extends Shape {
     constructor(points, radius) {
@@ -36,13 +40,21 @@ class Circle extends Shape {
         this.points = points;
         this.radius = radius;
     }
+    getID() {
+        return "circle_" + Circle.id++;
+    }
 }
+Circle.id = 0;
 exports.Circle = Circle;
 class Polygon extends Shape {
     constructor(points) {
         super(points);
         this.points = points;
     }
+    getID() {
+        return "polygon_" + Polygon.id++;
+    }
 }
+Polygon.id = 0;
 exports.Polygon = Polygon;
 //# sourceMappingURL=shape.js.map

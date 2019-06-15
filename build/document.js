@@ -18,6 +18,7 @@ class SimpleDrawDocument {
         render.draw(...this.objects);
     }
     add(r) {
+        console.log(r.getID());
         this.objects.push(r);
     }
     do(a) {

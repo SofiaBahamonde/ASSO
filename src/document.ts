@@ -21,6 +21,7 @@ export class SimpleDrawDocument {
     }
 
     add(r: Shape): void {
+        console.log(r.getID());
         this.objects.push(r)
     }
 
