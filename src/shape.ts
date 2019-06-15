@@ -1,5 +1,6 @@
 
 export abstract class Shape {
+
     constructor(public points: Array<number>) { }
 
 //translation with array of points 
@@ -22,23 +23,50 @@ export abstract class Shape {
             
         }
     }
+
+    abstract getID() : string;
  
 }
 
-export class Rectangle extends Shape {
+export class Rectangle extends Shape{
+    static idCounter: number =0;
+    id: number;
+
     constructor(public points: Array<number>, public width: number, public height: number) {
         super(points)
+        this.id = Circle.idCounter++;
     }
+
+    getID(): string {
+        return "rect_" + this.id;
+     }
+
 }
 
 export class Circle extends Shape {
+    static idCounter: number =0;
+    id: number;
+
     constructor(public points: Array<number>, public radius: number) {
-        super(points)
+        super(points);
+        this.id = Circle.idCounter++;
     }
+
+    getID(): string {
+        return "circle_" + this.id;
+     }
 }
 
 export class Polygon extends Shape {
+    static idCounter: number =0;
+    id: number;
+
     constructor(public points: Array<number>) {
         super(points)
+        this.id = Circle.idCounter++;
     }
+
+    getID(): string {
+        return "polygon_" + this.id;
+     }
 }

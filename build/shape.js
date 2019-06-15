@@ -27,22 +27,37 @@ class Rectangle extends Shape {
         this.points = points;
         this.width = width;
         this.height = height;
+        this.id = Circle.idCounter++;
+    }
+    getID() {
+        return "rect_" + this.id;
     }
 }
+Rectangle.idCounter = 0;
 exports.Rectangle = Rectangle;
 class Circle extends Shape {
     constructor(points, radius) {
         super(points);
         this.points = points;
         this.radius = radius;
+        this.id = Circle.idCounter++;
+    }
+    getID() {
+        return "circle_" + this.id;
     }
 }
+Circle.idCounter = 0;
 exports.Circle = Circle;
 class Polygon extends Shape {
     constructor(points) {
         super(points);
         this.points = points;
+        this.id = Circle.idCounter++;
+    }
+    getID() {
+        return "polygon_" + this.id;
     }
 }
+Polygon.idCounter = 0;
 exports.Polygon = Polygon;
 //# sourceMappingURL=shape.js.map

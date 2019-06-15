@@ -84,6 +84,7 @@ class SimpleDrawDocument {
     constructor() {
         this.objects = new Array();
         this.undoManager = new undo_1.UndoManager();
+        this.shapeDropbox = document.getElementById("shape-dropbox");
     }
     undo() {
         this.undoManager.undo();
@@ -96,6 +97,10 @@ class SimpleDrawDocument {
         render.draw(...this.objects);
     }
     add(r) {
+        var option = document.createElement("OPTION");
+        option.setAttribute("value", r.getID());
+        option.innerHTML = r.getID();
+        this.shapeDropbox.appendChild(option);
         this.objects.push(r);
     }
     do(a) {
@@ -357,23 +362,38 @@ class Rectangle extends Shape {
         this.points = points;
         this.width = width;
         this.height = height;
+        this.id = Circle.idCounter++;
+    }
+    getID() {
+        return "rect_" + this.id;
     }
 }
+Rectangle.idCounter = 0;
 exports.Rectangle = Rectangle;
 class Circle extends Shape {
     constructor(points, radius) {
         super(points);
         this.points = points;
         this.radius = radius;
+        this.id = Circle.idCounter++;
+    }
+    getID() {
+        return "circle_" + this.id;
     }
 }
+Circle.idCounter = 0;
 exports.Circle = Circle;
 class Polygon extends Shape {
     constructor(points) {
         super(points);
         this.points = points;
+        this.id = Circle.idCounter++;
+    }
+    getID() {
+        return "polygon_" + this.id;
     }
 }
+Polygon.idCounter = 0;
 exports.Polygon = Polygon;
 
 },{}],7:[function(require,module,exports){

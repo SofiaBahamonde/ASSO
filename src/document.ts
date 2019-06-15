@@ -6,14 +6,15 @@ import { UndoManager } from "./undo";
 export class SimpleDrawDocument {
     objects = new Array<Shape>()
     undoManager = new UndoManager();
+    shapeDropbox = document.getElementById("shape-dropbox");
 
     undo() {
     this.undoManager.undo();
-  }
+   }
 
-    redo() {
+    redo(){
     this.undoManager.redo();
-  }
+   }
 
     draw(render: Render): void {
         // this.objects.forEach(o => o.draw(ctx))
@@ -21,6 +22,11 @@ export class SimpleDrawDocument {
     }
 
     add(r: Shape): void {
+        var option = document.createElement("OPTION");
+        option.setAttribute("value",r.getID());
+        option.innerHTML = r.getID();
+        this.shapeDropbox.appendChild(option);
+        
         this.objects.push(r)
     }
 
