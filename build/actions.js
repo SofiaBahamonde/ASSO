@@ -14,13 +14,6 @@ class CreateShapeAction {
         this.doc.objects = this.doc.objects.filter(o => o !== this.shape);
     }
 }
-class CreateTriangleAction extends CreateShapeAction {
-    constructor(doc, points) {
-        super(doc, new shape_1.Triangle(points));
-        this.points = points;
-    }
-}
-exports.CreateTriangleAction = CreateTriangleAction;
 class CreateCircleAction extends CreateShapeAction {
     constructor(doc, points, radius) {
         super(doc, new shape_1.Circle(points, radius));

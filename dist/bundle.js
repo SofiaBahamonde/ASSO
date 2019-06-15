@@ -15,13 +15,6 @@ class CreateShapeAction {
         this.doc.objects = this.doc.objects.filter(o => o !== this.shape);
     }
 }
-class CreateTriangleAction extends CreateShapeAction {
-    constructor(doc, points) {
-        super(doc, new shape_1.Triangle(points));
-        this.points = points;
-    }
-}
-exports.CreateTriangleAction = CreateTriangleAction;
 class CreateCircleAction extends CreateShapeAction {
     constructor(doc, points, radius) {
         super(doc, new shape_1.Circle(points, radius));
@@ -114,9 +107,6 @@ class SimpleDrawDocument {
     }
     createCircle(points, radius) {
         return this.do(new actions_1.CreateCircleAction(this, points, radius));
-    }
-    createTriangle(points) {
-        return this.do(new actions_1.CreateTriangleAction(this, points));
     }
     createPolygon(points) {
         return this.do(new actions_1.CreatePolygonAction(this, points));
@@ -236,9 +226,18 @@ class SVGRender {
         this.svg = document.getElementById('svgcanvas');
     }
     draw(...objs) {
+        var xmlns = "http://www.w3.org/2000/svg";
+        var svgElem = document.createElementNS(xmlns, "svg");
+        svgElem.setAttributeNS(null, "id", "svgcanvas");
+        svgElem.setAttributeNS(null, "width", '400');
+        svgElem.setAttributeNS(null, "height", '400');
+        svgElem.setAttributeNS(null, "style", "border: 1px solid blue;");
+        this.svg.remove();
+        document.getElementById("all_canvas").appendChild(svgElem);
+        this.svg = document.getElementById('svgcanvas');
         for (const shape of objs) {
             if (shape instanceof shape_1.Rectangle) {
-                const e = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                const e = document.createElementNS(xmlns, "rect");
                 e.setAttribute('style', 'stroke: black; fill: white');
                 e.setAttribute('x', shape.points[0].toString());
                 e.setAttribute('y', shape.points[1].toString());
@@ -247,7 +246,7 @@ class SVGRender {
                 this.svg.appendChild(e);
             }
             else if (shape instanceof shape_1.Circle) {
-                const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                const c = document.createElementNS(xmlns, "circle");
                 c.setAttribute('style', 'stroke: black; fill: white');
                 c.setAttribute("cx", shape.points[0].toString());
                 c.setAttribute("cy", shape.points[1].toString());
@@ -260,10 +259,11 @@ class SVGRender {
 exports.SVGRender = SVGRender;
 class CanvasRender {
     constructor() {
-        const canvas = document.getElementById('canvas');
-        this.ctx = canvas.getContext('2d');
+        this.canvas = document.getElementById('canvas');
+        this.ctx = this.canvas.getContext('2d');
     }
     draw(...objs) {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         for (const shape of objs) {
             if (shape instanceof shape_1.Circle) {
                 this.ctx.ellipse(shape.points[0], shape.points[1], shape.radius, shape.radius, 0, 0, 2 * Math.PI);
@@ -271,13 +271,6 @@ class CanvasRender {
             }
             else if (shape instanceof shape_1.Rectangle) {
                 this.ctx.strokeRect(shape.points[0], shape.points[0], shape.width, shape.height);
-            }
-            else if (shape instanceof shape_1.Triangle) {
-                this.ctx.moveTo(shape.points[0], shape.points[1]);
-                this.ctx.lineTo(shape.points[2], shape.points[3]);
-                this.ctx.lineTo(shape.points[4], shape.points[5]);
-                this.ctx.lineTo(shape.points[0], shape.points[1]);
-                this.ctx.stroke();
             }
             else if (shape instanceof shape_1.Polygon) {
                 this.ctx.beginPath();
@@ -311,16 +304,26 @@ const sdd = new document_1.SimpleDrawDocument();
 //const s1 = sdd.createSelection(c1, r1, r2)
 // sdd.translate(p1, 10, 10) 
 // sdd.rotate(t2,Math.PI/3)
-var button = document.getElementById("submit");
+var consoleBtn = document.getElementById("submit");
+var undoBtn = document.getElementById("undo");
+var redoBtn = document.getElementById("redo");
 var input = document.getElementById("console-input");
-if (button) {
-    button.addEventListener("click", () => {
-        let command = input.value;
-        let context = new interperter_1.Interpreter.Context(sdd, canvasrender, svgrender, command);
-        let expression = new interperter_1.Interpreter.CommandExpression(command[0]);
-        expression.interpret(context);
-    });
-}
+consoleBtn.addEventListener("click", () => {
+    let command = input.value;
+    let context = new interperter_1.Interpreter.Context(sdd, canvasrender, svgrender, command);
+    let expression = new interperter_1.Interpreter.CommandExpression(command[0]);
+    expression.interpret(context);
+});
+undoBtn.addEventListener("click", () => {
+    sdd.undo();
+    sdd.draw(canvasrender);
+    sdd.draw(svgrender);
+});
+redoBtn.addEventListener("click", () => {
+    sdd.redo();
+    sdd.draw(canvasrender);
+    sdd.draw(svgrender);
+});
 // sdd.draw(canvasrender)
 // sdd.draw(svgrender)
 
@@ -365,13 +368,6 @@ class Circle extends Shape {
     }
 }
 exports.Circle = Circle;
-class Triangle extends Shape {
-    constructor(points) {
-        super(points);
-        this.points = points;
-    }
-}
-exports.Triangle = Triangle;
 class Polygon extends Shape {
     constructor(points) {
         super(points);

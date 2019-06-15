@@ -30,9 +30,6 @@ class SimpleDrawDocument {
     createCircle(points, radius) {
         return this.do(new actions_1.CreateCircleAction(this, points, radius));
     }
-    createTriangle(points) {
-        return this.do(new actions_1.CreateTriangleAction(this, points));
-    }
     createPolygon(points) {
         return this.do(new actions_1.CreatePolygonAction(this, points));
     }

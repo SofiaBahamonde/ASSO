@@ -38,13 +38,6 @@ class Circle extends Shape {
     }
 }
 exports.Circle = Circle;
-class Triangle extends Shape {
-    constructor(points) {
-        super(points);
-        this.points = points;
-    }
-}
-exports.Triangle = Triangle;
 class Polygon extends Shape {
     constructor(points) {
         super(points);

@@ -18,17 +18,33 @@ const sdd = new SimpleDrawDocument()
 // sdd.rotate(t2,Math.PI/3)
 
 
-var button = <HTMLButtonElement> document.getElementById("submit");
+var consoleBtn = <HTMLButtonElement> document.getElementById("submit");
+var undoBtn = <HTMLButtonElement> document.getElementById("undo");
+var redoBtn = <HTMLButtonElement> document.getElementById("redo");
+
 var input = <HTMLInputElement> document.getElementById("console-input");
 
-if(button){
-    button.addEventListener("click", () => {
-        let command : string = input.value;
-        let context :Interpreter.Context = new Interpreter.Context(sdd, canvasrender, svgrender, command); 
-        let expression : Interpreter.CommandExpression = new Interpreter.CommandExpression(command[0]);
-        expression.interpret(context)
-    })
-}
+
+consoleBtn.addEventListener("click", () => {
+    let command : string = input.value;
+    let context :Interpreter.Context = new Interpreter.Context(sdd, canvasrender, svgrender, command); 
+    let expression : Interpreter.CommandExpression = new Interpreter.CommandExpression(command[0]);
+    expression.interpret(context)
+});
+
+undoBtn.addEventListener("click", () => {
+    sdd.undo();
+    sdd.draw(canvasrender)
+    sdd.draw(svgrender)
+});
+
+redoBtn.addEventListener("click", () => {
+    sdd.redo();
+    sdd.draw(canvasrender)
+    sdd.draw(svgrender)
+});
+
+
 
 // sdd.draw(canvasrender)
 // sdd.draw(svgrender)

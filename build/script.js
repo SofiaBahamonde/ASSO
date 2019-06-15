@@ -15,16 +15,26 @@ const sdd = new document_1.SimpleDrawDocument();
 //const s1 = sdd.createSelection(c1, r1, r2)
 // sdd.translate(p1, 10, 10) 
 // sdd.rotate(t2,Math.PI/3)
-var button = document.getElementById("submit");
+var consoleBtn = document.getElementById("submit");
+var undoBtn = document.getElementById("undo");
+var redoBtn = document.getElementById("redo");
 var input = document.getElementById("console-input");
-if (button) {
-    button.addEventListener("click", () => {
-        let command = input.value;
-        let context = new interperter_1.Interpreter.Context(sdd, canvasrender, svgrender, command);
-        let expression = new interperter_1.Interpreter.CommandExpression(command[0]);
-        expression.interpret(context);
-    });
-}
+consoleBtn.addEventListener("click", () => {
+    let command = input.value;
+    let context = new interperter_1.Interpreter.Context(sdd, canvasrender, svgrender, command);
+    let expression = new interperter_1.Interpreter.CommandExpression(command[0]);
+    expression.interpret(context);
+});
+undoBtn.addEventListener("click", () => {
+    sdd.undo();
+    sdd.draw(canvasrender);
+    sdd.draw(svgrender);
+});
+redoBtn.addEventListener("click", () => {
+    sdd.redo();
+    sdd.draw(canvasrender);
+    sdd.draw(svgrender);
+});
 // sdd.draw(canvasrender)
 // sdd.draw(svgrender)
 //# sourceMappingURL=script.js.map

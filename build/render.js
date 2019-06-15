@@ -6,9 +6,18 @@ class SVGRender {
         this.svg = document.getElementById('svgcanvas');
     }
     draw(...objs) {
+        var xmlns = "http://www.w3.org/2000/svg";
+        var svgElem = document.createElementNS(xmlns, "svg");
+        svgElem.setAttributeNS(null, "id", "svgcanvas");
+        svgElem.setAttributeNS(null, "width", '400');
+        svgElem.setAttributeNS(null, "height", '400');
+        svgElem.setAttributeNS(null, "style", "border: 1px solid blue;");
+        this.svg.remove();
+        document.getElementById("all_canvas").appendChild(svgElem);
+        this.svg = document.getElementById('svgcanvas');
         for (const shape of objs) {
             if (shape instanceof shape_1.Rectangle) {
-                const e = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                const e = document.createElementNS(xmlns, "rect");
                 e.setAttribute('style', 'stroke: black; fill: white');
                 e.setAttribute('x', shape.points[0].toString());
                 e.setAttribute('y', shape.points[1].toString());
@@ -17,7 +26,7 @@ class SVGRender {
                 this.svg.appendChild(e);
             }
             else if (shape instanceof shape_1.Circle) {
-                const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                const c = document.createElementNS(xmlns, "circle");
                 c.setAttribute('style', 'stroke: black; fill: white');
                 c.setAttribute("cx", shape.points[0].toString());
                 c.setAttribute("cy", shape.points[1].toString());
@@ -30,10 +39,11 @@ class SVGRender {
 exports.SVGRender = SVGRender;
 class CanvasRender {
     constructor() {
-        const canvas = document.getElementById('canvas');
-        this.ctx = canvas.getContext('2d');
+        this.canvas = document.getElementById('canvas');
+        this.ctx = this.canvas.getContext('2d');
     }
     draw(...objs) {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         for (const shape of objs) {
             if (shape instanceof shape_1.Circle) {
                 this.ctx.ellipse(shape.points[0], shape.points[1], shape.radius, shape.radius, 0, 0, 2 * Math.PI);
@@ -41,13 +51,6 @@ class CanvasRender {
             }
             else if (shape instanceof shape_1.Rectangle) {
                 this.ctx.strokeRect(shape.points[0], shape.points[0], shape.width, shape.height);
-            }
-            else if (shape instanceof shape_1.Triangle) {
-                this.ctx.moveTo(shape.points[0], shape.points[1]);
-                this.ctx.lineTo(shape.points[2], shape.points[3]);
-                this.ctx.lineTo(shape.points[4], shape.points[5]);
-                this.ctx.lineTo(shape.points[0], shape.points[1]);
-                this.ctx.stroke();
             }
             else if (shape instanceof shape_1.Polygon) {
                 this.ctx.beginPath();
