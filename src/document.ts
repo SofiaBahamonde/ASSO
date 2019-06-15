@@ -2,10 +2,13 @@ import { Shape } from './shape'
 import { Action, CreateCircleAction, CreateRectangleAction, CreateTriangleAction, CreatePolygonAction } from './actions'
 import { Render } from './render';
 import { UndoManager } from "./undo";
+import { ToolBox } from 'toolbox';
 
 export class SimpleDrawDocument {
     objects = new Array<Shape>()
     undoManager = new UndoManager();
+
+    private toolbox:ToolBox
 
     undo() {
     this.undoManager.undo();
@@ -43,6 +46,10 @@ export class SimpleDrawDocument {
 
     createPolygon( points: Array<number>): Shape {
       return this.do(new CreatePolygonAction(this, points))
+    }
+
+    setToolBox(newtoolbox:ToolBox){
+      this.toolbox = newtoolbox
     }
 
 

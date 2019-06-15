@@ -1,6 +1,15 @@
 
 export abstract class Shape {
+
+    public color:String = "white"
+
     constructor(public points: Array<number>) { }
+
+
+    public setPos(new_points:Array<number>): void {
+        this.points = new_points
+    }
+
 
 /* translation with array of points 
 
