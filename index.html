@@ -3,21 +3,121 @@
 <head>
     <title>SimpleDraw</title>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="bootstrap.min.css">
     <link rel="stylesheet" href="index.css">
 </head>
 
 <body>
 
-<header>
+<nav class="navbar navbar-expand-lg navbar-light bg-light" id="nav">
+        <div class="container">
+        <a class="navbar-brand" href="#">SimpleDraw</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarColor03">
+            <ul class="navbar-nav mr-auto">
+            <!-- <li class="nav-item active">
+                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Features</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Pricing</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">About</a>
+            </li> -->
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                A simple drawing web application for ASSO
+            </form>
+        </div>
 
-    <p> 
-        SimpleDraw, a simple drawing web application for ASSO.
-    </p>
-    <p>   
-        The Red Canvas is for BitMap shapes and the blue one is for SVG Shapes.
-    </p>
+        </div>
+</nav>
 
-</header>
+
+
+<div class="container">
+
+    <div class="row">
+
+        <div class="col-5">
+            <h1 class="mt-5">Bitmap Shapes</h1>
+            <canvas id="canvas" width="300" height="300" style="border: 2px solid black; border-radius: 5px 5px 5px 5px/25px 25px 25px 5px;">
+            </canvas>
+        </div>
+        <div class="col-5">
+                <h1 class="mt-5">SVG Shapes</h1>
+                <svg id="svgcanvas" width="300" height="300"  style="border: 2px solid black; border-radius: 5px 5px 5px 5px/25px 25px 25px 5px;">
+                </svg>
+        </div>
+
+        <div class="col-2">
+            <h1 class="mt-5" >ToolBox</h1>
+            <div class="card">       
+                <div class="card-body">
+                        <button type="button" id ="undo" class="btn btn-outline-primary btn-sm">Undo</button>
+                        <button type="button" id ="redo" class="btn btn-outline-secondary btn-sm">Redo</button>  
+                        <p>Rotate</p>
+                    <p>Translate</p>
+                    <p>Grid</p>
+                    <h5>Viewport Tools</h5>
+                    <p>Wireframe</p>
+                    <p>Bounding box</p> 
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="row">
+        <div class="col-5">
+            <h3>Layers</h3>
+            <ul class="pagination">
+                <li class="page-item disabled">
+                <a class="page-link" href="#">&laquo;</a>
+                </li>
+                <li class="page-item active">
+                <a class="page-link" href="#">1</a>
+                </li>
+                <li class="page-item">
+                <a class="page-link" href="#">2</a>
+                </li>
+                <li class="page-item">
+                <a class="page-link" href="#">3</a>
+                </li>
+                <li class="page-item">
+                <a class="page-link" href="#">4</a>
+                </li>
+                <li class="page-item">
+                <a class="page-link" href="#">5</a>
+                </li>
+                <li class="page-item">
+                <a class="page-link" href="#">&raquo;</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="col-7">
+                <div id="command">
+                    <h3>Console</h3>
+                        <form id="form-console">
+                            <input type="text" id="console-input" class="form-control" placeholder="draw figure values"></input>
+                            <button type='button' id="submit" class="btn-primary btn" >Submit</button> 
+                        </form>
+                </div>
+        </div>
+    </div>
+</div>
+
+
+<h1>Cenas Antigas</h1>
+
 
 
     <div class="flex-container">
@@ -25,7 +125,7 @@
     <div style="flex-shrink: 0" id="all_canvas">
         
          
-        <canvas id="canvas" width="400" height="400" style="border: 1px solid red;">
+        <canvas id="canvas" width="400" height="400" style="border: 2px solid black; border-radius: 5px 5px 5px 5px/25px 25px 25px 5px;">
         </canvas>
         
         <svg id="svgcanvas" width="400" height="400" style="border: 1px solid blue;">
