@@ -95,8 +95,8 @@ export class SimpleDrawDocument {
     return this.do(new TranslateAction(this, this.getShape(id), xd, yd))
   }
 
-  rotate(s: Shape, angle: number): void {
-    return this.do(new RotationAction(this, s, angle))
+  rotate(id: string, angle: number): void {
+    return this.do(new RotationAction(this, this.getShape(id), angle))
   }
 
   getShape(id : String){

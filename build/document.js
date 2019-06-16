@@ -60,8 +60,8 @@ class SimpleDrawDocument {
     translate(id, xd, yd) {
         return this.do(new actions_1.TranslateAction(this, this.getShape(id), xd, yd));
     }
-    rotate(s, angle) {
-        return this.do(new actions_1.RotationAction(this, s, angle));
+    rotate(id, angle) {
+        return this.do(new actions_1.RotationAction(this, this.getShape(id), angle));
     }
     getShape(id) {
         for (var i = 0; i < this.objects.length; i++) {

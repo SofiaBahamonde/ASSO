@@ -39,6 +39,10 @@ export namespace Interpreter {
                     let translateExpression = new TranslateExpression(context.command);
                     translateExpression.interpret(context);
                     break;
+                case 'rotate':
+                    let rotateExpression = new RotateExpression(context.command);
+                    rotateExpression.interpret(context);
+                    break;
                 default:
                     break;
             }
@@ -160,6 +164,23 @@ export namespace Interpreter {
 
         }
     }
+
+    class RotateExpression implements Expression{
+        private shape_id : string;
+        private angle: number;
+
+        constructor(command : Array<string>){
+            this.shape_id = command[1];
+            this.angle = parseInt(command[2]);
+        }
+
+        public interpret(context: Context) : void{
+
+            context.document.rotate(this.shape_id,this.angle);
+
+        }
+    }
+
 
 
 }

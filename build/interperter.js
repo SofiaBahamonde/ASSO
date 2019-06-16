@@ -25,6 +25,10 @@ var Interpreter;
                     let translateExpression = new TranslateExpression(context.command);
                     translateExpression.interpret(context);
                     break;
+                case 'rotate':
+                    let rotateExpression = new RotateExpression(context.command);
+                    rotateExpression.interpret(context);
+                    break;
                 default:
                     break;
             }
@@ -101,6 +105,15 @@ var Interpreter;
         }
         interpret(context) {
             context.document.translate(this.shape_id, this.x, this.y);
+        }
+    }
+    class RotateExpression {
+        constructor(command) {
+            this.shape_id = command[1];
+            this.angle = parseInt(command[2]);
+        }
+        interpret(context) {
+            context.document.rotate(this.shape_id, this.angle);
         }
     }
 })(Interpreter = exports.Interpreter || (exports.Interpreter = {}));
