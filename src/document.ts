@@ -2,7 +2,8 @@ import { Shape } from './shape'
 import { Action, CreateCircleAction, CreateRectangleAction, CreatePolygonAction, TranslateAction, RotationAction } from './actions'
 import { Render, InterfaceRender } from './render';
 import { UndoManager } from "./undo";
-import { InterfaceObj } from 'interfaceobj';
+import { InterfaceObj } from './interfaceobj';
+import { Layers } from './layer';
 
 export class SimpleDrawDocument {
     objects = new Array<Shape>()
@@ -34,7 +35,7 @@ export class SimpleDrawDocument {
 
     draw(render: Render): void {
         // this.objects.forEach(o => o.draw(ctx))
-        render.draw(...this.objects)
+        render.draw(this.getElemsToDraw())
     }
 
 
@@ -96,6 +97,21 @@ export class SimpleDrawDocument {
     if(found == false){
       this.uielems.push(elem)
     }
+
+  }
+
+  getElemsToDraw(): Array<Shape>{
+
+    //Figure out if the concept of layers exists, if not just return objects vector
+
+    this.uielems.forEach(element => {
+
+      if(element instanceof Layers){
+        return element.getSortedShapes()
+      }
+   })
+
+   return this.objects
 
   }
 

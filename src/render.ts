@@ -56,19 +56,35 @@ export class InterfaceRender{
     }
 }
 
+// Bridge Design Pattern with strategy mixed in
+export interface DrawAPI {
 
-export interface Render {
-    draw(...objs: Array<Shape>): void
+    draw(htmlelem:HTMLElement, ...objs: Array<Shape>): void
 }
 
-export class SVGRender implements Render {
-    svg: HTMLElement
+export abstract class Render {
 
-    constructor() {
-        this.svg = <HTMLElement>document.getElementById('svgcanvas')
+    drawelem: HTMLElement
+
+    constructor(private drawAPI:DrawAPI){
     }
 
-    draw(...objs: Array<Shape>): void {
+    draw(objs: Array<Shape>): void {
+        this.drawAPI.draw(this.drawelem, ...objs)
+    }
+
+    setDrawAPI(dapi:DrawAPI){
+        this.drawAPI = dapi
+    }
+
+    getDrawAPI(): DrawAPI{
+        return this.drawAPI
+    }
+}
+
+class SVGAPI implements DrawAPI{
+
+    draw(htmlelem:HTMLElement, ...objs: Array<Shape>): void {
         var xmlns = "http://www.w3.org/2000/svg";
             
         var svgElem = document.createElementNS (xmlns, "svg");
@@ -77,9 +93,9 @@ export class SVGRender implements Render {
         svgElem.setAttributeNS (null, "height", '300');
         svgElem.setAttributeNS (null, "style", "border: 2px solid black; border-radius: 5px 5px 5px 5px/25px 25px 25px 5px;");
 
-        this.svg.remove();
+        htmlelem.remove();
         document.getElementById("all_canvas").appendChild(svgElem);
-        this.svg = <HTMLElement>document.getElementById('svgcanvas')
+        htmlelem = <HTMLElement>document.getElementById('svgcanvas')
 
         
         for (const shape of objs) {
@@ -91,47 +107,61 @@ export class SVGRender implements Render {
                 e.setAttribute('y', shape.points[1].toString())
                 e.setAttribute('width', shape.width.toString())
                 e.setAttribute('height', shape.height.toString())
-                this.svg.appendChild(e)
+                htmlelem.appendChild(e)
             } else if(shape instanceof Circle){
                 const c = document.createElementNS(xmlns, "circle")
                 c.setAttribute('style', 'stroke: black; fill: white')
                 c.setAttribute("cx",shape.points[0].toString())
                 c.setAttribute("cy",shape.points[1].toString())
                 c.setAttribute("r",shape.radius.toString())
-                this.svg.appendChild(c)
+                htmlelem.appendChild(c)
             }
         }
     }
 }
 
-export class CanvasRender implements Render {
-    ctx: CanvasRenderingContext2D
-    canvas : any
+export class SVGRender extends Render {
 
     constructor() {
-        this.canvas = <HTMLCanvasElement> document.getElementById('canvas')
-        this.ctx = this.canvas.getContext('2d')
+        super(new SVGAPI())
     }
 
-    draw(...objs: Array<Shape>): void {
+}
 
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+export class WireFrameAPI implements DrawAPI{
+
+    draw(htmlelem:HTMLElement, ...objs: Array<Shape>) {
+
+        let canvas = <HTMLCanvasElement> document.getElementById('canvas')
+        let ctx = canvas.getContext('2d')
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         for (const shape of objs) {
             if (shape instanceof Circle) {
-                this.ctx.ellipse(shape.points[0], shape.points[1], shape.radius, shape.radius, 0, 0, 2 * Math.PI)
-                this.ctx.stroke()
+                ctx.ellipse(shape.points[0], shape.points[1], shape.radius, shape.radius, 0, 0, 2 * Math.PI)
+                ctx.stroke()
             } else if (shape instanceof Rectangle) {
-                this.ctx.strokeRect(shape.points[0], shape.points[0], shape.width, shape.height)   
+                ctx.strokeRect(shape.points[0], shape.points[0], shape.width, shape.height)   
             } else if (shape instanceof Polygon) {
 
-                this.ctx.beginPath()
-                this.ctx.moveTo(shape.points[0], shape.points[1])
+                ctx.beginPath()
+                ctx.moveTo(shape.points[0], shape.points[1])
                 for( var item = 2 ; item < shape.points.length-1 ; item+=2 )
-                {this.ctx.lineTo( shape.points[item] , shape.points[item+1] )}
-                this.ctx.closePath()
-                this.ctx.stroke()
+                {ctx.lineTo( shape.points[item] , shape.points[item+1] )}
+                ctx.closePath()
+                ctx.stroke()
             }
         }
     }
+}
+
+
+export class CanvasRender extends Render {
+    
+    constructor(drawAPI:DrawAPI) {
+        super(drawAPI)
+    }
+
+
 }

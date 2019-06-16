@@ -42,4 +42,20 @@ export class Layers implements InterfaceObj{
         return this.layers
     }
 
+    getSortedShapes(): Array<Shape>{
+
+        let objs = Array<Shape>()
+
+        for (let layer_it = this.layers.length -1; layer_it <= 0 ; layer_it--) {
+            
+            this.layers[layer_it].getShapes().forEach(obj => {
+                objs.push(obj)
+            });
+            
+        }
+
+        return objs
+
+    }
+
 }
