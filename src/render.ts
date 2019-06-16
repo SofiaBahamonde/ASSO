@@ -73,9 +73,9 @@ export class SVGRender implements Render {
             
         var svgElem = document.createElementNS (xmlns, "svg");
         svgElem.setAttributeNS (null, "id", "svgcanvas");
-        svgElem.setAttributeNS (null, "width", '400');
-        svgElem.setAttributeNS (null, "height", '400');
-        svgElem.setAttributeNS (null, "style", "border: 1px solid blue;");
+        svgElem.setAttributeNS (null, "width", '300');
+        svgElem.setAttributeNS (null, "height", '300');
+        svgElem.setAttributeNS (null, "style", "border: 2px solid black; border-radius: 5px 5px 5px 5px/25px 25px 25px 5px;");
 
         this.svg.remove();
         document.getElementById("all_canvas").appendChild(svgElem);

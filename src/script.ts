@@ -9,7 +9,6 @@ const canvasrender = new CanvasRender()
 const svgrender = new SVGRender()
 const uirender = new InterfaceRender()
 
-
 const sdd = new SimpleDrawDocument(update)
 
 function update(){
@@ -17,8 +16,6 @@ function update(){
     sdd.draw(svgrender)
     sdd.drawUI(uirender)
 }
-
-
 
 var toolbox = new ToolBox()
 
@@ -45,10 +42,10 @@ sdd.addUIElem(layerui)
  //const t2 = sdd.createTriangle([50,50,70,70,90,50])
  //const p1 = sdd.createPolygon([ 200,50, 250,10, 400,200, 200,200 ])
 
-//const s1 = sdd.createSelection(c1, r1, r2)
+// const s1 = sdd.createSelection(c1, r1, r2)
 // sdd.translate(p1, 10, 10) 
 // sdd.rotate(t2,Math.PI/3)
-
+// sdd.rotate(r1,Math.PI/3)
 
 var consoleBtn = <HTMLButtonElement> document.getElementById("submit");
 var undoBtn = <HTMLButtonElement> document.getElementById("undo");
