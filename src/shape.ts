@@ -1,6 +1,8 @@
 
 export abstract class Shape {
 
+    public color:String = "Grey"
+
     constructor(public points: Array<number>) { }
 
 //translation with array of points 

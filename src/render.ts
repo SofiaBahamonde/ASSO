@@ -1,5 +1,62 @@
 import { Shape, Circle, Rectangle, Polygon } from "./shape"
 
+
+import { InterfaceObj } from "./interfaceobj";
+import { ToolBox } from "./toolbox";
+import { Layers } from "./layer";
+
+
+export class InterfaceRender{
+    draw(...elems: Array<InterfaceObj>): void {
+
+
+        console.log("Interface Rendering")
+
+            for (const elem of elems) {
+                
+                if (elem instanceof ToolBox) {
+                    
+                    console.log("Drawing ToolBox")
+                    var toolbox_html = <HTMLElement>document.getElementById('tools')
+                    let tb_html = toolbox_html.innerHTML
+
+                    elem.getTools().forEach(tool => {
+                        
+                        tb_html += "<div> <p> " + tool.name + " </p> </div>"
+
+                    });
+
+                    
+                    toolbox_html.innerHTML = tb_html
+
+                } else if(elem instanceof Layers){
+
+                console.log("Drawing Layers")
+
+                var layers_elem = <HTMLElement>document.getElementById('layers')
+                let layers_html = "<li class=\"page-item disabled\"> <a class=\"page-link\" href=\"#\">&laquo;</a> </li>"
+
+                let active_numb = 1
+
+                for (let layer_it = 0; layer_it < elem.getLayers().length; layer_it++) {
+
+                    if(layer_it == active_numb)
+                        layers_html += "<li class=\"page-item active\"> <a class=\"page-link\" href=\"#\"> " + elem.getLayers()[layer_it].pos + " </a> </li>"
+                    else
+                        layers_html += "<li class=\"page-item\"> <a class=\"page-link\" href=\"#\"> " + elem.getLayers()[layer_it].pos + " </a> </li>"
+                }
+
+                layers_elem.innerHTML = layers_html + " <li class=\"page-item\"> <a class=\"page-link\" href=\"#\">&raquo;</a> </li> "
+
+            } 
+
+        }
+
+
+    }
+}
+
+
 export interface Render {
     draw(...objs: Array<Shape>): void
 }
