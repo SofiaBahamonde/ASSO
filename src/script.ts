@@ -4,6 +4,7 @@ import {Interpreter} from './interperter';
 import { ToolBox } from './toolbox';
 import { MoveTool, PaintTool } from './tool';
 import { Layers } from './layer';
+import { BMP, XML, FileIO } from './fileio';
 
 const sdd = new SimpleDrawDocument(update)
 
@@ -38,6 +39,10 @@ var consoleBtn = <HTMLButtonElement> document.getElementById("submit");
 var undoBtn = <HTMLButtonElement> document.getElementById("undo");
 var redoBtn = <HTMLButtonElement> document.getElementById("redo");
 
+var importbtn = <HTMLButtonElement> document.getElementById("import");
+var exportbtn = <HTMLButtonElement> document.getElementById("export");
+var format_box = <HTMLButtonElement> document.getElementById("format-dropbox")
+
 var input = <HTMLInputElement> document.getElementById("console-input");
 
 
@@ -56,6 +61,39 @@ undoBtn.addEventListener("click", () => {
 redoBtn.addEventListener("click", () => {
     sdd.redo();
     update()
+});
+
+var BMPexp = new BMP(100, 100)
+var XMLexp = new XML()
+
+var option = document.createElement("OPTION");
+option.setAttribute("value","BMP");
+option.innerHTML = "BMP";
+format_box.appendChild(option);
+
+var option = document.createElement("OPTION");
+option.setAttribute("value","XML");
+option.innerHTML = "XML";
+format_box.appendChild(option);
+
+function retFileIO(name:String): FileIO{
+    
+    if(name == "BMP")
+        return BMPexp
+    else if (name == "XML")
+        return XMLexp
+    
+    return null
+}
+
+importbtn.addEventListener("click", () => {
+
+    sdd.import(retFileIO(format_box.value));
+    update()
+});
+
+exportbtn.addEventListener("click", () => {
+    sdd.export(retFileIO(format_box.value));
 });
 
 update()

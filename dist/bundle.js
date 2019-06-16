@@ -75,7 +75,7 @@ class RotationAction {
 }
 exports.RotationAction = RotationAction;
 
-},{"./shape":7}],2:[function(require,module,exports){
+},{"./shape":8}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const actions_1 = require("./actions");
@@ -151,10 +151,56 @@ class SimpleDrawDocument {
         });
         return this.objects;
     }
+    export(fileio) {
+        fileio.export(this.getElemsToDraw());
+    }
+    import(fileio) {
+        this.uielems.forEach(element => {
+            if (element instanceof layer_1.Layers) {
+                var layers = new layer_1.Layers();
+                var new_layer = new layer_1.Layer(0, true);
+                new_layer.addShapes(fileio.import("FILE"));
+                layers.addLayer(new_layer);
+                element = layers;
+            }
+        });
+    }
 }
 exports.SimpleDrawDocument = SimpleDrawDocument;
 
-},{"./actions":1,"./layer":4,"./undo":10}],3:[function(require,module,exports){
+},{"./actions":1,"./layer":5,"./undo":11}],3:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class BMP {
+    constructor(sizex, sizey) {
+        console.log("Init of BMP FileIO");
+    }
+    import(fileloc) {
+        console.log("Importing from BMP");
+        return Array();
+    }
+    export(shapes) {
+        console.log("Exporting Many shapes in BMP");
+        return true;
+    }
+}
+exports.BMP = BMP;
+class XML {
+    constructor() {
+        console.log("Init of XML FileIO");
+    }
+    import(fileloc) {
+        console.log("Importing from XML");
+        return Array();
+    }
+    export(shapes) {
+        console.log("Exporting Many shapes in XML");
+        return true;
+    }
+}
+exports.XML = XML;
+
+},{}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Interpreter;
@@ -251,7 +297,7 @@ var Interpreter;
     Interpreter.PolygonExpression = PolygonExpression;
 })(Interpreter = exports.Interpreter || (exports.Interpreter = {}));
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Layer {
@@ -265,6 +311,11 @@ class Layer {
     }
     getShapes() {
         return this.objects;
+    }
+    addShapes(shapes) {
+        shapes.forEach(element => {
+            this.addShape(element);
+        });
     }
 }
 exports.Layer = Layer;
@@ -294,7 +345,7 @@ class Layers {
 }
 exports.Layers = Layers;
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const shape_1 = require("./shape");
@@ -416,7 +467,7 @@ class CanvasRender extends Render {
 }
 exports.CanvasRender = CanvasRender;
 
-},{"./layer":4,"./shape":7,"./toolbox":9}],6:[function(require,module,exports){
+},{"./layer":5,"./shape":8,"./toolbox":10}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const document_1 = require("./document");
@@ -425,6 +476,7 @@ const interperter_1 = require("./interperter");
 const toolbox_1 = require("./toolbox");
 const tool_1 = require("./tool");
 const layer_1 = require("./layer");
+const fileio_1 = require("./fileio");
 const sdd = new document_1.SimpleDrawDocument(update);
 const canvasrender = new render_1.CanvasRender(new render_1.WireFrameAPI());
 const svgrender = new render_1.SVGRender();
@@ -448,6 +500,9 @@ sdd.addUIElem(layerui);
 var consoleBtn = document.getElementById("submit");
 var undoBtn = document.getElementById("undo");
 var redoBtn = document.getElementById("redo");
+var importbtn = document.getElementById("import");
+var exportbtn = document.getElementById("export");
+var format_box = document.getElementById("format-dropbox");
 var input = document.getElementById("console-input");
 consoleBtn.addEventListener("click", () => {
     let command = input.value;
@@ -463,9 +518,33 @@ redoBtn.addEventListener("click", () => {
     sdd.redo();
     update();
 });
+var BMPexp = new fileio_1.BMP(100, 100);
+var XMLexp = new fileio_1.XML();
+var option = document.createElement("OPTION");
+option.setAttribute("value", "BMP");
+option.innerHTML = "BMP";
+format_box.appendChild(option);
+var option = document.createElement("OPTION");
+option.setAttribute("value", "XML");
+option.innerHTML = "XML";
+format_box.appendChild(option);
+function retFileIO(name) {
+    if (name == "BMP")
+        return BMPexp;
+    else if (name == "XML")
+        return XMLexp;
+    return null;
+}
+importbtn.addEventListener("click", () => {
+    sdd.import(retFileIO(format_box.value));
+    update();
+});
+exportbtn.addEventListener("click", () => {
+    sdd.export(retFileIO(format_box.value));
+});
 update();
 
-},{"./document":2,"./interperter":3,"./layer":4,"./render":5,"./tool":8,"./toolbox":9}],7:[function(require,module,exports){
+},{"./document":2,"./fileio":3,"./interperter":4,"./layer":5,"./render":6,"./tool":9,"./toolbox":10}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Shape {
@@ -540,7 +619,7 @@ class Polygon extends Shape {
 Polygon.idCounter = 0;
 exports.Polygon = Polygon;
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /*
@@ -607,7 +686,7 @@ class PaintTool extends Tool {
 }
 exports.PaintTool = PaintTool;
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class ToolBox {
@@ -621,7 +700,7 @@ class ToolBox {
 }
 exports.ToolBox = ToolBox;
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class UndoManager {
@@ -650,4 +729,4 @@ class UndoManager {
 }
 exports.UndoManager = UndoManager;
 
-},{}]},{},[6]);
+},{}]},{},[7]);

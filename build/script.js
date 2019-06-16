@@ -6,6 +6,7 @@ const interperter_1 = require("./interperter");
 const toolbox_1 = require("./toolbox");
 const tool_1 = require("./tool");
 const layer_1 = require("./layer");
+const fileio_1 = require("./fileio");
 const sdd = new document_1.SimpleDrawDocument(update);
 const canvasrender = new render_1.CanvasRender(new render_1.WireFrameAPI());
 const svgrender = new render_1.SVGRender();
@@ -29,6 +30,9 @@ sdd.addUIElem(layerui);
 var consoleBtn = document.getElementById("submit");
 var undoBtn = document.getElementById("undo");
 var redoBtn = document.getElementById("redo");
+var importbtn = document.getElementById("import");
+var exportbtn = document.getElementById("export");
+var format_box = document.getElementById("format-dropbox");
 var input = document.getElementById("console-input");
 consoleBtn.addEventListener("click", () => {
     let command = input.value;
@@ -43,6 +47,30 @@ undoBtn.addEventListener("click", () => {
 redoBtn.addEventListener("click", () => {
     sdd.redo();
     update();
+});
+var BMPexp = new fileio_1.BMP(100, 100);
+var XMLexp = new fileio_1.XML();
+var option = document.createElement("OPTION");
+option.setAttribute("value", "BMP");
+option.innerHTML = "BMP";
+format_box.appendChild(option);
+var option = document.createElement("OPTION");
+option.setAttribute("value", "XML");
+option.innerHTML = "XML";
+format_box.appendChild(option);
+function retFileIO(name) {
+    if (name == "BMP")
+        return BMPexp;
+    else if (name == "XML")
+        return XMLexp;
+    return null;
+}
+importbtn.addEventListener("click", () => {
+    sdd.import(retFileIO(format_box.value));
+    update();
+});
+exportbtn.addEventListener("click", () => {
+    sdd.export(retFileIO(format_box.value));
 });
 update();
 //# sourceMappingURL=script.js.map

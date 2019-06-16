@@ -3,6 +3,7 @@ import { InterfaceObj } from "./interfaceobj"
 
 export class Layer{
 
+
     private objects: Array<Shape>
 
     constructor(public pos:number, public visible:boolean){
@@ -16,6 +17,12 @@ export class Layer{
     getShapes(){
         return this.objects
     }
+
+    addShapes(shapes: Shape[]) {
+        shapes.forEach(element => {
+            this.addShape(element)
+        });
+      }
 
 }
 

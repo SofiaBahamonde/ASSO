@@ -73,6 +73,20 @@ class SimpleDrawDocument {
         });
         return this.objects;
     }
+    export(fileio) {
+        fileio.export(this.getElemsToDraw());
+    }
+    import(fileio) {
+        this.uielems.forEach(element => {
+            if (element instanceof layer_1.Layers) {
+                var layers = new layer_1.Layers();
+                var new_layer = new layer_1.Layer(0, true);
+                new_layer.addShapes(fileio.import("FILE"));
+                layers.addLayer(new_layer);
+                element = layers;
+            }
+        });
+    }
 }
 exports.SimpleDrawDocument = SimpleDrawDocument;
 //# sourceMappingURL=document.js.map

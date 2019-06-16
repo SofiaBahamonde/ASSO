@@ -3,9 +3,11 @@ import { Action, CreateCircleAction, CreateRectangleAction, CreatePolygonAction,
 import { Render, InterfaceRender } from './render';
 import { UndoManager } from "./undo";
 import { InterfaceObj } from './interfaceobj';
-import { Layers } from './layer';
+import { Layers, Layer } from './layer';
+import { FileIO } from './fileio';
 
 export class SimpleDrawDocument {
+
     objects = new Array<Shape>()
     undoManager = new UndoManager();
     shapeDropbox = document.getElementById("shape-dropbox");
@@ -100,6 +102,7 @@ export class SimpleDrawDocument {
 
   }
 
+
   getElemsToDraw(): Array<Shape>{
 
     //Figure out if the concept of layers exists, if not just return objects vector
@@ -114,6 +117,31 @@ export class SimpleDrawDocument {
    return this.objects
 
   }
+
+    export(fileio:FileIO) {
+      fileio.export(this.getElemsToDraw())
+    }
+
+
+    import(fileio:FileIO) {
+      
+      this.uielems.forEach(element => {
+
+        if(element instanceof Layers){
+
+          var layers = new Layers()
+          
+          var new_layer = new Layer(0, true)
+          new_layer.addShapes(fileio.import("FILE"))
+
+          layers.addLayer(new_layer)
+
+          element = layers
+
+        }
+     })
+
+    }
 
   /*
   setToolBox(newtoolbox:ToolBox){

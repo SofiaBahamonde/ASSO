@@ -12,6 +12,11 @@ class Layer {
     getShapes() {
         return this.objects;
     }
+    addShapes(shapes) {
+        shapes.forEach(element => {
+            this.addShape(element);
+        });
+    }
 }
 exports.Layer = Layer;
 class Layers {
