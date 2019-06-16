@@ -8,49 +8,66 @@ import { FileIO } from './fileio';
 
 export class SimpleDrawDocument {
 
-    objects = new Array<Shape>()
-    undoManager = new UndoManager();
-    shapeDropbox = document.getElementById("shape-dropbox");
+  objects = new Array<Shape>()
+  undoManager = new UndoManager();
+  shapeDropbox = document.getElementById("shape-dropbox");
 
-    uielems = new Array<InterfaceObj>();
+  uielems = new Array<InterfaceObj>();
 
-    update: any;
+  update: any;
 
-    undo() {
+  undo() {
     this.undoManager.undo();
-   }
+  }
 
-    redo(){
+  redo() {
     this.undoManager.redo();
-   }
+  }
 
 
-   constructor(update_call: any){
-     this.update = update_call
-   }
+  constructor(update_call: any) {
+    this.update = update_call
+  }
 
 
-   drawUI(uiRender: InterfaceRender){
+  drawUI(uiRender: InterfaceRender) {
 
     uiRender.draw(...this.uielems)
   }
 
-    draw(render: Render): void {
-        // this.objects.forEach(o => o.draw(ctx))
-        render.draw(this.getElemsToDraw())
+  draw(render: Render): void {
+    // this.objects.forEach(o => o.draw(ctx))
+    render.draw(this.getElemsToDraw())
+  }
+
+ 
+
+
+  add(r: Shape): void {
+    var option = document.createElement("OPTION");
+    option.setAttribute("value", r.getID());
+    option.innerHTML = r.getID();
+    this.shapeDropbox.appendChild(option);
+
+    this.objects.push(r)
+  }
+
+  remove(shape: Shape) {
+    var children = this.shapeDropbox.children;
+    for (var i = 0; i < children.length; i++) {
+      var child = children[i];
+
+      if(child.getAttribute("value") == shape.getID()){
+        child.remove();
+      }
+      
     }
 
+    this.objects = this.objects.filter(o => o !== shape)
+  }
 
-    add(r: Shape): void {
-        var option = document.createElement("OPTION");
-        option.setAttribute("value",r.getID());
-        option.innerHTML = r.getID();
-        this.shapeDropbox.appendChild(option);
-        
-        this.objects.push(r)
-    }
 
-    do<T>(a: Action<T>): T {
+  do<T>(a: Action<T>): T {
     this.undoManager.onActionDone(a);
 
     const action_return = a.do()
@@ -60,88 +77,88 @@ export class SimpleDrawDocument {
     return action_return;
   }
 
-    createRectangle(points: Array<number>, width: number, height: number): Shape {
-        return this.do(new CreateRectangleAction(this, points, width, height))
-    }
+  createRectangle(points: Array<number>, width: number, height: number): Shape {
+    return this.do(new CreateRectangleAction(this, points, width, height))
+  }
 
-    createCircle(points: Array<number>, radius: number): Shape {
-        return this.do(new CreateCircleAction(this, points, radius))
-    }
+  createCircle(points: Array<number>, radius: number): Shape {
+    return this.do(new CreateCircleAction(this, points, radius))
+  }
 
-    createPolygon( points: Array<number>): Shape {
-      return this.do(new CreatePolygonAction(this, points))
-    }
-
-
-    translate(s: Shape, xd: number, yd: number): void {
-        return this.do(new TranslateAction(this, s, xd, yd))
-    }
-
-    rotate(s: Shape, angle: number): void {
-      return this.do(new RotationAction(this, s, angle))
+  createPolygon(points: Array<number>): Shape {
+    return this.do(new CreatePolygonAction(this, points))
   }
 
 
-  addUIElem(elem:InterfaceObj){
-      
+  translate(s: Shape, xd: number, yd: number): void {
+    return this.do(new TranslateAction(this, s, xd, yd))
+  }
+
+  rotate(s: Shape, angle: number): void {
+    return this.do(new RotationAction(this, s, angle))
+  }
+
+
+  addUIElem(elem: InterfaceObj) {
+
 
     var found = Boolean(false)
 
     this.uielems.forEach(element => {
 
-        if(element === elem){
-           found = true
-            element = elem
-        }
+      if (element === elem) {
+        found = true
+        element = elem
+      }
 
     })
 
-    if(found == false){
+    if (found == false) {
       this.uielems.push(elem)
     }
 
   }
 
 
-  getElemsToDraw(): Array<Shape>{
+  getElemsToDraw(): Array<Shape> {
 
     //Figure out if the concept of layers exists, if not just return objects vector
 
     this.uielems.forEach(element => {
 
-      if(element instanceof Layers){
+      if (element instanceof Layers) {
         return element.getSortedShapes()
       }
-   })
+    })
 
-   return this.objects
+    return this.objects
 
   }
 
-    export(fileio:FileIO) {
-      fileio.export(this.getElemsToDraw())
-    }
+  export(fileio: FileIO) {
+    fileio.export(this.getElemsToDraw())
+  }
 
 
-    import(fileio:FileIO) {
-      
-      this.uielems.forEach(element => {
+  import(fileio: FileIO) {
 
-        if(element instanceof Layers){
+    this.uielems.forEach(element => {
 
-          var layers = new Layers()
-          
-          var new_layer = new Layer(0, true)
-          new_layer.addShapes(fileio.import("FILE"))
+      if (element instanceof Layers) {
 
-          layers.addLayer(new_layer)
+        var layers = new Layers()
 
-          element = layers
+        var new_layer = new Layer(0, true)
+        new_layer.addShapes(fileio.import("FILE"))
 
-        }
-     })
+        layers.addLayer(new_layer)
 
-    }
+        element = layers
+
+      }
+    })
+
+  }
 
   /*
   setToolBox(newtoolbox:ToolBox){

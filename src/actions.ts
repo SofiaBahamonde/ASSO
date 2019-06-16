@@ -15,7 +15,7 @@ abstract class CreateShapeAction<S extends Shape> implements Action<S> {
     }
 
     undo() {
-        this.doc.objects = this.doc.objects.filter(o => o !== this.shape)
+        this.doc.remove(this.shape);
     }
 }
 

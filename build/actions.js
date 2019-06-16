@@ -11,7 +11,7 @@ class CreateShapeAction {
         return this.shape;
     }
     undo() {
-        this.doc.objects = this.doc.objects.filter(o => o !== this.shape);
+        this.doc.remove(this.shape);
     }
 }
 class CreateCircleAction extends CreateShapeAction {

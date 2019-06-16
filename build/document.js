@@ -31,6 +31,16 @@ class SimpleDrawDocument {
         this.shapeDropbox.appendChild(option);
         this.objects.push(r);
     }
+    remove(shape) {
+        var children = this.shapeDropbox.children;
+        for (var i = 0; i < children.length; i++) {
+            var child = children[i];
+            if (child.getAttribute("value") == shape.getID()) {
+                child.remove();
+            }
+        }
+        this.objects = this.objects.filter(o => o !== shape);
+    }
     do(a) {
         this.undoManager.onActionDone(a);
         const action_return = a.do();

@@ -12,7 +12,7 @@ class CreateShapeAction {
         return this.shape;
     }
     undo() {
-        this.doc.objects = this.doc.objects.filter(o => o !== this.shape);
+        this.doc.remove(this.shape);
     }
 }
 class CreateCircleAction extends CreateShapeAction {
@@ -108,6 +108,16 @@ class SimpleDrawDocument {
         option.innerHTML = r.getID();
         this.shapeDropbox.appendChild(option);
         this.objects.push(r);
+    }
+    remove(shape) {
+        var children = this.shapeDropbox.children;
+        for (var i = 0; i < children.length; i++) {
+            var child = children[i];
+            if (child.getAttribute("value") == shape.getID()) {
+                child.remove();
+            }
+        }
+        this.objects = this.objects.filter(o => o !== shape);
     }
     do(a) {
         this.undoManager.onActionDone(a);
