@@ -429,7 +429,7 @@ class Render {
         this.drawAPI = drawAPI;
     }
     draw(objs) {
-        this.drawAPI.draw(this.drawelem, ...objs);
+        this.drawAPI.draw(...objs);
     }
     setDrawAPI(dapi) {
         this.drawAPI = dapi;
@@ -440,16 +440,17 @@ class Render {
 }
 exports.Render = Render;
 class SVGAPI {
-    draw(htmlelem, ...objs) {
+    draw(...objs) {
+        var svg = document.getElementById('svgcanvas');
         var xmlns = "http://www.w3.org/2000/svg";
         var svgElem = document.createElementNS(xmlns, "svg");
         svgElem.setAttributeNS(null, "id", "svgcanvas");
         svgElem.setAttributeNS(null, "width", '300');
         svgElem.setAttributeNS(null, "height", '300');
         svgElem.setAttributeNS(null, "style", "border: 2px solid black; border-radius: 5px 5px 5px 5px/25px 25px 25px 5px;");
-        htmlelem.remove();
+        svg.remove();
         document.getElementById("all_canvas").appendChild(svgElem);
-        htmlelem = document.getElementById('svgcanvas');
+        svg = document.getElementById('svgcanvas');
         for (const shape of objs) {
             if (shape instanceof shape_1.Rectangle) {
                 const e = document.createElementNS(xmlns, "rect");
@@ -458,7 +459,7 @@ class SVGAPI {
                 e.setAttribute('y', shape.points[1].toString());
                 e.setAttribute('width', shape.width.toString());
                 e.setAttribute('height', shape.height.toString());
-                htmlelem.appendChild(e);
+                svg.appendChild(e);
             }
             else if (shape instanceof shape_1.Circle) {
                 const c = document.createElementNS(xmlns, "circle");
@@ -466,7 +467,7 @@ class SVGAPI {
                 c.setAttribute("cx", shape.points[0].toString());
                 c.setAttribute("cy", shape.points[1].toString());
                 c.setAttribute("r", shape.radius.toString());
-                htmlelem.appendChild(c);
+                svg.appendChild(c);
             }
         }
     }
@@ -478,13 +479,13 @@ class SVGRender extends Render {
 }
 exports.SVGRender = SVGRender;
 class WireFrameAPI {
-    draw(htmlelem, ...objs) {
+    draw(...objs) {
         let canvas = document.getElementById('canvas');
         let ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         for (const shape of objs) {
             if (shape instanceof shape_1.Circle) {
-                ctx.ellipse(shape.points[0], shape.points[1], shape.radius, shape.radius, 0, 0, 2 * Math.PI);
+                ctx.arc(shape.points[0], shape.points[1], shape.radius, 0, 2 * Math.PI);
                 ctx.stroke();
             }
             else if (shape instanceof shape_1.Rectangle) {

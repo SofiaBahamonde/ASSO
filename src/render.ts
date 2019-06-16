@@ -59,18 +59,16 @@ export class InterfaceRender{
 // Bridge Design Pattern with strategy mixed in
 export interface DrawAPI {
 
-    draw(htmlelem:HTMLElement, ...objs: Array<Shape>): void
+    draw( ...objs: Array<Shape>): void
 }
 
 export abstract class Render {
-
-    drawelem: HTMLElement
 
     constructor(private drawAPI:DrawAPI){
     }
 
     draw(objs: Array<Shape>): void {
-        this.drawAPI.draw(this.drawelem, ...objs)
+        this.drawAPI.draw(...objs)
     }
 
     setDrawAPI(dapi:DrawAPI){
@@ -84,7 +82,8 @@ export abstract class Render {
 
 class SVGAPI implements DrawAPI{
 
-    draw(htmlelem:HTMLElement, ...objs: Array<Shape>): void {
+    draw(...objs: Array<Shape>): void {
+        var svg =  <HTMLElement>document.getElementById('svgcanvas');
         var xmlns = "http://www.w3.org/2000/svg";
             
         var svgElem = document.createElementNS (xmlns, "svg");
@@ -93,9 +92,9 @@ class SVGAPI implements DrawAPI{
         svgElem.setAttributeNS (null, "height", '300');
         svgElem.setAttributeNS (null, "style", "border: 2px solid black; border-radius: 5px 5px 5px 5px/25px 25px 25px 5px;");
 
-        htmlelem.remove();
+        svg.remove();
         document.getElementById("all_canvas").appendChild(svgElem);
-        htmlelem = <HTMLElement>document.getElementById('svgcanvas')
+        svg = <HTMLElement>document.getElementById('svgcanvas')
 
         
         for (const shape of objs) {
@@ -107,14 +106,14 @@ class SVGAPI implements DrawAPI{
                 e.setAttribute('y', shape.points[1].toString())
                 e.setAttribute('width', shape.width.toString())
                 e.setAttribute('height', shape.height.toString())
-                htmlelem.appendChild(e)
+                svg.appendChild(e)
             } else if(shape instanceof Circle){
                 const c = document.createElementNS(xmlns, "circle")
                 c.setAttribute('style', 'stroke: black; fill: white')
                 c.setAttribute("cx",shape.points[0].toString())
                 c.setAttribute("cy",shape.points[1].toString())
                 c.setAttribute("r",shape.radius.toString())
-                htmlelem.appendChild(c)
+                svg.appendChild(c)
             }
         }
     }
@@ -130,7 +129,7 @@ export class SVGRender extends Render {
 
 export class WireFrameAPI implements DrawAPI{
 
-    draw(htmlelem:HTMLElement, ...objs: Array<Shape>) {
+    draw(...objs: Array<Shape>) {
 
         let canvas = <HTMLCanvasElement> document.getElementById('canvas')
         let ctx = canvas.getContext('2d')
@@ -139,7 +138,7 @@ export class WireFrameAPI implements DrawAPI{
 
         for (const shape of objs) {
             if (shape instanceof Circle) {
-                ctx.ellipse(shape.points[0], shape.points[1], shape.radius, shape.radius, 0, 0, 2 * Math.PI)
+                ctx.arc(shape.points[0], shape.points[1], shape.radius, 0, 2 * Math.PI);
                 ctx.stroke()
             } else if (shape instanceof Rectangle) {
                 ctx.strokeRect(shape.points[0], shape.points[0], shape.width, shape.height)   
