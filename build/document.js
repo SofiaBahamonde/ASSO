@@ -21,9 +21,11 @@ class SimpleDrawDocument {
         uiRender.draw(...this.uielems);
     }
     draw(render) {
-        console.log(this.objects);
         // this.objects.forEach(o => o.draw(ctx))
         render.draw(this.getElemsToDraw());
+    }
+    zoom(render, factor) {
+        render.zoom(factor);
     }
     add(r) {
         var option = document.createElement("OPTION");

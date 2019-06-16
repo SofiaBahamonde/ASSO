@@ -60,6 +60,8 @@ export class InterfaceRender{
 export interface DrawAPI {
 
     draw( ...objs: Array<Shape>): void
+
+    zoom(scale : number): void
 }
 
 export abstract class Render {
@@ -69,6 +71,10 @@ export abstract class Render {
 
     draw(objs: Array<Shape>): void {
         this.drawAPI.draw(...objs)
+    }
+
+    zoom(scale : number){
+        this.drawAPI.zoom(scale);
     }
 
     setDrawAPI(dapi:DrawAPI){
@@ -82,6 +88,8 @@ export abstract class Render {
 
 class SVGAPI implements DrawAPI{
 
+    factor: number = 1;
+
     draw(...objs: Array<Shape>): void {
         var svg =  <HTMLElement>document.getElementById('svgcanvas');
         var xmlns = "http://www.w3.org/2000/svg";
@@ -91,6 +99,7 @@ class SVGAPI implements DrawAPI{
         svgElem.setAttributeNS (null, "width", '300');
         svgElem.setAttributeNS (null, "height", '300');
         svgElem.setAttributeNS (null, "style", "border: 2px solid black; border-radius: 5px 5px 5px 5px/25px 25px 25px 5px;");
+        svgElem.setAttributeNS (null, "viewBox", "0 0 " + 300/this.factor + " " + 300/this.factor)
 
         svg.remove();
         document.getElementById("all_canvas").appendChild(svgElem);
@@ -117,6 +126,10 @@ class SVGAPI implements DrawAPI{
             }
         }
     }
+
+    zoom(factor: number){
+        this.factor = factor;
+    }
 }
 
 export class SVGRender extends Render {
@@ -129,31 +142,38 @@ export class SVGRender extends Render {
 
 export class WireFrameAPI implements DrawAPI{
 
+    ctx: CanvasRenderingContext2D
+    canvas : any
+
     draw(...objs: Array<Shape>) {
 
-        let canvas = <HTMLCanvasElement> document.getElementById('canvas')
-        let ctx = canvas.getContext('2d')
+        this.canvas = <HTMLCanvasElement> document.getElementById('canvas')
+        this.ctx = this.canvas.getContext('2d')
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         for (const shape of objs) {
             if (shape instanceof Circle) {
-                ctx.beginPath();
-                ctx.arc(shape.points[0], shape.points[1], shape.radius, 0, 2 * Math.PI);
-                ctx.closePath()
-                ctx.stroke()
+                this.ctx.beginPath();
+                this.ctx.arc(shape.points[0], shape.points[1], shape.radius, 0, 2 * Math.PI);
+                this.ctx.closePath()
+                this.ctx.stroke()
             } else if (shape instanceof Rectangle) {
-                ctx.strokeRect(shape.points[0], shape.points[0], shape.width, shape.height)   
+                this.ctx.strokeRect(shape.points[0], shape.points[0], shape.width, shape.height)   
             } else if (shape instanceof Polygon) {
 
-                ctx.beginPath()
-                ctx.moveTo(shape.points[0], shape.points[1])
+                this.ctx.beginPath()
+                this.ctx.moveTo(shape.points[0], shape.points[1])
                 for( var item = 2 ; item < shape.points.length-1 ; item+=2 )
-                {ctx.lineTo( shape.points[item] , shape.points[item+1] )}
-                ctx.closePath()
-                ctx.stroke()
+                {this.ctx.lineTo( shape.points[item] , shape.points[item+1] )}
+                this.ctx.closePath()
+                this.ctx.stroke()
             }
         }
+    }
+
+    zoom(scale: number){
+        this.ctx.scale(scale, scale);
     }
 }
 

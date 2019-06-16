@@ -29,6 +29,9 @@ var Interpreter;
                     let rotateExpression = new RotateExpression(context.command);
                     rotateExpression.interpret(context);
                     break;
+                case 'zoom':
+                    let zoomExpression = new ZoomExpression(context.command[1]);
+                    zoomExpression.interpret(context);
                 default:
                     break;
             }
@@ -114,6 +117,15 @@ var Interpreter;
         }
         interpret(context) {
             context.document.rotate(this.shape_id, this.angle);
+        }
+    }
+    class ZoomExpression {
+        constructor(factor_str) {
+            this.factor = parseInt(factor_str);
+        }
+        interpret(context) {
+            context.document.zoom(context.canvas, this.factor);
+            context.document.zoom(context.svg, this.factor);
         }
     }
 })(Interpreter = exports.Interpreter || (exports.Interpreter = {}));

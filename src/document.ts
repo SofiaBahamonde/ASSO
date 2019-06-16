@@ -35,14 +35,13 @@ export class SimpleDrawDocument {
   }
 
   draw(render: Render): void {
-    console.log(this.objects);
-
     // this.objects.forEach(o => o.draw(ctx))
     render.draw(this.getElemsToDraw())
   }
 
- 
-
+  zoom(render: Render, factor: number){
+    render.zoom(factor)
+  }
 
   add(r: Shape): void {
     var option = document.createElement("OPTION");

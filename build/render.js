@@ -40,6 +40,9 @@ class Render {
     draw(objs) {
         this.drawAPI.draw(...objs);
     }
+    zoom(scale) {
+        this.drawAPI.zoom(scale);
+    }
     setDrawAPI(dapi) {
         this.drawAPI = dapi;
     }
@@ -49,6 +52,9 @@ class Render {
 }
 exports.Render = Render;
 class SVGAPI {
+    constructor() {
+        this.factor = 1;
+    }
     draw(...objs) {
         var svg = document.getElementById('svgcanvas');
         var xmlns = "http://www.w3.org/2000/svg";
@@ -57,6 +63,7 @@ class SVGAPI {
         svgElem.setAttributeNS(null, "width", '300');
         svgElem.setAttributeNS(null, "height", '300');
         svgElem.setAttributeNS(null, "style", "border: 2px solid black; border-radius: 5px 5px 5px 5px/25px 25px 25px 5px;");
+        svgElem.setAttributeNS(null, "viewBox", "0 0 " + 300 / this.factor + " " + 300 / this.factor);
         svg.remove();
         document.getElementById("all_canvas").appendChild(svgElem);
         svg = document.getElementById('svgcanvas');
@@ -80,6 +87,9 @@ class SVGAPI {
             }
         }
     }
+    zoom(factor) {
+        this.factor = factor;
+    }
 }
 class SVGRender extends Render {
     constructor() {
@@ -89,29 +99,32 @@ class SVGRender extends Render {
 exports.SVGRender = SVGRender;
 class WireFrameAPI {
     draw(...objs) {
-        let canvas = document.getElementById('canvas');
-        let ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        this.canvas = document.getElementById('canvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         for (const shape of objs) {
             if (shape instanceof shape_1.Circle) {
-                ctx.beginPath();
-                ctx.arc(shape.points[0], shape.points[1], shape.radius, 0, 2 * Math.PI);
-                ctx.closePath();
-                ctx.stroke();
+                this.ctx.beginPath();
+                this.ctx.arc(shape.points[0], shape.points[1], shape.radius, 0, 2 * Math.PI);
+                this.ctx.closePath();
+                this.ctx.stroke();
             }
             else if (shape instanceof shape_1.Rectangle) {
-                ctx.strokeRect(shape.points[0], shape.points[0], shape.width, shape.height);
+                this.ctx.strokeRect(shape.points[0], shape.points[0], shape.width, shape.height);
             }
             else if (shape instanceof shape_1.Polygon) {
-                ctx.beginPath();
-                ctx.moveTo(shape.points[0], shape.points[1]);
+                this.ctx.beginPath();
+                this.ctx.moveTo(shape.points[0], shape.points[1]);
                 for (var item = 2; item < shape.points.length - 1; item += 2) {
-                    ctx.lineTo(shape.points[item], shape.points[item + 1]);
+                    this.ctx.lineTo(shape.points[item], shape.points[item + 1]);
                 }
-                ctx.closePath();
-                ctx.stroke();
+                this.ctx.closePath();
+                this.ctx.stroke();
             }
         }
+    }
+    zoom(scale) {
+        this.ctx.scale(scale, scale);
     }
 }
 exports.WireFrameAPI = WireFrameAPI;
