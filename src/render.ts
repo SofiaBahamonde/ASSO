@@ -138,7 +138,9 @@ export class WireFrameAPI implements DrawAPI{
 
         for (const shape of objs) {
             if (shape instanceof Circle) {
+                ctx.beginPath();
                 ctx.arc(shape.points[0], shape.points[1], shape.radius, 0, 2 * Math.PI);
+                ctx.closePath()
                 ctx.stroke()
             } else if (shape instanceof Rectangle) {
                 ctx.strokeRect(shape.points[0], shape.points[0], shape.width, shape.height)   

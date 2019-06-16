@@ -94,7 +94,9 @@ class WireFrameAPI {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         for (const shape of objs) {
             if (shape instanceof shape_1.Circle) {
+                ctx.beginPath();
                 ctx.arc(shape.points[0], shape.points[1], shape.radius, 0, 2 * Math.PI);
+                ctx.closePath();
                 ctx.stroke();
             }
             else if (shape instanceof shape_1.Rectangle) {
