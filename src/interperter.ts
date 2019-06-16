@@ -34,15 +34,20 @@ export namespace Interpreter {
                 case 'draw':  
                     let objectExpression = new ShapeExpression(context.command[1])
                     objectExpression.interpret(context)
-
-                    context.document.draw(context.canvas);
-                    context.document.draw(context.svg);
                     break;
-            
+                case 'translate':
+                    let translateExpression = new TranslateExpression(context.command);
+                    translateExpression.interpret(context);
+                    break;
                 default:
                     break;
             }
+
+            context.document.draw(context.canvas);
+            context.document.draw(context.svg);
         }
+
+        
     }
 
     class ShapeExpression implements Expression{
@@ -80,7 +85,7 @@ export namespace Interpreter {
         }
     }
 
-    export class RectangleExpression implements Expression{
+    class RectangleExpression implements Expression{
 
         private x : number;
         private y : number;
@@ -101,7 +106,7 @@ export namespace Interpreter {
         }
     }
 
-    export class CircleExpression implements Expression{
+    class CircleExpression implements Expression{
         private x : number;
         private y : number;
         private radius : number;
@@ -117,9 +122,9 @@ export namespace Interpreter {
         }
     }
 
-    export class PolygonExpression implements Expression{
+    class PolygonExpression implements Expression{
 
-        protected points : Array<number>;
+        private points : Array<number>;
 
         constructor(command : Array<string>){
             this.points = [];
@@ -137,5 +142,24 @@ export namespace Interpreter {
  
         }
     }
+
+    class TranslateExpression implements Expression{
+        private shape_id : string;
+        private x: number;
+        private y: number;
+
+        constructor(command : Array<string>){
+            this.shape_id = command[1];
+            this.x = parseInt(command[2]);
+            this.y = parseInt(command[3]);
+        }
+
+        public interpret(context: Context) : void{
+
+            context.document.translate(this.shape_id,this.x,this.y);
+
+        }
+    }
+
 
 }

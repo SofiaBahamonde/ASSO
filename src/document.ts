@@ -31,11 +31,12 @@ export class SimpleDrawDocument {
 
 
   drawUI(uiRender: InterfaceRender) {
-
     uiRender.draw(...this.uielems)
   }
 
   draw(render: Render): void {
+    console.log(this.objects);
+
     // this.objects.forEach(o => o.draw(ctx))
     render.draw(this.getElemsToDraw())
   }
@@ -90,12 +91,22 @@ export class SimpleDrawDocument {
   }
 
 
-  translate(s: Shape, xd: number, yd: number): void {
-    return this.do(new TranslateAction(this, s, xd, yd))
+  translate(id : string, xd: number, yd: number): void {
+    return this.do(new TranslateAction(this, this.getShape(id), xd, yd))
   }
 
   rotate(s: Shape, angle: number): void {
     return this.do(new RotationAction(this, s, angle))
+  }
+
+  getShape(id : String){
+    for(var i =0; i < this.objects.length; i++){
+      if(this.objects[i].getID() == id){
+        return this.objects[i];
+      }
+    }
+
+    return null;
   }
 
 
@@ -116,7 +127,6 @@ export class SimpleDrawDocument {
     if (found == false) {
       this.uielems.push(elem)
     }
-
   }
 
 

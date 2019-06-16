@@ -99,6 +99,7 @@ class SimpleDrawDocument {
         uiRender.draw(...this.uielems);
     }
     draw(render) {
+        console.log(this.objects);
         // this.objects.forEach(o => o.draw(ctx))
         render.draw(this.getElemsToDraw());
     }
@@ -134,11 +135,19 @@ class SimpleDrawDocument {
     createPolygon(points) {
         return this.do(new actions_1.CreatePolygonAction(this, points));
     }
-    translate(s, xd, yd) {
-        return this.do(new actions_1.TranslateAction(this, s, xd, yd));
+    translate(id, xd, yd) {
+        return this.do(new actions_1.TranslateAction(this, this.getShape(id), xd, yd));
     }
     rotate(s, angle) {
         return this.do(new actions_1.RotationAction(this, s, angle));
+    }
+    getShape(id) {
+        for (var i = 0; i < this.objects.length; i++) {
+            if (this.objects[i].getID() == id) {
+                return this.objects[i];
+            }
+        }
+        return null;
     }
     addUIElem(elem) {
         var found = Boolean(false);
@@ -233,12 +242,16 @@ var Interpreter;
                 case 'draw':
                     let objectExpression = new ShapeExpression(context.command[1]);
                     objectExpression.interpret(context);
-                    context.document.draw(context.canvas);
-                    context.document.draw(context.svg);
+                    break;
+                case 'translate':
+                    let translateExpression = new TranslateExpression(context.command);
+                    translateExpression.interpret(context);
                     break;
                 default:
                     break;
             }
+            context.document.draw(context.canvas);
+            context.document.draw(context.svg);
         }
     }
     Interpreter.CommandExpression = CommandExpression;
@@ -280,7 +293,6 @@ var Interpreter;
             context.document.createRectangle([this.x, this.y], this.width, this.height);
         }
     }
-    Interpreter.RectangleExpression = RectangleExpression;
     class CircleExpression {
         constructor(x, y, radius) {
             this.x = parseInt(x);
@@ -291,7 +303,6 @@ var Interpreter;
             context.document.createCircle([this.x, this.y], this.radius);
         }
     }
-    Interpreter.CircleExpression = CircleExpression;
     class PolygonExpression {
         constructor(command) {
             this.points = [];
@@ -304,7 +315,16 @@ var Interpreter;
             context.document.createPolygon(this.points);
         }
     }
-    Interpreter.PolygonExpression = PolygonExpression;
+    class TranslateExpression {
+        constructor(command) {
+            this.shape_id = command[1];
+            this.x = parseInt(command[2]);
+            this.y = parseInt(command[3]);
+        }
+        interpret(context) {
+            context.document.translate(this.shape_id, this.x, this.y);
+        }
+    }
 })(Interpreter = exports.Interpreter || (exports.Interpreter = {}));
 
 },{}],5:[function(require,module,exports){

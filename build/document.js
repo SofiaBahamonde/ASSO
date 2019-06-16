@@ -21,6 +21,7 @@ class SimpleDrawDocument {
         uiRender.draw(...this.uielems);
     }
     draw(render) {
+        console.log(this.objects);
         // this.objects.forEach(o => o.draw(ctx))
         render.draw(this.getElemsToDraw());
     }
@@ -56,11 +57,19 @@ class SimpleDrawDocument {
     createPolygon(points) {
         return this.do(new actions_1.CreatePolygonAction(this, points));
     }
-    translate(s, xd, yd) {
-        return this.do(new actions_1.TranslateAction(this, s, xd, yd));
+    translate(id, xd, yd) {
+        return this.do(new actions_1.TranslateAction(this, this.getShape(id), xd, yd));
     }
     rotate(s, angle) {
         return this.do(new actions_1.RotationAction(this, s, angle));
+    }
+    getShape(id) {
+        for (var i = 0; i < this.objects.length; i++) {
+            if (this.objects[i].getID() == id) {
+                return this.objects[i];
+            }
+        }
+        return null;
     }
     addUIElem(elem) {
         var found = Boolean(false);
