@@ -8,7 +8,7 @@ class SimpleDrawDocument {
     constructor(update_call) {
         this.objects = new Array();
         this.undoManager = new undo_1.UndoManager();
-        this.shapeDropbox = document.getElementById("shape-dropbox");
+        this.shapeDropbox = document.getElementById("shape-dropdown");
         this.uielems = new Array();
         this.update = update_call;
     }
@@ -24,6 +24,17 @@ class SimpleDrawDocument {
     draw(render) {
         // this.objects.forEach(o => o.draw(ctx))
         render.draw(this.getElemsToDraw());
+    }
+    selectShape(shape_id) {
+        for (var shape of this.objects) {
+            if (shape.getID() == shape_id) {
+                shape.setHighlight(true);
+                this.selectedShape = shape;
+            }
+            else {
+                shape.setHighlight(false);
+            }
+        }
     }
     getSelLayer() {
         var e = document.getElementById("layers");

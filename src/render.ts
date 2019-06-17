@@ -110,14 +110,20 @@ class SVGAPI implements DrawAPI{
         for (const shape of objs) {
            
             if(shape instanceof Circle){
-                const c = document.createElementNS(xmlns, "circle")
-                c.setAttribute('style', 'stroke: black; fill: white')
-                c.setAttribute("cx",shape.points[0].toString())
-                c.setAttribute("cy",shape.points[1].toString())
-                c.setAttribute("r",shape.radius.toString())
-                svg.appendChild(c)
+                const circle = document.createElementNS(xmlns, "circle")
+                if(shape.hightlighted)
+                circle.setAttribute('style', 'stroke: red; fill: white')
+                else
+                circle.setAttribute('style', 'stroke: black; fill: white')
+                circle.setAttribute("cx",shape.points[0].toString())
+                circle.setAttribute("cy",shape.points[1].toString())
+                circle.setAttribute("r",shape.radius.toString())
+                svg.appendChild(circle)
             }else if (shape instanceof Polygon || shape instanceof Rectangle) {
                 const polygon =  document.createElementNS(xmlns, "polygon")
+                if(shape.hightlighted)
+                polygon.setAttribute('style', 'stroke: red; fill: white')
+                else
                 polygon.setAttribute('style', 'stroke: black; fill: white')      
                 var textPoints = ''                
                 for ( var item = 0 ; item < shape.points.length-1 ; item+=2 ) 
@@ -164,14 +170,27 @@ export class WireFrameAPI implements DrawAPI{
                 this.ctx.beginPath();
                 this.ctx.arc(shape.points[0], shape.points[1], shape.radius, 0, 2 * Math.PI);
                 this.ctx.closePath()
-                this.ctx.stroke()  
+                if(shape.hightlighted){
+                    this.ctx.strokeStyle = "red";
+                }
+                this.ctx.stroke()
+                if(shape.hightlighted){
+                    this.ctx.strokeStyle = "grey";
+                }
             } else if (shape instanceof Polygon || shape instanceof Rectangle) {
+
                 this.ctx.beginPath()
                 this.ctx.moveTo(shape.points[0], shape.points[1])
                 for( var item = 2 ; item < shape.points.length-1 ; item+=2 )
                 {this.ctx.lineTo( shape.points[item] , shape.points[item+1] )}
                 this.ctx.closePath()
+                if(shape.hightlighted){
+                    this.ctx.strokeStyle = "red";
+                }
                 this.ctx.stroke()
+                if(shape.hightlighted){
+                    this.ctx.strokeStyle = "grey";
+                }
             }
         }
     }

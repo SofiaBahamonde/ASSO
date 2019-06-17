@@ -36,19 +36,7 @@ layerui.addLayernew()
 sdd.addUIElem(layerui)
 
 var consoleBtn = <HTMLButtonElement> document.getElementById("submit");
-var undoBtn = <HTMLButtonElement> document.getElementById("undo");
-var redoBtn = <HTMLButtonElement> document.getElementById("redo");
-var zoomPlusBtn = <HTMLButtonElement> document.getElementById("zoom-plus");
-var zoomMinusBtn = <HTMLButtonElement> document.getElementById("zoom-minus")
-
-var importbtn = <HTMLButtonElement> document.getElementById("import");
-var exportbtn = <HTMLButtonElement> document.getElementById("export");
-var format_box = <HTMLButtonElement> document.getElementById("format-dropbox");
-
-
 var input = <HTMLInputElement> document.getElementById("console-input");
-var zoomFactor = <HTMLElement> document.getElementById("zoom-factor");
-
 
 consoleBtn.addEventListener("click", () => {
     let command : string = input.value;
@@ -56,6 +44,9 @@ consoleBtn.addEventListener("click", () => {
     let expression : Interpreter.CommandExpression = new Interpreter.CommandExpression(command[0]);
     expression.interpret(context)
 });
+
+var undoBtn = <HTMLButtonElement> document.getElementById("undo");
+var redoBtn = <HTMLButtonElement> document.getElementById("redo");
 
 undoBtn.addEventListener("click", () => {
     sdd.undo();
@@ -66,6 +57,10 @@ redoBtn.addEventListener("click", () => {
     sdd.redo();
     update()
 });
+
+var zoomPlusBtn = <HTMLButtonElement> document.getElementById("zoom-plus");
+var zoomMinusBtn = <HTMLButtonElement> document.getElementById("zoom-minus")
+var zoomFactor = <HTMLElement> document.getElementById("zoom-factor");
 
 zoomPlusBtn.addEventListener("click", () =>{
     var factor = parseFloat(zoomFactor.innerHTML);
@@ -90,6 +85,21 @@ zoomMinusBtn.addEventListener("click", () =>{
     }
 
 });
+
+const shapes = <HTMLSelectElement> document.getElementById("shape-dropdown")
+
+shapes.addEventListener("change", () =>{
+    if(shapes.value != "none"){
+        sdd.selectShape(shapes.value);
+    }
+    update();
+})
+
+
+
+var importbtn = <HTMLButtonElement> document.getElementById("import");
+var exportbtn = <HTMLButtonElement> document.getElementById("export");
+var format_box = <HTMLButtonElement> document.getElementById("format-dropbox");
 
 var BMPexp = new BMP(100, 100)
 var XMLexp = new XML()

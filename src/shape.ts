@@ -1,7 +1,8 @@
 
 export abstract class Shape {
-
+ 
     public color:String = "Grey"
+    public hightlighted = false
 
     constructor(public points: Array<number>) { }
 
@@ -39,13 +40,17 @@ export abstract class Shape {
         }
     }
 
+    setHighlight(value : boolean) {
+        this.hightlighted = value
+    }
+
     abstract getID() : string
  
 }
 
 export class Rectangle extends Shape{
-    static idCounter: number =0;
-    id: number;
+    static idCounter: number =0
+    id: number
 
     constructor(public points: Array<number>, public width: number, public height: number) {
         super(points)

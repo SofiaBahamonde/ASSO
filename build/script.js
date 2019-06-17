@@ -28,21 +28,15 @@ layerui.addLayernew();
 layerui.addLayernew();
 sdd.addUIElem(layerui);
 var consoleBtn = document.getElementById("submit");
-var undoBtn = document.getElementById("undo");
-var redoBtn = document.getElementById("redo");
-var zoomPlusBtn = document.getElementById("zoom-plus");
-var zoomMinusBtn = document.getElementById("zoom-minus");
-var importbtn = document.getElementById("import");
-var exportbtn = document.getElementById("export");
-var format_box = document.getElementById("format-dropbox");
 var input = document.getElementById("console-input");
-var zoomFactor = document.getElementById("zoom-factor");
 consoleBtn.addEventListener("click", () => {
     let command = input.value;
     let context = new interperter_1.Interpreter.Context(sdd, canvasrender, svgrender, command);
     let expression = new interperter_1.Interpreter.CommandExpression(command[0]);
     expression.interpret(context);
 });
+var undoBtn = document.getElementById("undo");
+var redoBtn = document.getElementById("redo");
 undoBtn.addEventListener("click", () => {
     sdd.undo();
     update();
@@ -51,6 +45,9 @@ redoBtn.addEventListener("click", () => {
     sdd.redo();
     update();
 });
+var zoomPlusBtn = document.getElementById("zoom-plus");
+var zoomMinusBtn = document.getElementById("zoom-minus");
+var zoomFactor = document.getElementById("zoom-factor");
 zoomPlusBtn.addEventListener("click", () => {
     var factor = parseFloat(zoomFactor.innerHTML);
     factor = Math.round((factor + 0.2) * 10) / 10;
@@ -67,6 +64,16 @@ zoomMinusBtn.addEventListener("click", () => {
         update();
     }
 });
+const shapes = document.getElementById("shape-dropdown");
+shapes.addEventListener("change", () => {
+    if (shapes.value != "none") {
+        sdd.selectShape(shapes.value);
+    }
+    update();
+});
+var importbtn = document.getElementById("import");
+var exportbtn = document.getElementById("export");
+var format_box = document.getElementById("format-dropbox");
 var BMPexp = new fileio_1.BMP(100, 100);
 var XMLexp = new fileio_1.XML();
 var option = document.createElement("OPTION");

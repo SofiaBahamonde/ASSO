@@ -98,7 +98,7 @@ class SimpleDrawDocument {
     constructor(update_call) {
         this.objects = new Array();
         this.undoManager = new undo_1.UndoManager();
-        this.shapeDropbox = document.getElementById("shape-dropbox");
+        this.shapeDropbox = document.getElementById("shape-dropdown");
         this.uielems = new Array();
         this.update = update_call;
     }
@@ -114,6 +114,17 @@ class SimpleDrawDocument {
     draw(render) {
         // this.objects.forEach(o => o.draw(ctx))
         render.draw(this.getElemsToDraw());
+    }
+    selectShape(shape_id) {
+        for (var shape of this.objects) {
+            if (shape.getID() == shape_id) {
+                shape.setHighlight(true);
+                this.selectedShape = shape;
+            }
+            else {
+                shape.setHighlight(false);
+            }
+        }
     }
     getSelLayer() {
         var e = document.getElementById("layers");
@@ -550,16 +561,22 @@ class SVGAPI {
         svg = document.getElementById('svgcanvas');
         for (const shape of objs) {
             if (shape instanceof shape_1.Circle) {
-                const c = document.createElementNS(xmlns, "circle");
-                c.setAttribute('style', 'stroke: black; fill: white');
-                c.setAttribute("cx", shape.points[0].toString());
-                c.setAttribute("cy", shape.points[1].toString());
-                c.setAttribute("r", shape.radius.toString());
-                svg.appendChild(c);
+                const circle = document.createElementNS(xmlns, "circle");
+                if (shape.hightlighted)
+                    circle.setAttribute('style', 'stroke: red; fill: white');
+                else
+                    circle.setAttribute('style', 'stroke: black; fill: white');
+                circle.setAttribute("cx", shape.points[0].toString());
+                circle.setAttribute("cy", shape.points[1].toString());
+                circle.setAttribute("r", shape.radius.toString());
+                svg.appendChild(circle);
             }
             else if (shape instanceof shape_1.Polygon || shape instanceof shape_1.Rectangle) {
                 const polygon = document.createElementNS(xmlns, "polygon");
-                polygon.setAttribute('style', 'stroke: black; fill: white');
+                if (shape.hightlighted)
+                    polygon.setAttribute('style', 'stroke: red; fill: white');
+                else
+                    polygon.setAttribute('style', 'stroke: black; fill: white');
                 var textPoints = '';
                 for (var item = 0; item < shape.points.length - 1; item += 2)
                     textPoints += shape.points[item] + ',' + shape.points[item + 1] + ' ';
@@ -591,7 +608,13 @@ class WireFrameAPI {
                 this.ctx.beginPath();
                 this.ctx.arc(shape.points[0], shape.points[1], shape.radius, 0, 2 * Math.PI);
                 this.ctx.closePath();
+                if (shape.hightlighted) {
+                    this.ctx.strokeStyle = "red";
+                }
                 this.ctx.stroke();
+                if (shape.hightlighted) {
+                    this.ctx.strokeStyle = "grey";
+                }
             }
             else if (shape instanceof shape_1.Polygon || shape instanceof shape_1.Rectangle) {
                 this.ctx.beginPath();
@@ -600,7 +623,13 @@ class WireFrameAPI {
                     this.ctx.lineTo(shape.points[item], shape.points[item + 1]);
                 }
                 this.ctx.closePath();
+                if (shape.hightlighted) {
+                    this.ctx.strokeStyle = "red";
+                }
                 this.ctx.stroke();
+                if (shape.hightlighted) {
+                    this.ctx.strokeStyle = "grey";
+                }
             }
         }
     }
@@ -656,21 +685,15 @@ layerui.addLayernew();
 layerui.addLayernew();
 sdd.addUIElem(layerui);
 var consoleBtn = document.getElementById("submit");
-var undoBtn = document.getElementById("undo");
-var redoBtn = document.getElementById("redo");
-var zoomPlusBtn = document.getElementById("zoom-plus");
-var zoomMinusBtn = document.getElementById("zoom-minus");
-var importbtn = document.getElementById("import");
-var exportbtn = document.getElementById("export");
-var format_box = document.getElementById("format-dropbox");
 var input = document.getElementById("console-input");
-var zoomFactor = document.getElementById("zoom-factor");
 consoleBtn.addEventListener("click", () => {
     let command = input.value;
     let context = new interperter_1.Interpreter.Context(sdd, canvasrender, svgrender, command);
     let expression = new interperter_1.Interpreter.CommandExpression(command[0]);
     expression.interpret(context);
 });
+var undoBtn = document.getElementById("undo");
+var redoBtn = document.getElementById("redo");
 undoBtn.addEventListener("click", () => {
     sdd.undo();
     update();
@@ -679,6 +702,9 @@ redoBtn.addEventListener("click", () => {
     sdd.redo();
     update();
 });
+var zoomPlusBtn = document.getElementById("zoom-plus");
+var zoomMinusBtn = document.getElementById("zoom-minus");
+var zoomFactor = document.getElementById("zoom-factor");
 zoomPlusBtn.addEventListener("click", () => {
     var factor = parseFloat(zoomFactor.innerHTML);
     factor = Math.round((factor + 0.2) * 10) / 10;
@@ -695,6 +721,16 @@ zoomMinusBtn.addEventListener("click", () => {
         update();
     }
 });
+const shapes = document.getElementById("shape-dropdown");
+shapes.addEventListener("change", () => {
+    if (shapes.value != "none") {
+        sdd.selectShape(shapes.value);
+    }
+    update();
+});
+var importbtn = document.getElementById("import");
+var exportbtn = document.getElementById("export");
+var format_box = document.getElementById("format-dropbox");
 var BMPexp = new fileio_1.BMP(100, 100);
 var XMLexp = new fileio_1.XML();
 var option = document.createElement("OPTION");
@@ -746,6 +782,7 @@ class Shape {
     constructor(points) {
         this.points = points;
         this.color = "Grey";
+        this.hightlighted = false;
     }
     translate(xd, yd) {
         for (var item = 0; item < this.points.length - 1; item += 2) {
@@ -770,6 +807,9 @@ class Shape {
             this.points[item] = xr + xc;
             this.points[item + 1] = yr + yc;
         }
+    }
+    setHighlight(value) {
+        this.hightlighted = value;
     }
 }
 exports.Shape = Shape;
