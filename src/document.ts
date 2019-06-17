@@ -5,8 +5,10 @@ import { UndoManager } from "./undo";
 import { InterfaceObj } from './interfaceobj';
 import { Layers, Layer } from './layer';
 import { FileIO } from './fileio';
+import { ToolBox } from './toolbox';
 
 export class SimpleDrawDocument {
+
 
   objects = new Array<Shape>()
   undoManager = new UndoManager();
@@ -41,7 +43,14 @@ export class SimpleDrawDocument {
     render.draw(this.getElemsToDraw())
   }
 
- 
+  
+  getSelLayer(): number{
+    
+    var e = document.getElementById("layers")
+    var str_value = e.getElementsByClassName("active")[0].children[0].innerHTML
+    return parseInt(str_value, 10)
+  }
+
 
 
   add(r: Shape): void {
@@ -49,6 +58,9 @@ export class SimpleDrawDocument {
     option.setAttribute("value", r.getID());
     option.innerHTML = r.getID();
     this.shapeDropbox.appendChild(option);
+
+
+
 
     this.objects.push(r)
   }
@@ -100,9 +112,12 @@ export class SimpleDrawDocument {
   }
 
   getShape(id : String){
-    for(var i =0; i < this.objects.length; i++){
-      if(this.objects[i].getID() == id){
-        return this.objects[i];
+
+    let shapes = this.getElemsToDraw()
+
+    for(var i =0; i < shapes.length; i++){
+      if(shapes[i].getID() == id){
+        return shapes[i];
       }
     }
 
@@ -167,6 +182,83 @@ export class SimpleDrawDocument {
 
       }
     })
+
+  }
+
+  getToolbox(): ToolBox{
+
+    this.uielems.forEach(element => {
+
+      if (element instanceof ToolBox) {
+          return element
+      }
+    })
+    return null
+
+  }
+
+
+  canvasNotification(x:number, y:number){
+
+    console.log("X: " + x.toString() + "Y: " + y.toString() )
+
+    this.uielems.forEach(element => {
+
+      if (element instanceof ToolBox) {
+          const tool = element.getSelTool()
+
+          if(tool != null){
+            //todo detect if a shape was clicked
+            if(tool.sendInput(x,y, null) == true){
+              element.unSelectTool()
+            }
+
+            return
+          }
+      }
+    })
+
+  }
+
+  getSelShape(): Shape{
+  
+
+    var sel_box = <HTMLSelectElement>this.shapeDropbox
+    var shape_id = sel_box.options[sel_box.selectedIndex].value;
+
+    this.getElemsToDraw().forEach(shape => {
+
+      if(shape.getID() == shape_id){
+        return shape
+      }
+
+    })
+    return null
+  }
+
+
+  clicked_tool(tool_name: String) {
+   console.log("Clicked TOOL:" + tool_name)
+    this.getToolbox().clicked_tool(tool_name, this.getSelShape())
+
+}
+
+
+  setToolListeners(): void {
+
+    var tools = document.getElementById("tools")
+    let doc = this
+    
+    for (let child_i = 0; child_i < tools.children.length; child_i++) {
+
+      const tool = tools.children[child_i];
+      console.log(tool)
+      tool.addEventListener("click", function(){
+        console.log("Hello From tool")
+        //doc.clicked_tool(tool.innerHTML.replace('<\/?p[^>]*>', ""))
+      }); 
+      
+    }
 
   }
 

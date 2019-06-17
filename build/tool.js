@@ -15,9 +15,17 @@ class Tool {
     constructor(name, img_loc) {
         this.name = name;
         this.img_loc = img_loc;
+        this.init_shape = null;
     }
     action(action_para) {
         return false;
+    }
+    initclick(sh) {
+        this.init_shape = sh;
+    }
+    //return false if needs more input, true if it was finished doing its thing
+    sendInput(x, y, sh) {
+        return true;
     }
 }
 exports.Tool = Tool;
@@ -38,6 +46,10 @@ class MoveTool extends Tool {
                 return false;
             }
         });
+        return true;
+    }
+    sendInput(x, y, sh) {
+        this.init_shape.translate(x, y);
         return true;
     }
 }

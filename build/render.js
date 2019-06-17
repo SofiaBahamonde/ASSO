@@ -10,9 +10,10 @@ class InterfaceRender {
             if (elem instanceof toolbox_1.ToolBox) {
                 console.log("Drawing ToolBox");
                 var toolbox_html = document.getElementById('tools');
-                let tb_html = toolbox_html.innerHTML;
+                let tb_html = "";
                 elem.getTools().forEach(tool => {
-                    tb_html += "<div> <p> " + tool.name + " </p> </div>";
+                    // tb_html += "<div onclick=\"clicked_tool('" + tool.name +"')\" > <p> " + tool.name + " </p> </div>"
+                    tb_html += "<div > <p> " + tool.name + " </p> </div>";
                 });
                 toolbox_html.innerHTML = tb_html;
             }

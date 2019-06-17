@@ -12,11 +12,27 @@ export class ActionParam{
 }
 
 export abstract class Tool{
+
+    protected init_shape:Shape
+
     constructor(public name:String, public img_loc:String ) {
+
+        this.init_shape = null
+
     }
 
     action(action_para:ActionParam) : boolean{
         return false;
+    }
+
+    initclick(sh:Shape){
+        this.init_shape = sh
+    }
+
+    //return false if needs more input, true if it was finished doing its thing
+    sendInput(x:number, y:number, sh:Shape): boolean{
+        return true
+
     }
 
 }
@@ -46,6 +62,15 @@ export class MoveTool extends Tool{
 
         return true;
     }
+
+
+    sendInput(x:number, y:number, sh:Shape): boolean{
+
+        this.init_shape.translate(x, y)
+        return true
+    }
+
+
 }
 
 export class PaintTool extends Tool{

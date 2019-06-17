@@ -45,6 +45,16 @@ export class Layers implements InterfaceObj{
         this.layers.push(new Layer(this.layers.length, true))
     }
 
+
+    addShape(sh:Shape, layer_id:number): boolean{
+        if(layer_id >= this.layers.length){
+            console.log("Invalid Layer")
+            return false
+        }
+        this.layers[layer_id].addShape(sh)
+        return true
+    }
+
     getLayers() : Array<Layer> {
         return this.layers
     }

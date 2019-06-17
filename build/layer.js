@@ -30,6 +30,14 @@ class Layers {
     addLayernew() {
         this.layers.push(new Layer(this.layers.length, true));
     }
+    addShape(sh, layer_id) {
+        if (layer_id >= this.layers.length) {
+            console.log("Invalid Layer");
+            return false;
+        }
+        this.layers[layer_id].addShape(sh);
+        return true;
+    }
     getLayers() {
         return this.layers;
     }

@@ -18,11 +18,12 @@ export class InterfaceRender{
                     
                     console.log("Drawing ToolBox")
                     var toolbox_html = <HTMLElement>document.getElementById('tools')
-                    let tb_html = toolbox_html.innerHTML
+                    let tb_html = ""
 
                     elem.getTools().forEach(tool => {
                         
-                        tb_html += "<div> <p> " + tool.name + " </p> </div>"
+                       // tb_html += "<div onclick=\"clicked_tool('" + tool.name +"')\" > <p> " + tool.name + " </p> </div>"
+                       tb_html += "<div > <p> " + tool.name + " </p> </div>"
 
                     });
 

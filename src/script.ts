@@ -96,4 +96,25 @@ exportbtn.addEventListener("click", () => {
     sdd.export(retFileIO(format_box.value));
 });
 
+function getCursorPosition(canvas:HTMLCanvasElement, event:MouseEvent) {
+    const rect = canvas.getBoundingClientRect()
+    const x = event.clientX - rect.left
+    const y = event.clientY - rect.top
+    console.log("x: " + x + " y: " + y)
+    return [x,y]
+}
+
+const canvas = document.querySelector('canvas')
+canvas.addEventListener('mousedown', function(e) {
+    const pos = getCursorPosition(canvas, e)
+    sdd.canvasNotification(pos[0], pos[1])
+})
+
+export function clicked_tool(tool_name:String){
+    console.log("on script.ts clicked tool")
+    sdd.clicked_tool(tool_name)
+}
+
+
 update()
+sdd.setToolListeners()

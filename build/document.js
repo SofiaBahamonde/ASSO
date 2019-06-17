@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const actions_1 = require("./actions");
 const undo_1 = require("./undo");
 const layer_1 = require("./layer");
+const toolbox_1 = require("./toolbox");
 class SimpleDrawDocument {
     constructor(update_call) {
         this.objects = new Array();
@@ -24,6 +25,11 @@ class SimpleDrawDocument {
         console.log(this.objects);
         // this.objects.forEach(o => o.draw(ctx))
         render.draw(this.getElemsToDraw());
+    }
+    getSelLayer() {
+        var e = document.getElementById("layers");
+        var str_value = e.getElementsByClassName("active")[0].children[0].innerHTML;
+        return parseInt(str_value, 10);
     }
     add(r) {
         var option = document.createElement("OPTION");
@@ -64,9 +70,10 @@ class SimpleDrawDocument {
         return this.do(new actions_1.RotationAction(this, this.getShape(id), angle));
     }
     getShape(id) {
-        for (var i = 0; i < this.objects.length; i++) {
-            if (this.objects[i].getID() == id) {
-                return this.objects[i];
+        let shapes = this.getElemsToDraw();
+        for (var i = 0; i < shapes.length; i++) {
+            if (shapes[i].getID() == id) {
+                return shapes[i];
             }
         }
         return null;
@@ -105,6 +112,55 @@ class SimpleDrawDocument {
                 element = layers;
             }
         });
+    }
+    getToolbox() {
+        this.uielems.forEach(element => {
+            if (element instanceof toolbox_1.ToolBox) {
+                return element;
+            }
+        });
+        return null;
+    }
+    canvasNotification(x, y) {
+        console.log("X: " + x.toString() + "Y: " + y.toString());
+        this.uielems.forEach(element => {
+            if (element instanceof toolbox_1.ToolBox) {
+                const tool = element.getSelTool();
+                if (tool != null) {
+                    //todo detect if a shape was clicked
+                    if (tool.sendInput(x, y, null) == true) {
+                        element.unSelectTool();
+                    }
+                    return;
+                }
+            }
+        });
+    }
+    getSelShape() {
+        var sel_box = this.shapeDropbox;
+        var shape_id = sel_box.options[sel_box.selectedIndex].value;
+        this.getElemsToDraw().forEach(shape => {
+            if (shape.getID() == shape_id) {
+                return shape;
+            }
+        });
+        return null;
+    }
+    clicked_tool(tool_name) {
+        console.log("Clicked TOOL:" + tool_name);
+        this.getToolbox().clicked_tool(tool_name, this.getSelShape());
+    }
+    setToolListeners() {
+        var tools = document.getElementById("tools");
+        let doc = this;
+        for (let child_i = 0; child_i < tools.children.length; child_i++) {
+            const tool = tools.children[child_i];
+            console.log(tool);
+            tool.addEventListener("click", function () {
+                console.log("Hello From tool");
+                //doc.clicked_tool(tool.innerHTML.replace('<\/?p[^>]*>', ""))
+            });
+        }
     }
 }
 exports.SimpleDrawDocument = SimpleDrawDocument;

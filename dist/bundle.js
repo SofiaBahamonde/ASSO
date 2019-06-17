@@ -81,6 +81,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const actions_1 = require("./actions");
 const undo_1 = require("./undo");
 const layer_1 = require("./layer");
+const toolbox_1 = require("./toolbox");
 class SimpleDrawDocument {
     constructor(update_call) {
         this.objects = new Array();
@@ -102,6 +103,11 @@ class SimpleDrawDocument {
         console.log(this.objects);
         // this.objects.forEach(o => o.draw(ctx))
         render.draw(this.getElemsToDraw());
+    }
+    getSelLayer() {
+        var e = document.getElementById("layers");
+        var str_value = e.getElementsByClassName("active")[0].children[0].innerHTML;
+        return parseInt(str_value, 10);
     }
     add(r) {
         var option = document.createElement("OPTION");
@@ -142,9 +148,10 @@ class SimpleDrawDocument {
         return this.do(new actions_1.RotationAction(this, this.getShape(id), angle));
     }
     getShape(id) {
-        for (var i = 0; i < this.objects.length; i++) {
-            if (this.objects[i].getID() == id) {
-                return this.objects[i];
+        let shapes = this.getElemsToDraw();
+        for (var i = 0; i < shapes.length; i++) {
+            if (shapes[i].getID() == id) {
+                return shapes[i];
             }
         }
         return null;
@@ -184,10 +191,59 @@ class SimpleDrawDocument {
             }
         });
     }
+    getToolbox() {
+        this.uielems.forEach(element => {
+            if (element instanceof toolbox_1.ToolBox) {
+                return element;
+            }
+        });
+        return null;
+    }
+    canvasNotification(x, y) {
+        console.log("X: " + x.toString() + "Y: " + y.toString());
+        this.uielems.forEach(element => {
+            if (element instanceof toolbox_1.ToolBox) {
+                const tool = element.getSelTool();
+                if (tool != null) {
+                    //todo detect if a shape was clicked
+                    if (tool.sendInput(x, y, null) == true) {
+                        element.unSelectTool();
+                    }
+                    return;
+                }
+            }
+        });
+    }
+    getSelShape() {
+        var sel_box = this.shapeDropbox;
+        var shape_id = sel_box.options[sel_box.selectedIndex].value;
+        this.getElemsToDraw().forEach(shape => {
+            if (shape.getID() == shape_id) {
+                return shape;
+            }
+        });
+        return null;
+    }
+    clicked_tool(tool_name) {
+        console.log("Clicked TOOL:" + tool_name);
+        this.getToolbox().clicked_tool(tool_name, this.getSelShape());
+    }
+    setToolListeners() {
+        var tools = document.getElementById("tools");
+        let doc = this;
+        for (let child_i = 0; child_i < tools.children.length; child_i++) {
+            const tool = tools.children[child_i];
+            console.log(tool);
+            tool.addEventListener("click", function () {
+                console.log("Hello From tool");
+                //doc.clicked_tool(tool.innerHTML.replace('<\/?p[^>]*>', ""))
+            });
+        }
+    }
 }
 exports.SimpleDrawDocument = SimpleDrawDocument;
 
-},{"./actions":1,"./layer":5,"./undo":11}],3:[function(require,module,exports){
+},{"./actions":1,"./layer":5,"./toolbox":10,"./undo":11}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class BMP {
@@ -373,6 +429,14 @@ class Layers {
     addLayernew() {
         this.layers.push(new Layer(this.layers.length, true));
     }
+    addShape(sh, layer_id) {
+        if (layer_id >= this.layers.length) {
+            console.log("Invalid Layer");
+            return false;
+        }
+        this.layers[layer_id].addShape(sh);
+        return true;
+    }
     getLayers() {
         return this.layers;
     }
@@ -401,9 +465,10 @@ class InterfaceRender {
             if (elem instanceof toolbox_1.ToolBox) {
                 console.log("Drawing ToolBox");
                 var toolbox_html = document.getElementById('tools');
-                let tb_html = toolbox_html.innerHTML;
+                let tb_html = "";
                 elem.getTools().forEach(tool => {
-                    tb_html += "<div> <p> " + tool.name + " </p> </div>";
+                    // tb_html += "<div onclick=\"clicked_tool('" + tool.name +"')\" > <p> " + tool.name + " </p> </div>"
+                    tb_html += "<div > <p> " + tool.name + " </p> </div>";
                 });
                 toolbox_html.innerHTML = tb_html;
             }
@@ -588,7 +653,25 @@ importbtn.addEventListener("click", () => {
 exportbtn.addEventListener("click", () => {
     sdd.export(retFileIO(format_box.value));
 });
+function getCursorPosition(canvas, event) {
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    console.log("x: " + x + " y: " + y);
+    return [x, y];
+}
+const canvas = document.querySelector('canvas');
+canvas.addEventListener('mousedown', function (e) {
+    const pos = getCursorPosition(canvas, e);
+    sdd.canvasNotification(pos[0], pos[1]);
+});
+function clicked_tool(tool_name) {
+    console.log("on script.ts clicked tool");
+    sdd.clicked_tool(tool_name);
+}
+exports.clicked_tool = clicked_tool;
 update();
+sdd.setToolListeners();
 
 },{"./document":2,"./fileio":3,"./interperter":4,"./layer":5,"./render":6,"./tool":9,"./toolbox":10}],8:[function(require,module,exports){
 "use strict";
@@ -683,9 +766,17 @@ class Tool {
     constructor(name, img_loc) {
         this.name = name;
         this.img_loc = img_loc;
+        this.init_shape = null;
     }
     action(action_para) {
         return false;
+    }
+    initclick(sh) {
+        this.init_shape = sh;
+    }
+    //return false if needs more input, true if it was finished doing its thing
+    sendInput(x, y, sh) {
+        return true;
     }
 }
 exports.Tool = Tool;
@@ -706,6 +797,10 @@ class MoveTool extends Tool {
                 return false;
             }
         });
+        return true;
+    }
+    sendInput(x, y, sh) {
+        this.init_shape.translate(x, y);
         return true;
     }
 }
@@ -736,12 +831,37 @@ exports.PaintTool = PaintTool;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class ToolBox {
-    constructor() { this.tools = new Array(); }
+    constructor() {
+        this.tools = new Array();
+        this.sel_tool = null;
+    }
     add(new_tool) {
         this.tools.push(new_tool);
     }
     getTools() {
         return this.tools;
+    }
+    setSel(tool) {
+        this.tools.forEach(tl => {
+            if (tool === tl) {
+                this.sel_tool = tool;
+                return;
+            }
+        });
+    }
+    unSelectTool() {
+        this.sel_tool = null;
+    }
+    getSelTool() {
+        return this.sel_tool;
+    }
+    clicked_tool(tool_name, getSelShape) {
+        this.tools.forEach(tool => {
+            if (tool.name == tool_name) {
+                tool.initclick(getSelShape);
+                this.sel_tool = tool;
+            }
+        });
     }
 }
 exports.ToolBox = ToolBox;
