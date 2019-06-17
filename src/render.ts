@@ -89,7 +89,7 @@ export abstract class Render {
 
 class SVGAPI implements DrawAPI{
 
-    factor: number = 300;
+    factor: number = 400;
 
     draw(...objs: Array<Shape>): void {
         var svg =  <HTMLElement>document.getElementById('svgcanvas');
@@ -97,8 +97,8 @@ class SVGAPI implements DrawAPI{
             
         var svgElem = document.createElementNS (xmlns, "svg");
         svgElem.setAttributeNS (null, "id", "svgcanvas");
-        svgElem.setAttributeNS (null, "width", '300');
-        svgElem.setAttributeNS (null, "height", '300');
+        svgElem.setAttributeNS (null, "width", '400');
+        svgElem.setAttributeNS (null, "height", '400');
         svgElem.setAttributeNS (null, "style", "border: 2px solid black; border-radius: 5px 5px 5px 5px/25px 25px 25px 5px;");
         svgElem.setAttributeNS (null, "viewBox", "0 0 " + this.factor + " " + this.factor)
 
@@ -109,22 +109,22 @@ class SVGAPI implements DrawAPI{
         
         for (const shape of objs) {
            
-            if (shape instanceof Rectangle) {
-                const e = document.createElementNS(xmlns, "rect")
+            if(shape instanceof Circle){
+                const circle = document.createElementNS(xmlns, "circle")
                 if(shape.hightlighted)
-                e.setAttribute('style', 'stroke: red; fill: white')
+                circle.setAttribute('style', 'stroke: red; fill: white')
                 else
-                e.setAttribute('style', 'stroke: black; fill: white')
-                e.setAttribute('x', shape.points[0].toString())
-                e.setAttribute('y', shape.points[1].toString())
-                e.setAttribute('width', shape.width.toString())
-                e.setAttribute('height', shape.height.toString())
-                svg.appendChild(e)
-            } else if(shape instanceof Circle){
-                const c = document.createElementNS(xmlns, "circle")
+                circle.setAttribute('style', 'stroke: black; fill: white')
+                circle.setAttribute("cx",shape.points[0].toString())
+                circle.setAttribute("cy",shape.points[1].toString())
+                circle.setAttribute("r",shape.radius.toString())
+                svg.appendChild(circle)
+            }else if (shape instanceof Polygon || shape instanceof Rectangle) {
+                const polygon =  document.createElementNS(xmlns, "polygon")
                 if(shape.hightlighted)
-                c.setAttribute('style', 'stroke: red; fill: white')
+                polygon.setAttribute('style', 'stroke: red; fill: white')
                 else
+<<<<<<< HEAD
                 c.setAttribute('style', 'stroke: black; fill: white')
                 c.setAttribute("cx",shape.points[0].toString())
                 c.setAttribute("cy",shape.points[1].toString())
@@ -136,6 +136,9 @@ class SVGAPI implements DrawAPI{
                 polygon.setAttribute('style', 'stroke: red; fill: white')
                 else
                 polygon.setAttribute('style', 'stroke: black; fill: white') 
+=======
+                polygon.setAttribute('style', 'stroke: black; fill: white')      
+>>>>>>> 007869da60c9f83749fada31afa1ad11eca3e163
                 var textPoints = ''                
                 for ( var item = 0 ; item < shape.points.length-1 ; item+=2 ) 
                     textPoints +=  shape.points[item] + ',' + shape.points[item+1] + ' '
@@ -149,7 +152,7 @@ class SVGAPI implements DrawAPI{
     zoom(factor: number, positive : boolean){
 
         if(positive)
-            this.factor = 300/factor;
+            this.factor = 400/factor;
         else    
             this.factor = this.factor * factor;
     }
@@ -196,7 +199,7 @@ export class WireFrameAPI implements DrawAPI{
                 if(shape.hightlighted){
                     this.ctx.strokeStyle = "black";
                 }
-            } else if (shape instanceof Polygon) {
+            } else if (shape instanceof Polygon || shape instanceof Rectangle) {
 
                 this.ctx.beginPath()
                 this.ctx.moveTo(shape.points[0], shape.points[1])

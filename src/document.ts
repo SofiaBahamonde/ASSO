@@ -34,6 +34,7 @@ export class SimpleDrawDocument {
 
   drawUI(uiRender: InterfaceRender) {
     uiRender.draw(...this.uielems)
+    this.setToolListeners()
   }
 
   draw(render: Render): void {
@@ -196,13 +197,15 @@ export class SimpleDrawDocument {
 
   getToolbox(): ToolBox{
 
+    let f_tb:ToolBox = null
+
     this.uielems.forEach(element => {
 
       if (element instanceof ToolBox) {
-          return element
+          f_tb = element
       }
     })
-    return null
+    return f_tb
 
   }
 
@@ -227,22 +230,25 @@ export class SimpleDrawDocument {
       }
     })
 
+    this.update()
+
   }
 
   getSelShape(): Shape{
   
-
     var sel_box = <HTMLSelectElement>this.shapeDropbox
     var shape_id = sel_box.options[sel_box.selectedIndex].value;
+
+    let f_shape:Shape = null 
 
     this.getElemsToDraw().forEach(shape => {
 
       if(shape.getID() == shape_id){
-        return shape
+        f_shape = shape
       }
 
     })
-    return null
+    return f_shape
   }
 
 
@@ -261,10 +267,13 @@ export class SimpleDrawDocument {
     for (let child_i = 0; child_i < tools.children.length; child_i++) {
 
       const tool = tools.children[child_i];
-      console.log(tool)
       tool.addEventListener("click", function(){
-        console.log("Hello From tool")
-        //doc.clicked_tool(tool.innerHTML.replace('<\/?p[^>]*>', ""))
+
+        const tool_p = <HTMLParagraphElement> tool.children[0]
+
+        console.log(tool_p.innerText)
+        doc.clicked_tool(tool_p.innerText)
+        doc.update()
       }); 
       
     }
