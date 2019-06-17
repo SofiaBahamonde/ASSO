@@ -71,10 +71,7 @@ class SVGAPI {
         for (const shape of objs) {
             if (shape instanceof shape_1.Circle) {
                 const circle = document.createElementNS(xmlns, "circle");
-                if (shape.hightlighted)
-                    circle.setAttribute('style', 'stroke: red; fill: white');
-                else
-                    circle.setAttribute('style', 'stroke: black; fill: white');
+                this.setStyle(shape, circle);
                 circle.setAttribute("cx", shape.points[0].toString());
                 circle.setAttribute("cy", shape.points[1].toString());
                 circle.setAttribute("r", shape.radius.toString());
@@ -82,10 +79,7 @@ class SVGAPI {
             }
             else if (shape instanceof shape_1.Polygon || shape instanceof shape_1.Rectangle) {
                 const polygon = document.createElementNS(xmlns, "polygon");
-                if (shape.hightlighted)
-                    polygon.setAttribute('style', 'stroke: red; fill: white');
-                else
-                    polygon.setAttribute('style', 'stroke: black; fill: white');
+                this.setStyle(shape, polygon);
                 var textPoints = '';
                 for (var item = 0; item < shape.points.length - 1; item += 2)
                     textPoints += shape.points[item] + ',' + shape.points[item + 1] + ' ';
@@ -101,13 +95,25 @@ class SVGAPI {
             this.factor = this.factor * factor;
     }
 }
-class SVGRender extends Render {
-    constructor() {
-        super(new SVGAPI());
+class SVGWireframeAPI extends SVGAPI {
+    setStyle(shape, element) {
+        if (shape.hightlighted)
+            element.setAttribute('style', 'stroke: ' + shape.color + '; stroke-width: 0.8%; fill: white');
+        else
+            element.setAttribute('style', 'stroke: ' + shape.color + '; fill: white');
     }
 }
-exports.SVGRender = SVGRender;
-class WireFrameAPI {
+exports.SVGWireframeAPI = SVGWireframeAPI;
+class SVGFillAPI extends SVGAPI {
+    setStyle(shape, element) {
+        if (shape.hightlighted)
+            element.setAttribute('style', 'stroke: red; stroke-width: 0.8%; fill:  ' + shape.color);
+        else
+            element.setAttribute('style', 'stroke: ' + shape.color + '; fill:  ' + shape.color);
+    }
+}
+exports.SVGFillAPI = SVGFillAPI;
+class CanvasAPI {
     draw(...objs) {
         this.canvas = document.getElementById('canvas');
         this.ctx = this.canvas.getContext('2d');
@@ -117,13 +123,6 @@ class WireFrameAPI {
                 this.ctx.beginPath();
                 this.ctx.arc(shape.points[0], shape.points[1], shape.radius, 0, 2 * Math.PI);
                 this.ctx.closePath();
-                if (shape.hightlighted) {
-                    this.ctx.strokeStyle = "red";
-                }
-                this.ctx.stroke();
-                if (shape.hightlighted) {
-                    this.ctx.strokeStyle = "grey";
-                }
             }
             else if (shape instanceof shape_1.Polygon || shape instanceof shape_1.Rectangle) {
                 this.ctx.beginPath();
@@ -132,15 +131,8 @@ class WireFrameAPI {
                     this.ctx.lineTo(shape.points[item], shape.points[item + 1]);
                 }
                 this.ctx.closePath();
-                if (shape.hightlighted) {
-                    this.ctx.strokeStyle = "red";
-                }
-                this.ctx.stroke();
-                if (shape.hightlighted) {
-                    //this.ctx.strokeStyle = "grey";
-                    this.ctx.strokeStyle = shape.color.toString();
-                }
             }
+            this.drawShape(shape);
         }
     }
     zoom(factor, positive) {
@@ -156,11 +148,29 @@ class WireFrameAPI {
         this.factor = factor;
     }
 }
-exports.WireFrameAPI = WireFrameAPI;
-class CanvasRender extends Render {
-    constructor(drawAPI) {
-        super(drawAPI);
+class CanvasWireframeAPI extends CanvasAPI {
+    drawShape(shape) {
+        this.ctx.strokeStyle = shape.color;
+        if (shape.hightlighted) {
+            this.ctx.lineWidth = 3;
+        }
+        else {
+            this.ctx.lineWidth = 1;
+        }
+        this.ctx.stroke();
     }
 }
-exports.CanvasRender = CanvasRender;
+exports.CanvasWireframeAPI = CanvasWireframeAPI;
+class CanvasFillAPI extends CanvasAPI {
+    drawShape(shape) {
+        this.ctx.fillStyle = shape.color;
+        this.ctx.fill();
+        if (shape.hightlighted) {
+            this.ctx.lineWidth = 3;
+            this.ctx.strokeStyle = "red";
+            this.ctx.stroke();
+        }
+    }
+}
+exports.CanvasFillAPI = CanvasFillAPI;
 //# sourceMappingURL=render.js.map

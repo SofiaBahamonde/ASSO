@@ -1,15 +1,15 @@
 import { SimpleDrawDocument } from './document'
-import { CanvasRender, SVGRender, InterfaceRender, WireFrameAPI } from './render';
+import { InterfaceRender, CanvasFillAPI, CanvasWireframeAPI, Render , SVGWireframeAPI, SVGFillAPI} from './render';
 import {Interpreter} from './interperter';
 import { ToolBox } from './toolbox';
 import { MoveTool, PaintTool } from './tool';
 import { Layers } from './layer';
-import { BMP, XML, FileIO } from './fileio';
+import { TXT, XML, FileIO } from './fileio';
 
 const sdd = new SimpleDrawDocument(update)
 
-const canvasrender = new CanvasRender(new WireFrameAPI())
-const svgrender = new SVGRender()
+const canvasrender = new Render(new CanvasWireframeAPI())
+const svgrender = new Render(new SVGWireframeAPI())
 const uirender = new InterfaceRender()
 
 function update(){
@@ -20,8 +20,8 @@ function update(){
 
 var toolbox = new ToolBox()
 
-const movetool = new MoveTool("Move Tool", "movetool.png")
-const painttool = new PaintTool("Red", "Paint Tool", "painttool.png")
+const movetool = new MoveTool("Move Tool", sdd)
+const painttool = new PaintTool("Red", sdd)
 
 toolbox.add(movetool)
 toolbox.add(painttool)
@@ -89,9 +89,17 @@ zoomMinusBtn.addEventListener("click", () =>{
 const shapes = <HTMLSelectElement> document.getElementById("shape-dropdown")
 
 shapes.addEventListener("change", () =>{
-    if(shapes.value != "none"){
-        sdd.selectShape(shapes.value);
-    }
+ 
+    sdd.selectShape(shapes.value);
+    
+    update();
+})
+
+const views = <HTMLSelectElement> document.getElementById("views-dropdown")
+
+views.addEventListener("change", () =>{
+    canvasrender.setDrawAPI(new CanvasFillAPI());
+    svgrender.setDrawAPI(new SVGFillAPI());
     update();
 })
 
@@ -101,12 +109,12 @@ var importbtn = <HTMLButtonElement> document.getElementById("import");
 var exportbtn = <HTMLButtonElement> document.getElementById("export");
 var format_box = <HTMLButtonElement> document.getElementById("format-dropbox");
 
-var BMPexp = new BMP(100, 100)
+var TXTexp = new TXT(100, 100)
 var XMLexp = new XML()
 
 var option = document.createElement("OPTION");
-option.setAttribute("value","BMP");
-option.innerHTML = "BMP";
+option.setAttribute("value","TXT");
+option.innerHTML = "TXT";
 format_box.appendChild(option);
 
 var option = document.createElement("OPTION");
@@ -116,8 +124,8 @@ format_box.appendChild(option);
 
 function retFileIO(name:String): FileIO{
     
-    if(name == "BMP")
-        return BMPexp
+    if(name == "TXT")
+        return TXTexp
     else if (name == "XML")
         return XMLexp
     

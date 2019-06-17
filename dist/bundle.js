@@ -120,7 +120,6 @@ class SimpleDrawDocument {
         for (var shape of this.getElemsToDraw()) {
             if (shape.getID() == shape_id) {
                 shape.setHighlight(true);
-                this.selectedShape = shape;
             }
             else {
                 shape.setHighlight(false);
@@ -151,8 +150,6 @@ class SimpleDrawDocument {
                 child.remove();
             }
         }
-        console.log("REMOVING");
-        //this.objects = this.objects.filter(o => o !== shape)
         this.getLayers().removeObject(shape);
     }
     do(a) {
@@ -313,7 +310,8 @@ exports.SimpleDrawDocument = SimpleDrawDocument;
 },{"./actions":1,"./layer":5,"./toolbox":10,"./undo":11}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-class BMP {
+const shape_1 = require("./shape");
+class TXT {
     constructor(sizex, sizey) {
         console.log("Init of BMP FileIO");
     }
@@ -322,13 +320,31 @@ class BMP {
         return Array();
     }
     export(shapes) {
-        console.log("Exporting Many shapes in BMP");
+        var fileData = '';
+        for (var shape in shapes) {
+            var shapeName = '';
+            if (shapes[shape] instanceof shape_1.Rectangle)
+                shapeName = "Rectangle";
+            else if (shapes[shape] instanceof shape_1.Circle)
+                shapeName = "Circle";
+            else if (shapes[shape] instanceof shape_1.Polygon)
+                shapeName = "Polygon";
+            fileData += shapes[shape].getID() + ' ' + shapes[shape].color + ' ' + shapeName + ' ' + shapes[shape].points + shapes[shape].getUnique() + '\n';
+        }
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(fileData));
+        element.setAttribute('download', 'save.txt');
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
         return true;
     }
 }
-exports.BMP = BMP;
+exports.TXT = TXT;
 class XML {
     constructor() {
+        this.doc = document.implementation.createDocument('', '', null);
         console.log("Init of XML FileIO");
     }
     import(fileloc) {
@@ -336,13 +352,41 @@ class XML {
         return Array();
     }
     export(shapes) {
-        console.log("Exporting Many shapes in XML");
+        let xmlData = this.doc.createElement('objects');
+        for (var shape in shapes) {
+            var shapeName = '';
+            if (shapes[shape] instanceof shape_1.Rectangle) {
+                var e = this.doc.createElement('rect');
+                shapeName = "Rectangle";
+            }
+            if (shapes[shape] instanceof shape_1.Circle) {
+                var e = this.doc.createElement('circ');
+                shapeName = "Circle";
+            }
+            if (shapes[shape] instanceof shape_1.Polygon) {
+                var e = this.doc.createElement('poly');
+                shapeName = "Polygon";
+            }
+            e.setAttribute('id', shapes[shape].getID());
+            e.setAttribute('color', shapes[shape].color.toString());
+            e.setAttribute('name', shapeName.toString());
+            e.setAttribute('points', shapes[shape].points.toString());
+            e.setAttribute('unique', shapes[shape].getUnique());
+            xmlData.appendChild(e);
+        }
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(xmlData)));
+        element.setAttribute('download', 'save.xml');
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
         return true;
     }
 }
 exports.XML = XML;
 
-},{}],4:[function(require,module,exports){
+},{"./shape":8}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Interpreter;
@@ -377,6 +421,9 @@ var Interpreter;
                 case 'zoom':
                     let zoomExpression = new ZoomExpression(context.command[1]);
                     zoomExpression.interpret(context);
+                case 'fill':
+                    let fillExpression = new FillExpression(context.command);
+                    fillExpression.interpret(context);
                 default:
                     break;
             }
@@ -472,6 +519,14 @@ var Interpreter;
             context.document.zoom([context.svg, context.canvas], this.factor);
         }
     }
+    class FillExpression {
+        constructor(command) {
+            this.color = command[2];
+            this.shape_id = command[3];
+        }
+        interpret(context) {
+        }
+    }
 })(Interpreter = exports.Interpreter || (exports.Interpreter = {}));
 
 },{}],5:[function(require,module,exports){
@@ -488,6 +543,9 @@ class Layer {
     }
     getShapes() {
         return this.objects;
+    }
+    removeShape(i) {
+        this.objects.splice(i, 1);
     }
     addShapes(shapes) {
         shapes.forEach(element => {
@@ -518,14 +576,17 @@ class Layers {
     getLayers() {
         return this.layers;
     }
-    removeObject(sh_toremove) {
-        this.layers.forEach(layer => {
-            layer.getShapes().forEach(sh => {
-                if (sh.getID() == sh_toremove.getID())
-                    layer.getShapes().filter(o => o !== sh);
-                return;
-            });
-        });
+    removeObject(shape) {
+        console.log("remove object");
+        for (let l of this.layers) {
+            let objects = l.getShapes();
+            for (let i = 0; i < objects.length; i++) {
+                if (objects[i].getID() == shape.getID()) {
+                    l.removeShape(i);
+                    break;
+                }
+            }
+        }
     }
     getSortedShapes() {
         let objs = Array();
@@ -615,10 +676,7 @@ class SVGAPI {
         for (const shape of objs) {
             if (shape instanceof shape_1.Circle) {
                 const circle = document.createElementNS(xmlns, "circle");
-                if (shape.hightlighted)
-                    circle.setAttribute('style', 'stroke: red; fill: white');
-                else
-                    circle.setAttribute('style', 'stroke: black; fill: white');
+                this.setStyle(shape, circle);
                 circle.setAttribute("cx", shape.points[0].toString());
                 circle.setAttribute("cy", shape.points[1].toString());
                 circle.setAttribute("r", shape.radius.toString());
@@ -626,10 +684,7 @@ class SVGAPI {
             }
             else if (shape instanceof shape_1.Polygon || shape instanceof shape_1.Rectangle) {
                 const polygon = document.createElementNS(xmlns, "polygon");
-                if (shape.hightlighted)
-                    polygon.setAttribute('style', 'stroke: red; fill: white');
-                else
-                    polygon.setAttribute('style', 'stroke: black; fill: white');
+                this.setStyle(shape, polygon);
                 var textPoints = '';
                 for (var item = 0; item < shape.points.length - 1; item += 2)
                     textPoints += shape.points[item] + ',' + shape.points[item + 1] + ' ';
@@ -645,13 +700,25 @@ class SVGAPI {
             this.factor = this.factor * factor;
     }
 }
-class SVGRender extends Render {
-    constructor() {
-        super(new SVGAPI());
+class SVGWireframeAPI extends SVGAPI {
+    setStyle(shape, element) {
+        if (shape.hightlighted)
+            element.setAttribute('style', 'stroke: ' + shape.color + '; stroke-width: 0.8%; fill: white');
+        else
+            element.setAttribute('style', 'stroke: ' + shape.color + '; fill: white');
     }
 }
-exports.SVGRender = SVGRender;
-class WireFrameAPI {
+exports.SVGWireframeAPI = SVGWireframeAPI;
+class SVGFillAPI extends SVGAPI {
+    setStyle(shape, element) {
+        if (shape.hightlighted)
+            element.setAttribute('style', 'stroke: red; stroke-width: 0.8%; fill:  ' + shape.color);
+        else
+            element.setAttribute('style', 'stroke: ' + shape.color + '; fill:  ' + shape.color);
+    }
+}
+exports.SVGFillAPI = SVGFillAPI;
+class CanvasAPI {
     draw(...objs) {
         this.canvas = document.getElementById('canvas');
         this.ctx = this.canvas.getContext('2d');
@@ -661,13 +728,6 @@ class WireFrameAPI {
                 this.ctx.beginPath();
                 this.ctx.arc(shape.points[0], shape.points[1], shape.radius, 0, 2 * Math.PI);
                 this.ctx.closePath();
-                if (shape.hightlighted) {
-                    this.ctx.strokeStyle = "red";
-                }
-                this.ctx.stroke();
-                if (shape.hightlighted) {
-                    this.ctx.strokeStyle = "grey";
-                }
             }
             else if (shape instanceof shape_1.Polygon || shape instanceof shape_1.Rectangle) {
                 this.ctx.beginPath();
@@ -676,15 +736,8 @@ class WireFrameAPI {
                     this.ctx.lineTo(shape.points[item], shape.points[item + 1]);
                 }
                 this.ctx.closePath();
-                if (shape.hightlighted) {
-                    this.ctx.strokeStyle = "red";
-                }
-                this.ctx.stroke();
-                if (shape.hightlighted) {
-                    //this.ctx.strokeStyle = "grey";
-                    this.ctx.strokeStyle = shape.color.toString();
-                }
             }
+            this.drawShape(shape);
         }
     }
     zoom(factor, positive) {
@@ -700,13 +753,31 @@ class WireFrameAPI {
         this.factor = factor;
     }
 }
-exports.WireFrameAPI = WireFrameAPI;
-class CanvasRender extends Render {
-    constructor(drawAPI) {
-        super(drawAPI);
+class CanvasWireframeAPI extends CanvasAPI {
+    drawShape(shape) {
+        this.ctx.strokeStyle = shape.color;
+        if (shape.hightlighted) {
+            this.ctx.lineWidth = 3;
+        }
+        else {
+            this.ctx.lineWidth = 1;
+        }
+        this.ctx.stroke();
     }
 }
-exports.CanvasRender = CanvasRender;
+exports.CanvasWireframeAPI = CanvasWireframeAPI;
+class CanvasFillAPI extends CanvasAPI {
+    drawShape(shape) {
+        this.ctx.fillStyle = shape.color;
+        this.ctx.fill();
+        if (shape.hightlighted) {
+            this.ctx.lineWidth = 3;
+            this.ctx.strokeStyle = "red";
+            this.ctx.stroke();
+        }
+    }
+}
+exports.CanvasFillAPI = CanvasFillAPI;
 
 },{"./layer":5,"./shape":8,"./toolbox":10}],7:[function(require,module,exports){
 "use strict";
@@ -719,8 +790,8 @@ const tool_1 = require("./tool");
 const layer_1 = require("./layer");
 const fileio_1 = require("./fileio");
 const sdd = new document_1.SimpleDrawDocument(update);
-const canvasrender = new render_1.CanvasRender(new render_1.WireFrameAPI());
-const svgrender = new render_1.SVGRender();
+const canvasrender = new render_1.Render(new render_1.CanvasWireframeAPI());
+const svgrender = new render_1.Render(new render_1.SVGWireframeAPI());
 const uirender = new render_1.InterfaceRender();
 function update() {
     sdd.draw(canvasrender);
@@ -728,8 +799,8 @@ function update() {
     sdd.drawUI(uirender);
 }
 var toolbox = new toolbox_1.ToolBox();
-const movetool = new tool_1.MoveTool("Move Tool", "movetool.png");
-const painttool = new tool_1.PaintTool("Red", "Paint Tool", "painttool.png");
+const movetool = new tool_1.MoveTool("Move Tool", sdd);
+const painttool = new tool_1.PaintTool("Red", sdd);
 toolbox.add(movetool);
 toolbox.add(painttool);
 sdd.addUIElem(toolbox);
@@ -777,27 +848,31 @@ zoomMinusBtn.addEventListener("click", () => {
 });
 const shapes = document.getElementById("shape-dropdown");
 shapes.addEventListener("change", () => {
-    if (shapes.value != "none") {
-        sdd.selectShape(shapes.value);
-    }
+    sdd.selectShape(shapes.value);
+    update();
+});
+const views = document.getElementById("views-dropdown");
+views.addEventListener("change", () => {
+    canvasrender.setDrawAPI(new render_1.CanvasFillAPI());
+    svgrender.setDrawAPI(new render_1.SVGFillAPI());
     update();
 });
 var importbtn = document.getElementById("import");
 var exportbtn = document.getElementById("export");
 var format_box = document.getElementById("format-dropbox");
-var BMPexp = new fileio_1.BMP(100, 100);
+var TXTexp = new fileio_1.TXT(100, 100);
 var XMLexp = new fileio_1.XML();
 var option = document.createElement("OPTION");
-option.setAttribute("value", "BMP");
-option.innerHTML = "BMP";
+option.setAttribute("value", "TXT");
+option.innerHTML = "TXT";
 format_box.appendChild(option);
 var option = document.createElement("OPTION");
 option.setAttribute("value", "XML");
 option.innerHTML = "XML";
 format_box.appendChild(option);
 function retFileIO(name) {
-    if (name == "BMP")
-        return BMPexp;
+    if (name == "TXT")
+        return TXTexp;
     else if (name == "XML")
         return XMLexp;
     return null;
@@ -884,6 +959,9 @@ class Rectangle extends Shape {
     getID() {
         return "rect_" + this.id;
     }
+    getUnique() {
+        return ' ' + this.width + ' ' + this.height;
+    }
 }
 Rectangle.idCounter = 0;
 exports.Rectangle = Rectangle;
@@ -897,6 +975,9 @@ class Circle extends Shape {
     getID() {
         return "circle_" + this.id;
     }
+    getUnique() {
+        return ' ' + this.radius;
+    }
 }
 Circle.idCounter = 0;
 exports.Circle = Circle;
@@ -908,6 +989,9 @@ class Polygon extends Shape {
     }
     getID() {
         return "polygon_" + this.id;
+    }
+    getUnique() {
+        return ' ';
     }
 }
 Polygon.idCounter = 0;
@@ -928,9 +1012,9 @@ class ActionParam {
 }
 exports.ActionParam = ActionParam;
 class Tool {
-    constructor(name, img_loc) {
+    constructor(name, sdd) {
         this.name = name;
-        this.img_loc = img_loc;
+        this.sdd = sdd;
         this.init_shape = null;
     }
     action(action_para) {
@@ -965,16 +1049,14 @@ class MoveTool extends Tool {
         return true;
     }
     sendInput(x, y, sh) {
-        this.init_shape.translate(x, y);
+        this.sdd.translate(this.init_shape.getID(), x, y);
         return true;
     }
 }
 exports.MoveTool = MoveTool;
 class PaintTool extends Tool {
-    constructor(color, name, img_loc) {
-        super(name, img_loc);
-        this.name = name;
-        this.img_loc = img_loc;
+    constructor() {
+        super(...arguments);
         this.color = "blue";
     }
     action(action_para) {

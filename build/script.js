@@ -8,8 +8,8 @@ const tool_1 = require("./tool");
 const layer_1 = require("./layer");
 const fileio_1 = require("./fileio");
 const sdd = new document_1.SimpleDrawDocument(update);
-const canvasrender = new render_1.CanvasRender(new render_1.WireFrameAPI());
-const svgrender = new render_1.SVGRender();
+const canvasrender = new render_1.Render(new render_1.CanvasWireframeAPI());
+const svgrender = new render_1.Render(new render_1.SVGWireframeAPI());
 const uirender = new render_1.InterfaceRender();
 function update() {
     sdd.draw(canvasrender);
@@ -17,8 +17,8 @@ function update() {
     sdd.drawUI(uirender);
 }
 var toolbox = new toolbox_1.ToolBox();
-const movetool = new tool_1.MoveTool("Move Tool", "movetool.png");
-const painttool = new tool_1.PaintTool("Red", "Paint Tool", "painttool.png");
+const movetool = new tool_1.MoveTool("Move Tool", sdd);
+const painttool = new tool_1.PaintTool("Red", sdd);
 toolbox.add(movetool);
 toolbox.add(painttool);
 sdd.addUIElem(toolbox);
@@ -66,27 +66,31 @@ zoomMinusBtn.addEventListener("click", () => {
 });
 const shapes = document.getElementById("shape-dropdown");
 shapes.addEventListener("change", () => {
-    if (shapes.value != "none") {
-        sdd.selectShape(shapes.value);
-    }
+    sdd.selectShape(shapes.value);
+    update();
+});
+const views = document.getElementById("views-dropdown");
+views.addEventListener("change", () => {
+    canvasrender.setDrawAPI(new render_1.CanvasFillAPI());
+    svgrender.setDrawAPI(new render_1.SVGFillAPI());
     update();
 });
 var importbtn = document.getElementById("import");
 var exportbtn = document.getElementById("export");
 var format_box = document.getElementById("format-dropbox");
-var BMPexp = new fileio_1.BMP(100, 100);
+var TXTexp = new fileio_1.TXT(100, 100);
 var XMLexp = new fileio_1.XML();
 var option = document.createElement("OPTION");
-option.setAttribute("value", "BMP");
-option.innerHTML = "BMP";
+option.setAttribute("value", "TXT");
+option.innerHTML = "TXT";
 format_box.appendChild(option);
 var option = document.createElement("OPTION");
 option.setAttribute("value", "XML");
 option.innerHTML = "XML";
 format_box.appendChild(option);
 function retFileIO(name) {
-    if (name == "BMP")
-        return BMPexp;
+    if (name == "TXT")
+        return TXTexp;
     else if (name == "XML")
         return XMLexp;
     return null;

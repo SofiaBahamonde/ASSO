@@ -1,7 +1,7 @@
 
 export abstract class Shape {
  
-    public color:String = "black"
+    public color:string = "black"
     public hightlighted = false
 
     constructor(public points: Array<number>) { }
@@ -45,6 +45,7 @@ export abstract class Shape {
     }
 
     abstract getID() : string
+    abstract getUnique() : string
  
 }
 
@@ -67,6 +68,10 @@ export class Rectangle extends Shape{
         return "rect_" + this.id
      }
 
+     getUnique() :string {
+         return ' ' + this.width + ' ' + this.height
+     }
+
 }
 
 export class Circle extends Shape {
@@ -81,6 +86,10 @@ export class Circle extends Shape {
     getID(): string {
         return "circle_" + this.id
      }
+
+     getUnique() :string {
+        return ' ' +  this.radius  
+    }
 }
 
 export class Polygon extends Shape {
@@ -95,4 +104,8 @@ export class Polygon extends Shape {
     getID(): string {
         return "polygon_" + this.id
      }
+
+     getUnique() :string {
+        return ' ' 
+    }
 }

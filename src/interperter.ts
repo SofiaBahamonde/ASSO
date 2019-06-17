@@ -1,15 +1,15 @@
 import { SimpleDrawDocument } from './document'
-import { CanvasRender  , SVGRender} from './render';
+import { Render } from './render';
 
 export namespace Interpreter {
 
     export class Context {
         public document :  SimpleDrawDocument;
-        public canvas : CanvasRender;
-        public svg : SVGRender
+        public canvas : Render;
+        public svg : Render
         public command : Array<string>;
         
-        constructor(doc : SimpleDrawDocument, can : CanvasRender, svg : SVGRender, commands : string){
+        constructor(doc : SimpleDrawDocument, can : Render, svg : Render, commands : string){
             this.document = doc;
             this.canvas = can;
             this.svg = svg;
@@ -46,6 +46,9 @@ export namespace Interpreter {
                 case 'zoom':
                     let zoomExpression = new ZoomExpression(context.command[1]);
                     zoomExpression.interpret(context);
+                case 'fill':
+                    let fillExpression = new FillExpression(context.command);
+                    fillExpression.interpret(context)
                 default:
                     break;
             }
@@ -195,6 +198,20 @@ export namespace Interpreter {
         public interpret(context: Context): void{
             
             context.document.zoom([context.svg, context.canvas], this.factor);
+        }
+    }
+
+    class FillExpression implements Expression{
+        private color: string;
+        private shape_id : string;
+        
+        constructor(command: Array<string>){
+            this.color = command[2];
+            this.shape_id = command[3];
+        }
+
+        interpret(context : Context){
+            
         }
     }
 

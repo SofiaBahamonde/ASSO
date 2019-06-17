@@ -1,4 +1,5 @@
 import { Shape } from "shape";
+import { SimpleDrawDocument } from "document";
 
 /*
     Tool is going to be instanced using factory design pattern and each has the virtual method action()
@@ -15,7 +16,7 @@ export abstract class Tool{
 
     protected init_shape:Shape
 
-    constructor(public name:String, public img_loc:String ) {
+    constructor(public name:String, public sdd:SimpleDrawDocument ) {
 
         this.init_shape = null
 
@@ -66,7 +67,8 @@ export class MoveTool extends Tool{
 
     sendInput(x:number, y:number, sh:Shape): boolean{
 
-        this.init_shape.translate(x, y)
+
+        this.sdd.translate(this.init_shape.getID(), x, y);
         return true
     }
 
@@ -75,11 +77,7 @@ export class MoveTool extends Tool{
 
 export class PaintTool extends Tool{
 
-    public color:String = "blue"
-
-    constructor(color:String, public name:String, public img_loc:String ){
-        super(name, img_loc)
-    }
+    public color:string = "blue"
 
     action(action_para:ActionParam) : boolean{
         action_para.objects_sel.forEach(element => {

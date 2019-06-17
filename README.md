@@ -55,3 +55,73 @@ So, for **our project** we intend to do the following ones:
 * Daniel Machado
 * Gonçalo Moreno
 * Sofia Alves
+
+
+# Implementation Details
+
+During the coding of SimpleDraw we consired the following points important for understading of the project and its implementation.
+
+## Features Done
+
+* Shapes drawing in Canvas and SVG
+* Possible shapes : rectangle, circle, triangle, polygon
+* **Different layers view ?**
+* **Adds new shapes in different layers ?**
+* New shapes are created in the console
+* Undo/Redo tool for all actions
+* Move and rotate objects both in console and toolbox
+* Zoom of both scenes (Canvas and SVG)
+* **Wireframe tool ?**
+* Exports file both in TXT and XML
+* **Impors file ?**
+
+
+## Design patterns
+
+### Architectural
+
+#### MVC
+
+The basis of SimpleDraw is a MVC (Model View Controller), the view is done on render.ts, the model are the layers and shapes and (layer.ts and shape.ts) and the controller is the document, document.ts
+
+![UML](https://github.com/sofia-bahamonde/feup-asso/blob/master/MVC.jpg)
+
+
+### Behavioral & Structural
+
+#### Bridge
+
+In order to render the shapes into the canvas we used the bridge design pattern.
+Each canvas has a renderer, that contains methods for zoom and drawing, drawing on ther other hand is done by APIs each representing a different view style.
+
+![UML](https://github.com/sofia-bahamonde/feup-asso/blob/master/bridge.jpg)
+
+#### Interpreter
+
+For the commands written in the command line we used the Interpretator pattern. A pattern that specifies how to evaluate sentences in a language. The basic idea is to have a class for each symbol (terminal or nonterminal) in a specialized computer language and make it simpler for the user to interact with the program. Also allows us to easily implement the Import function since we only need to build an interface between the file and our Interpreter.
+
+#### Memento
+
+For the undo and redo operations our implementation makes use of the Memento design pattern. 
+((TIVA FAz ESTE ))
+
+#### State
+
+Each tool requires to have its own internal state, more specifically the inital object to edit, at each click of the canvas the document object sends the selected tool the position, the tool does it updates to itself and also the shapes.
+
+#### Strategy
+
+For the FileIO, exporting in different formats we used the strategy pattern, the different exporters/importers can be changed at runtime.
+
+![UML](https://github.com/sofia-bahamonde/feup-asso/blob/master/strategy.jpg)
+
+
+#### Template method
+
+Template method has a recurrent apperance, used in the definition of the various polygons, tools and also rendereres.
+
+
+
+
+
+

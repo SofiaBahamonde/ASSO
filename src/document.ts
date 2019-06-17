@@ -12,7 +12,6 @@ export class SimpleDrawDocument {
   objects = new Array<Shape>()
   undoManager = new UndoManager();
   shapeDropbox = document.getElementById("shape-dropdown");
-  selectedShape : Shape
 
   uielems = new Array<InterfaceObj>();
 
@@ -47,7 +46,6 @@ export class SimpleDrawDocument {
 
       if(shape.getID() == shape_id){
         shape.setHighlight(true);
-        this.selectedShape = shape;
       }else{
         shape.setHighlight(false)
       }
@@ -88,9 +86,6 @@ export class SimpleDrawDocument {
       
     }
 
-    console.log("REMOVING")
-
-    //this.objects = this.objects.filter(o => o !== shape)
     this.getLayers().removeObject(shape)
   }
 

@@ -12,9 +12,9 @@ class ActionParam {
 }
 exports.ActionParam = ActionParam;
 class Tool {
-    constructor(name, img_loc) {
+    constructor(name, sdd) {
         this.name = name;
-        this.img_loc = img_loc;
+        this.sdd = sdd;
         this.init_shape = null;
     }
     action(action_para) {
@@ -49,16 +49,14 @@ class MoveTool extends Tool {
         return true;
     }
     sendInput(x, y, sh) {
-        this.init_shape.translate(x, y);
+        this.sdd.translate(this.init_shape.getID(), x, y);
         return true;
     }
 }
 exports.MoveTool = MoveTool;
 class PaintTool extends Tool {
-    constructor(color, name, img_loc) {
-        super(name, img_loc);
-        this.name = name;
-        this.img_loc = img_loc;
+    constructor() {
+        super(...arguments);
         this.color = "blue";
     }
     action(action_para) {

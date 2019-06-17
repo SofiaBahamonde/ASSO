@@ -18,6 +18,10 @@ export class Layer{
         return this.objects
     }
 
+    removeShape(i: number){
+        this.objects.splice(i,1);
+    }
+
     addShapes(shapes: Shape[]) {
         shapes.forEach(element => {
             this.addShape(element)
@@ -59,14 +63,20 @@ export class Layers implements InterfaceObj{
         return this.layers
     }
 
-    removeObject(sh_toremove:Shape): void{
-        this.layers.forEach(layer => {
-            layer.getShapes().forEach(sh =>{
-                if(sh.getID() == sh_toremove.getID())
-                layer.getShapes().filter(o => o !== sh)
-                return
-            })
-        });
+    removeObject(shape :Shape): void{
+        console.log("remove object");
+
+        for(let l of this.layers){
+            let objects = l.getShapes();
+            for(let i =0; i < objects.length; i++){
+                if(objects[i].getID() == shape.getID()){
+                    l.removeShape(i);
+                    break;
+                }
+            }
+
+        }
+
     }
 
     getSortedShapes(): Array<Shape>{
