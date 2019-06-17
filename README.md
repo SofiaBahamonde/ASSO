@@ -65,15 +65,15 @@ During the coding of SimpleDraw we consired the following points important for u
 
 * Shapes drawing in Canvas and SVG
 * Possible shapes : rectangle, circle, triangle, polygon
-* **Different layers view ?
-* **Adds new shapes in different layers ?
+* **Different layers view ?**
+* **Adds new shapes in different layers ?**
 * New shapes are created in the console
 * Undo/Redo tool for all actions
 * Move and rotate objects both in console and toolbox
 * Zoom of both scenes (Canvas and SVG)
-* **Wireframe tool ?
+* **Wireframe tool ?**
 * Exports file both in TXT and XML
-* **Impors file ?
+* **Impors file ?**
 
 
 ## Design patterns
