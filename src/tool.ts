@@ -67,6 +67,7 @@ export class MoveTool extends Tool{
 
     sendInput(x:number, y:number, sh:Shape): boolean{
 
+
         this.sdd.translate(this.init_shape.getID(), x, y);
         return true
     }
@@ -76,9 +77,7 @@ export class MoveTool extends Tool{
 
 export class PaintTool extends Tool{
 
-    public color:String = "blue"
-
-
+    public color:string = "blue"
 
     action(action_para:ActionParam) : boolean{
         action_para.objects_sel.forEach(element => {

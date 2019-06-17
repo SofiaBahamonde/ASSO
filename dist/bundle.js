@@ -679,18 +679,18 @@ class SVGAPI {
 class SVGWireframeAPI extends SVGAPI {
     setStyle(shape, element) {
         if (shape.hightlighted)
-            element.setAttribute('style', 'stroke: red; fill: white');
+            element.setAttribute('style', 'stroke: ' + shape.color + '; stroke-width: 0.8%; fill: white');
         else
-            element.setAttribute('style', 'stroke: black; fill: white');
+            element.setAttribute('style', 'stroke: ' + shape.color + '; fill: white');
     }
 }
 exports.SVGWireframeAPI = SVGWireframeAPI;
 class SVGFillAPI extends SVGAPI {
     setStyle(shape, element) {
         if (shape.hightlighted)
-            element.setAttribute('style', 'stroke: red; fill: red');
+            element.setAttribute('style', 'stroke: red; stroke-width: 0.8%; fill:  ' + shape.color);
         else
-            element.setAttribute('style', 'stroke: black; fill: black');
+            element.setAttribute('style', 'stroke: ' + shape.color + '; fill:  ' + shape.color);
     }
 }
 exports.SVGFillAPI = SVGFillAPI;
@@ -731,11 +731,12 @@ class CanvasAPI {
 }
 class CanvasWireframeAPI extends CanvasAPI {
     drawShape(shape) {
+        this.ctx.strokeStyle = shape.color;
         if (shape.hightlighted) {
-            this.ctx.strokeStyle = "red";
+            this.ctx.lineWidth = 3;
         }
         else {
-            this.ctx.strokeStyle = "black";
+            this.ctx.lineWidth = 1;
         }
         this.ctx.stroke();
     }
@@ -743,10 +744,13 @@ class CanvasWireframeAPI extends CanvasAPI {
 exports.CanvasWireframeAPI = CanvasWireframeAPI;
 class CanvasFillAPI extends CanvasAPI {
     drawShape(shape) {
-        if (shape.hightlighted) {
-            this.ctx.fillStyle = "red";
-        }
+        this.ctx.fillStyle = shape.color;
         this.ctx.fill();
+        if (shape.hightlighted) {
+            this.ctx.lineWidth = 3;
+            this.ctx.strokeStyle = "red";
+            this.ctx.stroke();
+        }
     }
 }
 exports.CanvasFillAPI = CanvasFillAPI;
@@ -820,9 +824,7 @@ zoomMinusBtn.addEventListener("click", () => {
 });
 const shapes = document.getElementById("shape-dropdown");
 shapes.addEventListener("change", () => {
-    if (shapes.value != "none") {
-        sdd.selectShape(shapes.value);
-    }
+    sdd.selectShape(shapes.value);
     update();
 });
 const views = document.getElementById("views-dropdown");
@@ -1024,7 +1026,6 @@ class MoveTool extends Tool {
     }
     sendInput(x, y, sh) {
         this.sdd.translate(this.init_shape.getID(), x, y);
-        //    this.init_shape.translate(x, y)
         return true;
     }
 }

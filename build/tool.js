@@ -50,7 +50,6 @@ class MoveTool extends Tool {
     }
     sendInput(x, y, sh) {
         this.sdd.translate(this.init_shape.getID(), x, y);
-        //    this.init_shape.translate(x, y)
         return true;
     }
 }

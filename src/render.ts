@@ -147,18 +147,18 @@ abstract class SVGAPI implements DrawAPI{
 export  class SVGWireframeAPI extends SVGAPI{
     setStyle(shape: Shape, element: any){
         if(shape.hightlighted)
-        element.setAttribute('style', 'stroke: red; fill: white')
+        element.setAttribute('style', 'stroke: ' + shape.color + '; stroke-width: 0.8%; fill: white')
         else
-        element.setAttribute('style', 'stroke: black; fill: white')
+        element.setAttribute('style', 'stroke: ' + shape.color + '; fill: white')
     }
 }
 
 export  class SVGFillAPI extends SVGAPI{
     setStyle(shape: Shape, element: any){
         if(shape.hightlighted)
-        element.setAttribute('style', 'stroke: red; fill: red')
+        element.setAttribute('style', 'stroke: red; stroke-width: 0.8%; fill:  ' + shape.color)
         else
-        element.setAttribute('style', 'stroke: black; fill: black')
+        element.setAttribute('style', 'stroke: ' + shape.color + '; fill:  ' + shape.color)
     }
 }
 
@@ -217,10 +217,13 @@ abstract class CanvasAPI implements DrawAPI{
 export class CanvasWireframeAPI extends CanvasAPI{
     drawShape(shape: Shape){
 
+       
+        this.ctx.strokeStyle = shape.color
+        
         if(shape.hightlighted){
-            this.ctx.strokeStyle = "red";
+            this.ctx.lineWidth = 3;
         }else{
-            this.ctx.strokeStyle = "black"
+            this.ctx.lineWidth = 1;
         }
 
         this.ctx.stroke()
@@ -231,11 +234,17 @@ export class CanvasWireframeAPI extends CanvasAPI{
 export class CanvasFillAPI extends CanvasAPI{
 
     drawShape(shape: Shape){
+        this.ctx.fillStyle = shape.color
+        this.ctx.fill()
+
         if(shape.hightlighted){
-            this.ctx.fillStyle = "red";
+            this.ctx.lineWidth = 3;
+            this.ctx.strokeStyle = "red";
+            this.ctx.stroke()
         }
 
-        this.ctx.fill()
+        
+       
     }
 
 }
