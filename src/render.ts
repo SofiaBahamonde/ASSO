@@ -23,7 +23,7 @@ export class InterfaceRender{
                     elem.getTools().forEach(tool => {
                         
                        // tb_html += "<div onclick=\"clicked_tool('" + tool.name +"')\" > <p> " + tool.name + " </p> </div>"
-                       tb_html += "<div > <p> " + tool.name + " </p> </div>"
+                       tb_html += "<div > <button class='btn btn-outline-primary' style='width:-webkit-fill-available; margin-bottom:1em;'> " + tool.name + " </button> </div>"
 
                     });
 
@@ -196,13 +196,13 @@ abstract class CanvasAPI implements DrawAPI{
     }
 
     zoom(factor: number, positive : boolean){
-        console.log(factor)
-        console.log(1/factor)
         if(positive){
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.ctx.scale(1/this.factor, 1/this.factor);
             this.ctx.scale(factor,factor);
         }
         else{
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.ctx.scale(1/factor,1/factor);
         }
 

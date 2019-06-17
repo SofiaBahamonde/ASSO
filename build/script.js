@@ -73,8 +73,14 @@ shapes.addEventListener("change", () => {
 });
 const views = document.getElementById("views-dropdown");
 views.addEventListener("change", () => {
-    canvasrender.setDrawAPI(new render_1.CanvasFillAPI());
-    svgrender.setDrawAPI(new render_1.SVGFillAPI());
+    if (canvasrender.getDrawAPI() instanceof render_1.CanvasWireframeAPI) {
+        canvasrender.setDrawAPI(new render_1.CanvasFillAPI());
+        svgrender.setDrawAPI(new render_1.SVGFillAPI());
+    }
+    else if (canvasrender.getDrawAPI() instanceof render_1.CanvasFillAPI) {
+        canvasrender.setDrawAPI(new render_1.CanvasWireframeAPI());
+        svgrender.setDrawAPI(new render_1.SVGWireframeAPI());
+    }
     update();
 });
 var importbtn = document.getElementById("import");

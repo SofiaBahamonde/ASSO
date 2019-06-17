@@ -271,9 +271,7 @@ export class SimpleDrawDocument {
 
 
   clicked_tool(tool_name: String) {
-   console.log("Clicked TOOL:" + tool_name)
     this.getToolbox().clicked_tool(tool_name, this.getSelShape())
-
 }
 
 
@@ -288,8 +286,8 @@ export class SimpleDrawDocument {
       tool.addEventListener("click", function(){
 
         const tool_p = <HTMLParagraphElement> tool.children[0]
-
-        console.log(tool_p.innerText)
+        
+        
         doc.clicked_tool(tool_p.innerText)
         doc.update()
       }); 

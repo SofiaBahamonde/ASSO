@@ -264,7 +264,6 @@ class SimpleDrawDocument {
         return f_shape;
     }
     clicked_tool(tool_name) {
-        console.log("Clicked TOOL:" + tool_name);
         this.getToolbox().clicked_tool(tool_name, this.getSelShape());
     }
     setToolListeners() {
@@ -274,7 +273,6 @@ class SimpleDrawDocument {
             const tool = tools.children[child_i];
             tool.addEventListener("click", function () {
                 const tool_p = tool.children[0];
-                console.log(tool_p.innerText);
                 doc.clicked_tool(tool_p.innerText);
                 doc.update();
             });
@@ -594,7 +592,7 @@ class InterfaceRender {
                 let tb_html = "";
                 elem.getTools().forEach(tool => {
                     // tb_html += "<div onclick=\"clicked_tool('" + tool.name +"')\" > <p> " + tool.name + " </p> </div>"
-                    tb_html += "<div > <p> " + tool.name + " </p> </div>";
+                    tb_html += "<div > <button class='btn btn-outline-primary' style='width:-webkit-fill-available; margin-bottom:1em;'> " + tool.name + " </button> </div>";
                 });
                 toolbox_html.innerHTML = tb_html;
             }
@@ -717,13 +715,13 @@ class CanvasAPI {
         }
     }
     zoom(factor, positive) {
-        console.log(factor);
-        console.log(1 / factor);
         if (positive) {
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.ctx.scale(1 / this.factor, 1 / this.factor);
             this.ctx.scale(factor, factor);
         }
         else {
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.ctx.scale(1 / factor, 1 / factor);
         }
         this.factor = factor;
@@ -827,8 +825,14 @@ shapes.addEventListener("change", () => {
 });
 const views = document.getElementById("views-dropdown");
 views.addEventListener("change", () => {
-    canvasrender.setDrawAPI(new render_1.CanvasFillAPI());
-    svgrender.setDrawAPI(new render_1.SVGFillAPI());
+    if (canvasrender.getDrawAPI() instanceof render_1.CanvasWireframeAPI) {
+        canvasrender.setDrawAPI(new render_1.CanvasFillAPI());
+        svgrender.setDrawAPI(new render_1.SVGFillAPI());
+    }
+    else if (canvasrender.getDrawAPI() instanceof render_1.CanvasFillAPI) {
+        canvasrender.setDrawAPI(new render_1.CanvasWireframeAPI());
+        svgrender.setDrawAPI(new render_1.SVGWireframeAPI());
+    }
     update();
 });
 var importbtn = document.getElementById("import");
@@ -1023,8 +1027,7 @@ class MoveTool extends Tool {
         return true;
     }
     sendInput(x, y, sh) {
-        this.sdd.translate(this.init_shape.getID(), x, y);
-        //    this.init_shape.translate(x, y)
+        this.sdd.translate(this.init_shape.getID(), x - this.init_shape.points[0], y - this.init_shape.points[1]);
         return true;
     }
 }

@@ -174,7 +174,6 @@ class SimpleDrawDocument {
         return f_shape;
     }
     clicked_tool(tool_name) {
-        console.log("Clicked TOOL:" + tool_name);
         this.getToolbox().clicked_tool(tool_name, this.getSelShape());
     }
     setToolListeners() {
@@ -184,7 +183,6 @@ class SimpleDrawDocument {
             const tool = tools.children[child_i];
             tool.addEventListener("click", function () {
                 const tool_p = tool.children[0];
-                console.log(tool_p.innerText);
                 doc.clicked_tool(tool_p.innerText);
                 doc.update();
             });

@@ -67,7 +67,7 @@ export class MoveTool extends Tool{
 
     sendInput(x:number, y:number, sh:Shape): boolean{
 
-        this.sdd.translate(this.init_shape.getID(), x, y);
+        this.sdd.translate(this.init_shape.getID(), x - this.init_shape.points[0], y - this.init_shape.points[1]);
         return true
     }
 

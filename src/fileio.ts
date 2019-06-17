@@ -18,7 +18,18 @@ export class TXT implements FileIO {
 
 
     import(fileloc: String): Shape[] {
-        console.log("Importing from BMP")
+        // var file = document.getElementById("fileForUpload").files[0];
+        // if (file) {
+        //     var reader = new FileReader();
+        //     reader.readAsText(file, "UTF-8");
+        //     reader.onload = function (evt) {
+        //         document.getElementById("fileContents").innerHTML = evt.target.result;
+        //     }
+        //     reader.onerror = function (evt) {
+        //         document.getElementById("fileContents").innerHTML = "error reading file";
+        //     }
+        // }
+        
         return Array<Shape>()
     }
     export(shapes:Array<Shape>): boolean {

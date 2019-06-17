@@ -98,8 +98,14 @@ shapes.addEventListener("change", () =>{
 const views = <HTMLSelectElement> document.getElementById("views-dropdown")
 
 views.addEventListener("change", () =>{
-    canvasrender.setDrawAPI(new CanvasFillAPI());
-    svgrender.setDrawAPI(new SVGFillAPI());
+
+    if(canvasrender.getDrawAPI()  instanceof CanvasWireframeAPI ){
+        canvasrender.setDrawAPI(new CanvasFillAPI());
+        svgrender.setDrawAPI(new SVGFillAPI());
+    }else if(canvasrender.getDrawAPI()  instanceof CanvasFillAPI ){
+        canvasrender.setDrawAPI(new CanvasWireframeAPI());
+        svgrender.setDrawAPI(new SVGWireframeAPI());
+    }
     update();
 })
 
