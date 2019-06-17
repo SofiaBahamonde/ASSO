@@ -92,6 +92,15 @@ class SVGAPI {
                 c.setAttribute("r", shape.radius.toString());
                 svg.appendChild(c);
             }
+            else if (shape instanceof shape_1.Polygon) {
+                const polygon = document.createElementNS(xmlns, "polygon");
+                polygon.setAttribute('style', 'stroke: black; fill: white');
+                var textPoints = '';
+                for (var item = 0; item < shape.points.length - 1; item += 2)
+                    textPoints += shape.points[item] + ',' + shape.points[item + 1] + ' ';
+                polygon.setAttribute('points', textPoints);
+                svg.appendChild(polygon);
+            }
         }
     }
     zoom(factor, positive) {
