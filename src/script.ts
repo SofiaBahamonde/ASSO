@@ -1,5 +1,5 @@
 import { SimpleDrawDocument } from './document'
-import { CanvasRender, SVGRender, InterfaceRender, WireFrameAPI } from './render';
+import { InterfaceRender, CanvasFillAPI, CanvasWireframeAPI, Render , SVGWireframeAPI, SVGFillAPI} from './render';
 import {Interpreter} from './interperter';
 import { ToolBox } from './toolbox';
 import { MoveTool, PaintTool } from './tool';
@@ -8,8 +8,8 @@ import { BMP, XML, FileIO } from './fileio';
 
 const sdd = new SimpleDrawDocument(update)
 
-const canvasrender = new CanvasRender(new WireFrameAPI())
-const svgrender = new SVGRender()
+const canvasrender = new Render(new CanvasWireframeAPI())
+const svgrender = new Render(new SVGWireframeAPI())
 const uirender = new InterfaceRender()
 
 function update(){
@@ -92,6 +92,14 @@ shapes.addEventListener("change", () =>{
     if(shapes.value != "none"){
         sdd.selectShape(shapes.value);
     }
+    update();
+})
+
+const views = <HTMLSelectElement> document.getElementById("views-dropdown")
+
+views.addEventListener("change", () =>{
+    canvasrender.setDrawAPI(new CanvasFillAPI());
+    svgrender.setDrawAPI(new SVGFillAPI());
     update();
 })
 

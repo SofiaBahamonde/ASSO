@@ -8,8 +8,8 @@ const tool_1 = require("./tool");
 const layer_1 = require("./layer");
 const fileio_1 = require("./fileio");
 const sdd = new document_1.SimpleDrawDocument(update);
-const canvasrender = new render_1.CanvasRender(new render_1.WireFrameAPI());
-const svgrender = new render_1.SVGRender();
+const canvasrender = new render_1.Render(new render_1.CanvasWireframeAPI());
+const svgrender = new render_1.Render(new render_1.SVGWireframeAPI());
 const uirender = new render_1.InterfaceRender();
 function update() {
     sdd.draw(canvasrender);
@@ -69,6 +69,12 @@ shapes.addEventListener("change", () => {
     if (shapes.value != "none") {
         sdd.selectShape(shapes.value);
     }
+    update();
+});
+const views = document.getElementById("views-dropdown");
+views.addEventListener("change", () => {
+    canvasrender.setDrawAPI(new render_1.CanvasFillAPI());
+    svgrender.setDrawAPI(new render_1.SVGFillAPI());
     update();
 });
 var importbtn = document.getElementById("import");

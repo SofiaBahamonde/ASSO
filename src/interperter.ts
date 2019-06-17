@@ -1,15 +1,15 @@
 import { SimpleDrawDocument } from './document'
-import { CanvasRender  , SVGRender} from './render';
+import { Render } from './render';
 
 export namespace Interpreter {
 
     export class Context {
         public document :  SimpleDrawDocument;
-        public canvas : CanvasRender;
-        public svg : SVGRender
+        public canvas : Render;
+        public svg : Render
         public command : Array<string>;
         
-        constructor(doc : SimpleDrawDocument, can : CanvasRender, svg : SVGRender, commands : string){
+        constructor(doc : SimpleDrawDocument, can : Render, svg : Render, commands : string){
             this.document = doc;
             this.canvas = can;
             this.svg = svg;

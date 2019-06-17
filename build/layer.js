@@ -14,7 +14,6 @@ class Layer {
     }
     removeShape(i) {
         this.objects.splice(i, 1);
-        console.log("objects" + this.objects);
     }
     addShapes(shapes) {
         shapes.forEach(element => {
@@ -51,23 +50,11 @@ class Layers {
             let objects = l.getShapes();
             for (let i = 0; i < objects.length; i++) {
                 if (objects[i].getID() == shape.getID()) {
-                    console.log(i);
                     l.removeShape(i);
                     break;
                 }
             }
         }
-        for (let l of this.layers) {
-            let layer_objects = l.getShapes();
-            console.log(layer_objects);
-        }
-        // this.layers.forEach(layer => {
-        //     layer.getShapes().forEach(sh =>{
-        //         if(sh.getID() == sh_toremove.getID())
-        //         layer.getShapes().filter(o => o !== sh)
-        //         return
-        //     })
-        // });
     }
     getSortedShapes() {
         let objs = Array();
