@@ -124,8 +124,7 @@ var Interpreter;
             this.factor = parseInt(factor_str);
         }
         interpret(context) {
-            context.document.zoom(context.canvas, this.factor);
-            context.document.zoom(context.svg, this.factor);
+            context.document.zoom([context.svg, context.canvas], this.factor);
         }
     }
 })(Interpreter = exports.Interpreter || (exports.Interpreter = {}));

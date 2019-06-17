@@ -38,12 +38,16 @@ sdd.addUIElem(layerui)
 var consoleBtn = <HTMLButtonElement> document.getElementById("submit");
 var undoBtn = <HTMLButtonElement> document.getElementById("undo");
 var redoBtn = <HTMLButtonElement> document.getElementById("redo");
+var zoomPlusBtn = <HTMLButtonElement> document.getElementById("zoom-plus");
+var zoomMinusBtn = <HTMLButtonElement> document.getElementById("zoom-minus")
 
 var importbtn = <HTMLButtonElement> document.getElementById("import");
 var exportbtn = <HTMLButtonElement> document.getElementById("export");
-var format_box = <HTMLButtonElement> document.getElementById("format-dropbox")
+var format_box = <HTMLButtonElement> document.getElementById("format-dropbox");
+
 
 var input = <HTMLInputElement> document.getElementById("console-input");
+var zoomFactor = <HTMLElement> document.getElementById("zoom-factor");
 
 
 consoleBtn.addEventListener("click", () => {
@@ -61,6 +65,30 @@ undoBtn.addEventListener("click", () => {
 redoBtn.addEventListener("click", () => {
     sdd.redo();
     update()
+});
+
+zoomPlusBtn.addEventListener("click", () =>{
+    var factor = parseFloat(zoomFactor.innerHTML);
+    factor = Math.round( (factor+0.2) * 10 ) / 10;
+
+    sdd.zoom([svgrender, canvasrender], factor);
+
+    zoomFactor.innerHTML = factor.toString();
+    update()
+
+});
+
+zoomMinusBtn.addEventListener("click", () =>{
+    var factor = parseFloat(zoomFactor.innerHTML);
+    factor = Math.round( (factor-0.2) * 10 ) / 10;
+
+    if(factor >0){
+        sdd.zoom([svgrender, canvasrender], factor);
+
+        zoomFactor.innerHTML = factor.toString();
+        update()
+    }
+
 });
 
 var BMPexp = new BMP(100, 100)

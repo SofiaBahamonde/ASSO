@@ -41,8 +41,8 @@ class Render {
     draw(objs) {
         this.drawAPI.draw(...objs);
     }
-    zoom(scale) {
-        this.drawAPI.zoom(scale);
+    zoom(factor, positive) {
+        this.drawAPI.zoom(factor, positive);
     }
     setDrawAPI(dapi) {
         this.drawAPI = dapi;
@@ -54,7 +54,7 @@ class Render {
 exports.Render = Render;
 class SVGAPI {
     constructor() {
-        this.factor = 1;
+        this.factor = 300;
     }
     draw(...objs) {
         var svg = document.getElementById('svgcanvas');
@@ -64,7 +64,7 @@ class SVGAPI {
         svgElem.setAttributeNS(null, "width", '300');
         svgElem.setAttributeNS(null, "height", '300');
         svgElem.setAttributeNS(null, "style", "border: 2px solid black; border-radius: 5px 5px 5px 5px/25px 25px 25px 5px;");
-        svgElem.setAttributeNS(null, "viewBox", "0 0 " + 300 / this.factor + " " + 300 / this.factor);
+        svgElem.setAttributeNS(null, "viewBox", "0 0 " + this.factor + " " + this.factor);
         svg.remove();
         document.getElementById("all_canvas").appendChild(svgElem);
         svg = document.getElementById('svgcanvas');
@@ -107,8 +107,11 @@ class SVGAPI {
             }
         }
     }
-    zoom(factor) {
-        this.factor = factor;
+    zoom(factor, positive) {
+        if (positive)
+            this.factor = 300 / factor;
+        else
+            this.factor = this.factor * factor;
     }
 }
 class SVGRender extends Render {
@@ -143,8 +146,17 @@ class WireFrameAPI {
             }
         }
     }
-    zoom(scale) {
-        this.ctx.scale(scale, scale);
+    zoom(factor, positive) {
+        console.log(factor);
+        console.log(1 / factor);
+        if (positive) {
+            this.ctx.scale(1 / this.factor, 1 / this.factor);
+            this.ctx.scale(factor, factor);
+        }
+        else {
+            this.ctx.scale(1 / factor, 1 / factor);
+        }
+        this.factor = factor;
     }
 }
 exports.WireFrameAPI = WireFrameAPI;

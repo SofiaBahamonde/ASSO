@@ -62,7 +62,7 @@ export interface DrawAPI {
 
     draw( ...objs: Array<Shape>): void
 
-    zoom(scale : number): void
+    zoom(scale : number, positive:boolean): void
 }
 
 export abstract class Render {
@@ -74,8 +74,8 @@ export abstract class Render {
         this.drawAPI.draw(...objs)
     }
 
-    zoom(scale : number){
-        this.drawAPI.zoom(scale);
+    zoom(factor : number, positive:boolean){
+        this.drawAPI.zoom(factor, positive);
     }
 
     setDrawAPI(dapi:DrawAPI){
@@ -89,7 +89,7 @@ export abstract class Render {
 
 class SVGAPI implements DrawAPI{
 
-    factor: number = 1;
+    factor: number = 300;
 
     draw(...objs: Array<Shape>): void {
         var svg =  <HTMLElement>document.getElementById('svgcanvas');
@@ -100,7 +100,7 @@ class SVGAPI implements DrawAPI{
         svgElem.setAttributeNS (null, "width", '300');
         svgElem.setAttributeNS (null, "height", '300');
         svgElem.setAttributeNS (null, "style", "border: 2px solid black; border-radius: 5px 5px 5px 5px/25px 25px 25px 5px;");
-        svgElem.setAttributeNS (null, "viewBox", "0 0 " + 300/this.factor + " " + 300/this.factor)
+        svgElem.setAttributeNS (null, "viewBox", "0 0 " + this.factor + " " + this.factor)
 
         svg.remove();
         document.getElementById("all_canvas").appendChild(svgElem);
@@ -137,8 +137,12 @@ class SVGAPI implements DrawAPI{
         }
     }
 
-    zoom(factor: number){
-        this.factor = factor;
+    zoom(factor: number, positive : boolean){
+
+        if(positive)
+            this.factor = 300/factor;
+        else    
+            this.factor = this.factor * factor;
     }
 }
 
@@ -154,6 +158,7 @@ export class WireFrameAPI implements DrawAPI{
 
     ctx: CanvasRenderingContext2D
     canvas : any
+    factor: number
 
     draw(...objs: Array<Shape>) {
 
@@ -182,8 +187,20 @@ export class WireFrameAPI implements DrawAPI{
         }
     }
 
-    zoom(scale: number){
-        this.ctx.scale(scale, scale);
+    zoom(factor: number, positive : boolean){
+        console.log(factor)
+        console.log(1/factor)
+        if(positive){
+            this.ctx.scale(1/this.factor, 1/this.factor);
+            this.ctx.scale(factor,factor);
+        }
+        else{
+            this.ctx.scale(1/factor,1/factor);
+        }
+
+        this.factor = factor;
+
+
     }
 }
 

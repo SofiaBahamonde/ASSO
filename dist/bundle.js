@@ -2,6 +2,24 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const shape_1 = require("./shape");
+class ZoomAction {
+    constructor(doc, renders, factor) {
+        this.doc = doc;
+        this.renders = renders;
+        this.factor = factor;
+    }
+    do() {
+        for (var r of this.renders) {
+            r.zoom(this.factor, true);
+        }
+    }
+    undo() {
+        for (var r of this.renders) {
+            r.zoom(this.factor, false);
+        }
+    }
+}
+exports.ZoomAction = ZoomAction;
 class CreateShapeAction {
     constructor(doc, shape) {
         this.doc = doc;
@@ -102,8 +120,8 @@ class SimpleDrawDocument {
         var str_value = e.getElementsByClassName("active")[0].children[0].innerHTML;
         return parseInt(str_value, 10);
     }
-    zoom(render, factor) {
-        render.zoom(factor);
+    zoom(renders, factor) {
+        this.do(new actions_1.ZoomAction(this, renders, factor));
     }
     add(r) {
         var option = document.createElement("OPTION");
@@ -398,8 +416,7 @@ var Interpreter;
             this.factor = parseInt(factor_str);
         }
         interpret(context) {
-            context.document.zoom(context.canvas, this.factor);
-            context.document.zoom(context.svg, this.factor);
+            context.document.zoom([context.svg, context.canvas], this.factor);
         }
     }
 })(Interpreter = exports.Interpreter || (exports.Interpreter = {}));
@@ -504,8 +521,8 @@ class Render {
     draw(objs) {
         this.drawAPI.draw(...objs);
     }
-    zoom(scale) {
-        this.drawAPI.zoom(scale);
+    zoom(factor, positive) {
+        this.drawAPI.zoom(factor, positive);
     }
     setDrawAPI(dapi) {
         this.drawAPI = dapi;
@@ -517,7 +534,7 @@ class Render {
 exports.Render = Render;
 class SVGAPI {
     constructor() {
-        this.factor = 1;
+        this.factor = 300;
     }
     draw(...objs) {
         var svg = document.getElementById('svgcanvas');
@@ -527,7 +544,7 @@ class SVGAPI {
         svgElem.setAttributeNS(null, "width", '300');
         svgElem.setAttributeNS(null, "height", '300');
         svgElem.setAttributeNS(null, "style", "border: 2px solid black; border-radius: 5px 5px 5px 5px/25px 25px 25px 5px;");
-        svgElem.setAttributeNS(null, "viewBox", "0 0 " + 300 / this.factor + " " + 300 / this.factor);
+        svgElem.setAttributeNS(null, "viewBox", "0 0 " + this.factor + " " + this.factor);
         svg.remove();
         document.getElementById("all_canvas").appendChild(svgElem);
         svg = document.getElementById('svgcanvas');
@@ -570,8 +587,11 @@ class SVGAPI {
             }
         }
     }
-    zoom(factor) {
-        this.factor = factor;
+    zoom(factor, positive) {
+        if (positive)
+            this.factor = 300 / factor;
+        else
+            this.factor = this.factor * factor;
     }
 }
 class SVGRender extends Render {
@@ -606,8 +626,17 @@ class WireFrameAPI {
             }
         }
     }
-    zoom(scale) {
-        this.ctx.scale(scale, scale);
+    zoom(factor, positive) {
+        console.log(factor);
+        console.log(1 / factor);
+        if (positive) {
+            this.ctx.scale(1 / this.factor, 1 / this.factor);
+            this.ctx.scale(factor, factor);
+        }
+        else {
+            this.ctx.scale(1 / factor, 1 / factor);
+        }
+        this.factor = factor;
     }
 }
 exports.WireFrameAPI = WireFrameAPI;
@@ -651,10 +680,13 @@ sdd.addUIElem(layerui);
 var consoleBtn = document.getElementById("submit");
 var undoBtn = document.getElementById("undo");
 var redoBtn = document.getElementById("redo");
+var zoomPlusBtn = document.getElementById("zoom-plus");
+var zoomMinusBtn = document.getElementById("zoom-minus");
 var importbtn = document.getElementById("import");
 var exportbtn = document.getElementById("export");
 var format_box = document.getElementById("format-dropbox");
 var input = document.getElementById("console-input");
+var zoomFactor = document.getElementById("zoom-factor");
 consoleBtn.addEventListener("click", () => {
     let command = input.value;
     let context = new interperter_1.Interpreter.Context(sdd, canvasrender, svgrender, command);
@@ -668,6 +700,22 @@ undoBtn.addEventListener("click", () => {
 redoBtn.addEventListener("click", () => {
     sdd.redo();
     update();
+});
+zoomPlusBtn.addEventListener("click", () => {
+    var factor = parseFloat(zoomFactor.innerHTML);
+    factor = Math.round((factor + 0.2) * 10) / 10;
+    sdd.zoom([svgrender, canvasrender], factor);
+    zoomFactor.innerHTML = factor.toString();
+    update();
+});
+zoomMinusBtn.addEventListener("click", () => {
+    var factor = parseFloat(zoomFactor.innerHTML);
+    factor = Math.round((factor - 0.2) * 10) / 10;
+    if (factor > 0) {
+        sdd.zoom([svgrender, canvasrender], factor);
+        zoomFactor.innerHTML = factor.toString();
+        update();
+    }
 });
 var BMPexp = new fileio_1.BMP(100, 100);
 var XMLexp = new fileio_1.XML();

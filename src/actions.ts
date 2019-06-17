@@ -1,9 +1,31 @@
 import { Shape, Circle, Rectangle, Polygon } from './shape'
+import { Render } from './render';
 import { SimpleDrawDocument } from './document'
 
 export interface Action<T> {
     do(): T
     undo(): void
+}
+
+
+export class ZoomAction implements Action<void>{
+
+    constructor(private doc: SimpleDrawDocument, private renders: Array<Render>, private factor: number) { }
+
+    do(): void{
+        for(var r of this.renders){
+            r.zoom(this.factor, true)
+        }
+            
+    }    
+    
+    undo(): void {
+        for(var r of this.renders){
+            r.zoom(this.factor, false)
+        }
+    }
+
+
 }
 
 abstract class CreateShapeAction<S extends Shape> implements Action<S> {
@@ -62,3 +84,4 @@ export class RotationAction implements Action<void> {
        this.shape.rotate(-this.angle)
     }
 }
+

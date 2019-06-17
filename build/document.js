@@ -30,8 +30,8 @@ class SimpleDrawDocument {
         var str_value = e.getElementsByClassName("active")[0].children[0].innerHTML;
         return parseInt(str_value, 10);
     }
-    zoom(render, factor) {
-        render.zoom(factor);
+    zoom(renders, factor) {
+        this.do(new actions_1.ZoomAction(this, renders, factor));
     }
     add(r) {
         var option = document.createElement("OPTION");

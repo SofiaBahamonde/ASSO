@@ -1,6 +1,24 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const shape_1 = require("./shape");
+class ZoomAction {
+    constructor(doc, renders, factor) {
+        this.doc = doc;
+        this.renders = renders;
+        this.factor = factor;
+    }
+    do() {
+        for (var r of this.renders) {
+            r.zoom(this.factor, true);
+        }
+    }
+    undo() {
+        for (var r of this.renders) {
+            r.zoom(this.factor, false);
+        }
+    }
+}
+exports.ZoomAction = ZoomAction;
 class CreateShapeAction {
     constructor(doc, shape) {
         this.doc = doc;

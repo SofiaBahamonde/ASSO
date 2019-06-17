@@ -1,5 +1,5 @@
 import { Shape } from './shape'
-import { Action, CreateCircleAction, CreateRectangleAction, CreatePolygonAction, TranslateAction, RotationAction } from './actions'
+import { Action, CreateCircleAction, CreateRectangleAction, CreatePolygonAction, TranslateAction, RotationAction, ZoomAction } from './actions'
 import { Render, InterfaceRender } from './render';
 import { UndoManager } from "./undo";
 import { InterfaceObj } from './interfaceobj';
@@ -50,8 +50,9 @@ export class SimpleDrawDocument {
 
 
 
-  zoom(render: Render, factor: number){
-    render.zoom(factor)
+  zoom(renders: Array<Render>, factor: number){
+
+  this.do(new ZoomAction(this, renders, factor));
   }
 
   add(r: Shape): void {

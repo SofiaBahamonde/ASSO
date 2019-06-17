@@ -33,7 +33,7 @@
 
         <div class="col-5">
             <h1 class="mt-5">Bitmap Shapes</h1>
-            <canvas id="canvas" width="300" height="400" style="border: 2px solid black; border-radius: 5px 5px 5px 5px/25px 25px 25px 5px;">
+            <canvas id="canvas" width="300" height="300" style="border: 2px solid black; border-radius: 5px 5px 5px 5px/25px 25px 25px 5px;">
             </canvas>
         </div>
         <div class="col-5" id="all_canvas">
@@ -48,11 +48,20 @@
                 <div class="card-body">
                         <button type="button" id ="undo" class="btn btn-outline-primary btn-sm">Undo</button>
                         <button type="button" id ="redo" class="btn btn-outline-secondary btn-sm">Redo</button>  
+                        <p></p>
+
                         <h6>Figure</h6>
                         <div class="form-group">
                             <select id="shape-dropbox" class="custom-select"></select>
                         </div>
 
+                        <h6>Zoom</h6>
+                        <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start;">
+                            <button type="button" id ="zoom-minus" class="btn btn-outline-primary btn-sm">-</button>
+                            <div id="zoom-factor" style="margin-bottom: 0 ; line-height: 2"> 1 </div>
+                            <button type="button" id ="zoom-plus" class="btn btn-outline-secondary btn-sm">+</button>  
+                        </div>
+                        <p></p>
 
                 <div id="tools">
                     <p>(placeholder) Rotate</p>
