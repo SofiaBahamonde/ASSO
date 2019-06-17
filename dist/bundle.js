@@ -110,13 +110,14 @@ class SimpleDrawDocument {
     }
     drawUI(uiRender) {
         uiRender.draw(...this.uielems);
+        this.setToolListeners();
     }
     draw(render) {
         // this.objects.forEach(o => o.draw(ctx))
         render.draw(this.getElemsToDraw());
     }
     selectShape(shape_id) {
-        for (var shape of this.objects) {
+        for (var shape of this.getElemsToDraw()) {
             if (shape.getID() == shape_id) {
                 shape.setHighlight(true);
                 this.selectedShape = shape;
@@ -139,7 +140,8 @@ class SimpleDrawDocument {
         option.setAttribute("value", r.getID());
         option.innerHTML = r.getID();
         this.shapeDropbox.appendChild(option);
-        this.objects.push(r);
+        this.getLayers().addShape(r, this.getSelLayer());
+        //this.objects.push(r)
     }
     remove(shape) {
         var children = this.shapeDropbox.children;
@@ -149,7 +151,8 @@ class SimpleDrawDocument {
                 child.remove();
             }
         }
-        this.objects = this.objects.filter(o => o !== shape);
+        //this.objects = this.objects.filter(o => o !== shape)
+        this.getLayers().removeObject(shape);
     }
     do(a) {
         this.undoManager.onActionDone(a);
@@ -195,12 +198,13 @@ class SimpleDrawDocument {
     }
     getElemsToDraw() {
         //Figure out if the concept of layers exists, if not just return objects vector
+        let shapes_draw = null;
         this.uielems.forEach(element => {
             if (element instanceof layer_1.Layers) {
-                return element.getSortedShapes();
+                shapes_draw = element.getSortedShapes();
             }
         });
-        return this.objects;
+        return shapes_draw;
     }
     export(fileio) {
         fileio.export(this.getElemsToDraw());
@@ -217,12 +221,22 @@ class SimpleDrawDocument {
         });
     }
     getToolbox() {
+        let f_tb = null;
         this.uielems.forEach(element => {
             if (element instanceof toolbox_1.ToolBox) {
-                return element;
+                f_tb = element;
             }
         });
-        return null;
+        return f_tb;
+    }
+    getLayers() {
+        let f_layers = null;
+        this.uielems.forEach(element => {
+            if (element instanceof layer_1.Layers) {
+                f_layers = element;
+            }
+        });
+        return f_layers;
     }
     canvasNotification(x, y) {
         console.log("X: " + x.toString() + "Y: " + y.toString());
@@ -238,16 +252,18 @@ class SimpleDrawDocument {
                 }
             }
         });
+        this.update();
     }
     getSelShape() {
         var sel_box = this.shapeDropbox;
         var shape_id = sel_box.options[sel_box.selectedIndex].value;
+        let f_shape = null;
         this.getElemsToDraw().forEach(shape => {
             if (shape.getID() == shape_id) {
-                return shape;
+                f_shape = shape;
             }
         });
-        return null;
+        return f_shape;
     }
     clicked_tool(tool_name) {
         console.log("Clicked TOOL:" + tool_name);
@@ -258,10 +274,11 @@ class SimpleDrawDocument {
         let doc = this;
         for (let child_i = 0; child_i < tools.children.length; child_i++) {
             const tool = tools.children[child_i];
-            console.log(tool);
             tool.addEventListener("click", function () {
-                console.log("Hello From tool");
-                //doc.clicked_tool(tool.innerHTML.replace('<\/?p[^>]*>', ""))
+                const tool_p = tool.children[0];
+                console.log(tool_p.innerText);
+                doc.clicked_tool(tool_p.innerText);
+                doc.update();
             });
         }
     }
@@ -382,6 +399,9 @@ var Interpreter;
                 case 'zoom':
                     let zoomExpression = new ZoomExpression(context.command[1]);
                     zoomExpression.interpret(context);
+                case 'fill':
+                    let fillExpression = new FillExpression(context.command);
+                    fillExpression.interpret(context);
                 default:
                     break;
             }
@@ -477,6 +497,14 @@ var Interpreter;
             context.document.zoom([context.svg, context.canvas], this.factor);
         }
     }
+    class FillExpression {
+        constructor(command) {
+            this.color = command[2];
+            this.shape_id = command[3];
+        }
+        interpret(context) {
+        }
+    }
 })(Interpreter = exports.Interpreter || (exports.Interpreter = {}));
 
 },{}],5:[function(require,module,exports){
@@ -493,6 +521,9 @@ class Layer {
     }
     getShapes() {
         return this.objects;
+    }
+    removeShape(i) {
+        this.objects.splice(i, 1);
     }
     addShapes(shapes) {
         shapes.forEach(element => {
@@ -523,13 +554,27 @@ class Layers {
     getLayers() {
         return this.layers;
     }
+    removeObject(shape) {
+        console.log("remove object");
+        for (let l of this.layers) {
+            let objects = l.getShapes();
+            for (let i = 0; i < objects.length; i++) {
+                if (objects[i].getID() == shape.getID()) {
+                    l.removeShape(i);
+                    break;
+                }
+            }
+        }
+    }
     getSortedShapes() {
         let objs = Array();
-        for (let layer_it = this.layers.length - 1; layer_it <= 0; layer_it--) {
+        for (let layer_it = this.layers.length - 1; layer_it >= 0; layer_it--) {
+            console.log("Getting Sorted Shapes: " + this.layers[layer_it].getShapes());
             this.layers[layer_it].getShapes().forEach(obj => {
                 objs.push(obj);
             });
         }
+        //console.log("Getting Sorted Shapes: " + this.layers[1].getShapes())
         return objs;
     }
 }
@@ -592,15 +637,15 @@ class Render {
 exports.Render = Render;
 class SVGAPI {
     constructor() {
-        this.factor = 300;
+        this.factor = 400;
     }
     draw(...objs) {
         var svg = document.getElementById('svgcanvas');
         var xmlns = "http://www.w3.org/2000/svg";
         var svgElem = document.createElementNS(xmlns, "svg");
         svgElem.setAttributeNS(null, "id", "svgcanvas");
-        svgElem.setAttributeNS(null, "width", '300');
-        svgElem.setAttributeNS(null, "height", '300');
+        svgElem.setAttributeNS(null, "width", '400');
+        svgElem.setAttributeNS(null, "height", '400');
         svgElem.setAttributeNS(null, "style", "border: 2px solid black; border-radius: 5px 5px 5px 5px/25px 25px 25px 5px;");
         svgElem.setAttributeNS(null, "viewBox", "0 0 " + this.factor + " " + this.factor);
         svg.remove();
@@ -609,10 +654,7 @@ class SVGAPI {
         for (const shape of objs) {
             if (shape instanceof shape_1.Circle) {
                 const circle = document.createElementNS(xmlns, "circle");
-                if (shape.hightlighted)
-                    circle.setAttribute('style', 'stroke: red; fill: white');
-                else
-                    circle.setAttribute('style', 'stroke: black; fill: white');
+                this.setStyle(shape, circle);
                 circle.setAttribute("cx", shape.points[0].toString());
                 circle.setAttribute("cy", shape.points[1].toString());
                 circle.setAttribute("r", shape.radius.toString());
@@ -620,10 +662,7 @@ class SVGAPI {
             }
             else if (shape instanceof shape_1.Polygon || shape instanceof shape_1.Rectangle) {
                 const polygon = document.createElementNS(xmlns, "polygon");
-                if (shape.hightlighted)
-                    polygon.setAttribute('style', 'stroke: red; fill: white');
-                else
-                    polygon.setAttribute('style', 'stroke: black; fill: white');
+                this.setStyle(shape, polygon);
                 var textPoints = '';
                 for (var item = 0; item < shape.points.length - 1; item += 2)
                     textPoints += shape.points[item] + ',' + shape.points[item + 1] + ' ';
@@ -634,18 +673,30 @@ class SVGAPI {
     }
     zoom(factor, positive) {
         if (positive)
-            this.factor = 300 / factor;
+            this.factor = 400 / factor;
         else
             this.factor = this.factor * factor;
     }
 }
-class SVGRender extends Render {
-    constructor() {
-        super(new SVGAPI());
+class SVGWireframeAPI extends SVGAPI {
+    setStyle(shape, element) {
+        if (shape.hightlighted)
+            element.setAttribute('style', 'stroke: red; fill: white');
+        else
+            element.setAttribute('style', 'stroke: black; fill: white');
     }
 }
-exports.SVGRender = SVGRender;
-class WireFrameAPI {
+exports.SVGWireframeAPI = SVGWireframeAPI;
+class SVGFillAPI extends SVGAPI {
+    setStyle(shape, element) {
+        if (shape.hightlighted)
+            element.setAttribute('style', 'stroke: red; fill: red');
+        else
+            element.setAttribute('style', 'stroke: black; fill: black');
+    }
+}
+exports.SVGFillAPI = SVGFillAPI;
+class CanvasAPI {
     draw(...objs) {
         this.canvas = document.getElementById('canvas');
         this.ctx = this.canvas.getContext('2d');
@@ -655,13 +706,6 @@ class WireFrameAPI {
                 this.ctx.beginPath();
                 this.ctx.arc(shape.points[0], shape.points[1], shape.radius, 0, 2 * Math.PI);
                 this.ctx.closePath();
-                if (shape.hightlighted) {
-                    this.ctx.strokeStyle = "red";
-                }
-                this.ctx.stroke();
-                if (shape.hightlighted) {
-                    this.ctx.strokeStyle = "grey";
-                }
             }
             else if (shape instanceof shape_1.Polygon || shape instanceof shape_1.Rectangle) {
                 this.ctx.beginPath();
@@ -670,14 +714,8 @@ class WireFrameAPI {
                     this.ctx.lineTo(shape.points[item], shape.points[item + 1]);
                 }
                 this.ctx.closePath();
-                if (shape.hightlighted) {
-                    this.ctx.strokeStyle = "red";
-                }
-                this.ctx.stroke();
-                if (shape.hightlighted) {
-                    this.ctx.strokeStyle = "grey";
-                }
             }
+            this.drawShape(shape);
         }
     }
     zoom(factor, positive) {
@@ -693,13 +731,24 @@ class WireFrameAPI {
         this.factor = factor;
     }
 }
-exports.WireFrameAPI = WireFrameAPI;
-class CanvasRender extends Render {
-    constructor(drawAPI) {
-        super(drawAPI);
+class CanvasWireframeAPI extends CanvasAPI {
+    drawShape(shape) {
+        if (shape.hightlighted) {
+            this.ctx.strokeStyle = "red";
+        }
+        this.ctx.stroke();
     }
 }
-exports.CanvasRender = CanvasRender;
+exports.CanvasWireframeAPI = CanvasWireframeAPI;
+class CanvasFillAPI extends CanvasAPI {
+    drawShape(shape) {
+        if (shape.hightlighted) {
+            this.ctx.fillStyle = "red";
+        }
+        this.ctx.fill();
+    }
+}
+exports.CanvasFillAPI = CanvasFillAPI;
 
 },{"./layer":5,"./shape":8,"./toolbox":10}],7:[function(require,module,exports){
 "use strict";
@@ -712,8 +761,8 @@ const tool_1 = require("./tool");
 const layer_1 = require("./layer");
 const fileio_1 = require("./fileio");
 const sdd = new document_1.SimpleDrawDocument(update);
-const canvasrender = new render_1.CanvasRender(new render_1.WireFrameAPI());
-const svgrender = new render_1.SVGRender();
+const canvasrender = new render_1.Render(new render_1.CanvasWireframeAPI());
+const svgrender = new render_1.Render(new render_1.SVGWireframeAPI());
 const uirender = new render_1.InterfaceRender();
 function update() {
     sdd.draw(canvasrender);
@@ -775,6 +824,12 @@ shapes.addEventListener("change", () => {
     }
     update();
 });
+const views = document.getElementById("views-dropdown");
+views.addEventListener("change", () => {
+    canvasrender.setDrawAPI(new render_1.CanvasFillAPI());
+    svgrender.setDrawAPI(new render_1.SVGFillAPI());
+    update();
+});
 var importbtn = document.getElementById("import");
 var exportbtn = document.getElementById("export");
 var format_box = document.getElementById("format-dropbox");
@@ -828,7 +883,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class Shape {
     constructor(points) {
         this.points = points;
-        this.color = "Grey";
+        this.color = "black";
         this.hightlighted = false;
     }
     translate(xd, yd) {
@@ -977,7 +1032,7 @@ class PaintTool extends Tool {
         super(name, img_loc);
         this.name = name;
         this.img_loc = img_loc;
-        this.color = "Blue";
+        this.color = "blue";
     }
     action(action_para) {
         action_para.objects_sel.forEach(element => {
@@ -990,6 +1045,9 @@ class PaintTool extends Tool {
             }
         });
         return true;
+    }
+    initclick(sh) {
+        sh.color = this.color;
     }
 }
 exports.PaintTool = PaintTool;

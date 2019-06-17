@@ -59,7 +59,7 @@ class PaintTool extends Tool {
         super(name, img_loc);
         this.name = name;
         this.img_loc = img_loc;
-        this.color = "Blue";
+        this.color = "blue";
     }
     action(action_para) {
         action_para.objects_sel.forEach(element => {
@@ -72,6 +72,9 @@ class PaintTool extends Tool {
             }
         });
         return true;
+    }
+    initclick(sh) {
+        sh.color = this.color;
     }
 }
 exports.PaintTool = PaintTool;

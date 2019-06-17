@@ -65,7 +65,7 @@ export interface DrawAPI {
     zoom(scale : number, positive:boolean): void
 }
 
-export abstract class Render {
+export class Render {
 
     constructor(private drawAPI:DrawAPI){
     }
@@ -87,9 +87,9 @@ export abstract class Render {
     }
 }
 
-class SVGAPI implements DrawAPI{
+abstract class SVGAPI implements DrawAPI{
 
-    factor: number = 300;
+    factor: number = 400;
 
     draw(...objs: Array<Shape>): void {
         var svg =  <HTMLElement>document.getElementById('svgcanvas');
@@ -97,8 +97,8 @@ class SVGAPI implements DrawAPI{
             
         var svgElem = document.createElementNS (xmlns, "svg");
         svgElem.setAttributeNS (null, "id", "svgcanvas");
-        svgElem.setAttributeNS (null, "width", '300');
-        svgElem.setAttributeNS (null, "height", '300');
+        svgElem.setAttributeNS (null, "width", '400');
+        svgElem.setAttributeNS (null, "height", '400');
         svgElem.setAttributeNS (null, "style", "border: 2px solid black; border-radius: 5px 5px 5px 5px/25px 25px 25px 5px;");
         svgElem.setAttributeNS (null, "viewBox", "0 0 " + this.factor + " " + this.factor)
 
@@ -111,20 +111,14 @@ class SVGAPI implements DrawAPI{
            
             if(shape instanceof Circle){
                 const circle = document.createElementNS(xmlns, "circle")
-                if(shape.hightlighted)
-                circle.setAttribute('style', 'stroke: red; fill: white')
-                else
-                circle.setAttribute('style', 'stroke: black; fill: white')
+                this.setStyle(shape,circle)
                 circle.setAttribute("cx",shape.points[0].toString())
                 circle.setAttribute("cy",shape.points[1].toString())
                 circle.setAttribute("r",shape.radius.toString())
                 svg.appendChild(circle)
             }else if (shape instanceof Polygon || shape instanceof Rectangle) {
                 const polygon =  document.createElementNS(xmlns, "polygon")
-                if(shape.hightlighted)
-                polygon.setAttribute('style', 'stroke: red; fill: white')
-                else
-                polygon.setAttribute('style', 'stroke: black; fill: white')      
+                this.setStyle(shape,polygon)   
                 var textPoints = ''                
                 for ( var item = 0 ; item < shape.points.length-1 ; item+=2 ) 
                     textPoints +=  shape.points[item] + ',' + shape.points[item+1] + ' '
@@ -132,27 +126,43 @@ class SVGAPI implements DrawAPI{
                 svg.appendChild(polygon)
                 
             }
+
+            
         }
     }
 
     zoom(factor: number, positive : boolean){
 
         if(positive)
-            this.factor = 300/factor;
+            this.factor = 400/factor;
         else    
             this.factor = this.factor * factor;
     }
+
+    abstract setStyle(shape: Shape, element: any): void
+
+  
 }
 
-export class SVGRender extends Render {
-
-    constructor() {
-        super(new SVGAPI())
+export  class SVGWireframeAPI extends SVGAPI{
+    setStyle(shape: Shape, element: any){
+        if(shape.hightlighted)
+        element.setAttribute('style', 'stroke: red; fill: white')
+        else
+        element.setAttribute('style', 'stroke: black; fill: white')
     }
-
 }
 
-export class WireFrameAPI implements DrawAPI{
+export  class SVGFillAPI extends SVGAPI{
+    setStyle(shape: Shape, element: any){
+        if(shape.hightlighted)
+        element.setAttribute('style', 'stroke: red; fill: red')
+        else
+        element.setAttribute('style', 'stroke: black; fill: black')
+    }
+}
+
+abstract class CanvasAPI implements DrawAPI{
 
     ctx: CanvasRenderingContext2D
     canvas : any
@@ -170,28 +180,18 @@ export class WireFrameAPI implements DrawAPI{
                 this.ctx.beginPath();
                 this.ctx.arc(shape.points[0], shape.points[1], shape.radius, 0, 2 * Math.PI);
                 this.ctx.closePath()
-                if(shape.hightlighted){
-                    this.ctx.strokeStyle = "red";
-                }
-                this.ctx.stroke()
-                if(shape.hightlighted){
-                    this.ctx.strokeStyle = "grey";
-                }
-            } else if (shape instanceof Polygon || shape instanceof Rectangle) {
+
+            }  else if (shape instanceof Polygon || shape instanceof Rectangle) {
 
                 this.ctx.beginPath()
                 this.ctx.moveTo(shape.points[0], shape.points[1])
                 for( var item = 2 ; item < shape.points.length-1 ; item+=2 )
                 {this.ctx.lineTo( shape.points[item] , shape.points[item+1] )}
                 this.ctx.closePath()
-                if(shape.hightlighted){
-                    this.ctx.strokeStyle = "red";
-                }
-                this.ctx.stroke()
-                if(shape.hightlighted){
-                    this.ctx.strokeStyle = "grey";
-                }
+                
             }
+
+            this.drawShape(shape);
         }
     }
 
@@ -210,14 +210,30 @@ export class WireFrameAPI implements DrawAPI{
 
 
     }
+
+    abstract drawShape(shape: Shape):void
 }
 
+export class CanvasWireframeAPI extends CanvasAPI{
+    drawShape(shape: Shape){
 
-export class CanvasRender extends Render {
-    
-    constructor(drawAPI:DrawAPI) {
-        super(drawAPI)
+        if(shape.hightlighted){
+            this.ctx.strokeStyle = "red";
+        }
+
+        this.ctx.stroke()
+
     }
+}
 
+export class CanvasFillAPI extends CanvasAPI{
+
+    drawShape(shape: Shape){
+        if(shape.hightlighted){
+            this.ctx.fillStyle = "red";
+        }
+
+        this.ctx.fill()
+    }
 
 }

@@ -33,12 +33,12 @@
 
         <div class="col-5">
             <h1 class="mt-5">Bitmap Shapes</h1>
-            <canvas id="canvas" width="300" height="300" style="border: 2px solid black; border-radius: 5px 5px 5px 5px/25px 25px 25px 5px;">
+            <canvas id="canvas" width="400" height="400" style="border: 2px solid black; border-radius: 5px 5px 5px 5px/25px 25px 25px 5px;">
             </canvas>
         </div>
         <div class="col-5" id="all_canvas">
                 <h1 class="mt-5">SVG Shapes</h1>
-                <svg id="svgcanvas" width="300" height="300" viewBox="0 0 10 10" style="border: 2px solid black; border-radius: 5px 5px 5px 5px/25px 25px 25px 5px;">
+                <svg id="svgcanvas" width="400" height="400" viewBox="0 0 10 10" style="border: 2px solid black; border-radius: 5px 5px 5px 5px/25px 25px 25px 5px;">
                 </svg>
         </div>
 
@@ -73,15 +73,11 @@
 
                     <h5>Viewport Views</h5>
                     
-                    <select id="vvoption">
+                    <select id="views-dropdown"  class="custom-select">
                         <option value="wireframe" selected="selected">Wireframe</option>
-                        <option value="boundingbox">BoundingBox</option>
                         <option value="fill">Fill</option>
                     </select>
-<!-- 
-                    <p>Wireframe</p>
-                    <p>Bounding box</p> 
-            -->
+
 
 
             <h5>Exports</h5>

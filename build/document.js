@@ -20,13 +20,14 @@ class SimpleDrawDocument {
     }
     drawUI(uiRender) {
         uiRender.draw(...this.uielems);
+        this.setToolListeners();
     }
     draw(render) {
         // this.objects.forEach(o => o.draw(ctx))
         render.draw(this.getElemsToDraw());
     }
     selectShape(shape_id) {
-        for (var shape of this.objects) {
+        for (var shape of this.getElemsToDraw()) {
             if (shape.getID() == shape_id) {
                 shape.setHighlight(true);
                 this.selectedShape = shape;
@@ -49,7 +50,8 @@ class SimpleDrawDocument {
         option.setAttribute("value", r.getID());
         option.innerHTML = r.getID();
         this.shapeDropbox.appendChild(option);
-        this.objects.push(r);
+        this.getLayers().addShape(r, this.getSelLayer());
+        //this.objects.push(r)
     }
     remove(shape) {
         var children = this.shapeDropbox.children;
@@ -59,7 +61,8 @@ class SimpleDrawDocument {
                 child.remove();
             }
         }
-        this.objects = this.objects.filter(o => o !== shape);
+        //this.objects = this.objects.filter(o => o !== shape)
+        this.getLayers().removeObject(shape);
     }
     do(a) {
         this.undoManager.onActionDone(a);
@@ -105,12 +108,13 @@ class SimpleDrawDocument {
     }
     getElemsToDraw() {
         //Figure out if the concept of layers exists, if not just return objects vector
+        let shapes_draw = null;
         this.uielems.forEach(element => {
             if (element instanceof layer_1.Layers) {
-                return element.getSortedShapes();
+                shapes_draw = element.getSortedShapes();
             }
         });
-        return this.objects;
+        return shapes_draw;
     }
     export(fileio) {
         fileio.export(this.getElemsToDraw());
@@ -127,12 +131,22 @@ class SimpleDrawDocument {
         });
     }
     getToolbox() {
+        let f_tb = null;
         this.uielems.forEach(element => {
             if (element instanceof toolbox_1.ToolBox) {
-                return element;
+                f_tb = element;
             }
         });
-        return null;
+        return f_tb;
+    }
+    getLayers() {
+        let f_layers = null;
+        this.uielems.forEach(element => {
+            if (element instanceof layer_1.Layers) {
+                f_layers = element;
+            }
+        });
+        return f_layers;
     }
     canvasNotification(x, y) {
         console.log("X: " + x.toString() + "Y: " + y.toString());
@@ -148,16 +162,18 @@ class SimpleDrawDocument {
                 }
             }
         });
+        this.update();
     }
     getSelShape() {
         var sel_box = this.shapeDropbox;
         var shape_id = sel_box.options[sel_box.selectedIndex].value;
+        let f_shape = null;
         this.getElemsToDraw().forEach(shape => {
             if (shape.getID() == shape_id) {
-                return shape;
+                f_shape = shape;
             }
         });
-        return null;
+        return f_shape;
     }
     clicked_tool(tool_name) {
         console.log("Clicked TOOL:" + tool_name);
@@ -168,10 +184,11 @@ class SimpleDrawDocument {
         let doc = this;
         for (let child_i = 0; child_i < tools.children.length; child_i++) {
             const tool = tools.children[child_i];
-            console.log(tool);
             tool.addEventListener("click", function () {
-                console.log("Hello From tool");
-                //doc.clicked_tool(tool.innerHTML.replace('<\/?p[^>]*>', ""))
+                const tool_p = tool.children[0];
+                console.log(tool_p.innerText);
+                doc.clicked_tool(tool_p.innerText);
+                doc.update();
             });
         }
     }

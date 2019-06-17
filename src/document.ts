@@ -34,6 +34,7 @@ export class SimpleDrawDocument {
 
   drawUI(uiRender: InterfaceRender) {
     uiRender.draw(...this.uielems)
+    this.setToolListeners()
   }
 
   draw(render: Render): void {
@@ -42,7 +43,7 @@ export class SimpleDrawDocument {
   }
 
   selectShape(shape_id: string) {
-    for(var shape of this.objects){
+    for(var shape of this.getElemsToDraw()){
 
       if(shape.getID() == shape_id){
         shape.setHighlight(true);
@@ -71,7 +72,9 @@ export class SimpleDrawDocument {
     option.innerHTML = r.getID();
     this.shapeDropbox.appendChild(option);
 
-    this.objects.push(r)
+    this.getLayers().addShape(r, this.getSelLayer())
+
+    //this.objects.push(r)
   }
 
   remove(shape: Shape) {
@@ -85,7 +88,8 @@ export class SimpleDrawDocument {
       
     }
 
-    this.objects = this.objects.filter(o => o !== shape)
+    //this.objects = this.objects.filter(o => o !== shape)
+    this.getLayers().removeObject(shape)
   }
 
 
@@ -158,14 +162,16 @@ export class SimpleDrawDocument {
 
     //Figure out if the concept of layers exists, if not just return objects vector
 
+    let shapes_draw:Array<Shape> = null 
+
     this.uielems.forEach(element => {
 
       if (element instanceof Layers) {
-        return element.getSortedShapes()
+        shapes_draw = element.getSortedShapes()
       }
     })
 
-    return this.objects
+    return shapes_draw
 
   }
 
@@ -196,16 +202,33 @@ export class SimpleDrawDocument {
 
   getToolbox(): ToolBox{
 
+    let f_tb:ToolBox = null
+
     this.uielems.forEach(element => {
 
       if (element instanceof ToolBox) {
-          return element
+          f_tb = element
       }
     })
-    return null
+    return f_tb
 
   }
 
+
+  getLayers(): Layers{
+
+    let f_layers:Layers = null
+
+    this.uielems.forEach(element => {
+
+      if (element instanceof Layers) {
+          f_layers = element
+
+      }
+    })
+
+    return f_layers
+  }
 
   canvasNotification(x:number, y:number){
 
@@ -227,22 +250,25 @@ export class SimpleDrawDocument {
       }
     })
 
+    this.update()
+
   }
 
   getSelShape(): Shape{
   
-
     var sel_box = <HTMLSelectElement>this.shapeDropbox
     var shape_id = sel_box.options[sel_box.selectedIndex].value;
+
+    let f_shape:Shape = null 
 
     this.getElemsToDraw().forEach(shape => {
 
       if(shape.getID() == shape_id){
-        return shape
+        f_shape = shape
       }
 
     })
-    return null
+    return f_shape
   }
 
 
@@ -261,15 +287,20 @@ export class SimpleDrawDocument {
     for (let child_i = 0; child_i < tools.children.length; child_i++) {
 
       const tool = tools.children[child_i];
-      console.log(tool)
       tool.addEventListener("click", function(){
-        console.log("Hello From tool")
-        //doc.clicked_tool(tool.innerHTML.replace('<\/?p[^>]*>', ""))
+
+        const tool_p = <HTMLParagraphElement> tool.children[0]
+
+        console.log(tool_p.innerText)
+        doc.clicked_tool(tool_p.innerText)
+        doc.update()
       }); 
       
     }
 
   }
+
+
 
   /*
   setToolBox(newtoolbox:ToolBox){

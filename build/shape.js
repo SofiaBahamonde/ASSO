@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class Shape {
     constructor(points) {
         this.points = points;
-        this.color = "Grey";
+        this.color = "black";
         this.hightlighted = false;
     }
     translate(xd, yd) {

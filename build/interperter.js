@@ -32,6 +32,9 @@ var Interpreter;
                 case 'zoom':
                     let zoomExpression = new ZoomExpression(context.command[1]);
                     zoomExpression.interpret(context);
+                case 'fill':
+                    let fillExpression = new FillExpression(context.command);
+                    fillExpression.interpret(context);
                 default:
                     break;
             }
@@ -125,6 +128,14 @@ var Interpreter;
         }
         interpret(context) {
             context.document.zoom([context.svg, context.canvas], this.factor);
+        }
+    }
+    class FillExpression {
+        constructor(command) {
+            this.color = command[2];
+            this.shape_id = command[3];
+        }
+        interpret(context) {
         }
     }
 })(Interpreter = exports.Interpreter || (exports.Interpreter = {}));
