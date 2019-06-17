@@ -35,7 +35,7 @@ export class InterfaceRender{
                 console.log("Drawing Layers")
 
                 var layers_elem = <HTMLElement>document.getElementById('layers')
-                let layers_html = "<li class=\"page-item disabled\"> <a class=\"page-link\" href=\"#\">&laquo;</a> </li>"
+                let layers_html = "<li id=\"nextlayer\" class=\"page-item\"> <a class=\"page-link\" href=\"#\">&raquo;</a> </li>"
 
                 let active_numb = 1
 
@@ -47,7 +47,7 @@ export class InterfaceRender{
                         layers_html += "<li class=\"page-item\"> <a class=\"page-link\" href=\"#\"> " + elem.getLayers()[layer_it].pos + " </a> </li>"
                 }
 
-                layers_elem.innerHTML = layers_html + " <li class=\"page-item\"> <a class=\"page-link\" href=\"#\">&raquo;</a> </li> "
+                layers_elem.innerHTML = layers_html //+ " <li id=\"prevlayer\" class=\"page-item\"> <a class=\"page-link\" href=\"#\">&raquo;</a> </li> "
 
             } 
 
