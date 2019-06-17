@@ -86,7 +86,6 @@ export class SimpleDrawDocument {
       
     }
 
-    
     this.getLayers().removeObject(shape)
   }
 
@@ -274,6 +273,47 @@ export class SimpleDrawDocument {
     this.getToolbox().clicked_tool(tool_name, this.getSelShape())
 }
 
+  nextLayer():void{
+
+    let current_sel = this.getSelLayer()
+
+    let html_layers = document.getElementById("layers")
+    let active = html_layers.getElementsByClassName("active")[0]
+    active.className = active.className.replace( /(?:^|\s)active(?!\S)/g , '' )
+
+    html_layers.children[((current_sel+1)%this.getLayers().getLayers().length)+1].className += " active";
+
+  }
+
+
+  prevLayer():void{
+
+    let current_sel = this.getSelLayer()
+
+    let html_layers = document.getElementById("layers")
+    let active = html_layers.getElementsByClassName("active")[0]
+    active.className = active.className.replace( /(?:^|\s)active(?!\S)/g , '' )
+
+    html_layers.children[ ((current_sel-1)%this.getLayers().getLayers().length)+1].className += " active";
+
+  }
+
+  setLayersListeners(){
+
+    let doc = this
+
+    document.getElementById("nextlayer").addEventListener("click", function(){
+
+      doc.nextLayer()
+    }); 
+
+    document.getElementById("prevlayer").addEventListener("click", function(){
+
+      doc.prevLayer()
+    }); 
+
+  }
+  
 
   setToolListeners(): void {
 
@@ -294,6 +334,7 @@ export class SimpleDrawDocument {
       
     }
 
+    this.setLayersListeners()
   }
 
 

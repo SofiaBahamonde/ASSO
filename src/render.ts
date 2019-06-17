@@ -35,7 +35,7 @@ export class InterfaceRender{
                 console.log("Drawing Layers")
 
                 var layers_elem = <HTMLElement>document.getElementById('layers')
-                let layers_html = "<li class=\"page-item disabled\"> <a class=\"page-link\" href=\"#\">&laquo;</a> </li>"
+                let layers_html = "<li id=\"nextlayer\" class=\"page-item\"> <a class=\"page-link\" href=\"#\">&raquo;</a> </li>"
 
                 let active_numb = 1
 
@@ -47,7 +47,7 @@ export class InterfaceRender{
                         layers_html += "<li class=\"page-item\"> <a class=\"page-link\" href=\"#\"> " + elem.getLayers()[layer_it].pos + " </a> </li>"
                 }
 
-                layers_elem.innerHTML = layers_html + " <li class=\"page-item\"> <a class=\"page-link\" href=\"#\">&raquo;</a> </li> "
+                layers_elem.innerHTML = layers_html //+ " <li id=\"prevlayer\" class=\"page-item\"> <a class=\"page-link\" href=\"#\">&raquo;</a> </li> "
 
             } 
 
@@ -147,18 +147,18 @@ abstract class SVGAPI implements DrawAPI{
 export  class SVGWireframeAPI extends SVGAPI{
     setStyle(shape: Shape, element: any){
         if(shape.hightlighted)
-        element.setAttribute('style', 'stroke: red; fill: white')
+        element.setAttribute('style', 'stroke: ' + shape.color + '; stroke-width: 0.8%; fill: white')
         else
-        element.setAttribute('style', 'stroke: black; fill: white')
+        element.setAttribute('style', 'stroke: ' + shape.color + '; fill: white')
     }
 }
 
 export  class SVGFillAPI extends SVGAPI{
     setStyle(shape: Shape, element: any){
         if(shape.hightlighted)
-        element.setAttribute('style', 'stroke: red; fill: red')
+        element.setAttribute('style', 'stroke: red; stroke-width: 0.8%; fill:  ' + shape.color)
         else
-        element.setAttribute('style', 'stroke: black; fill: black')
+        element.setAttribute('style', 'stroke: ' + shape.color + '; fill:  ' + shape.color)
     }
 }
 
@@ -217,10 +217,13 @@ abstract class CanvasAPI implements DrawAPI{
 export class CanvasWireframeAPI extends CanvasAPI{
     drawShape(shape: Shape){
 
+       
+        this.ctx.strokeStyle = shape.color
+        
         if(shape.hightlighted){
-            this.ctx.strokeStyle = "red";
+            this.ctx.lineWidth = 3;
         }else{
-            this.ctx.strokeStyle = "black"
+            this.ctx.lineWidth = 1;
         }
 
         this.ctx.stroke()
@@ -231,11 +234,17 @@ export class CanvasWireframeAPI extends CanvasAPI{
 export class CanvasFillAPI extends CanvasAPI{
 
     drawShape(shape: Shape){
+        this.ctx.fillStyle = shape.color
+        this.ctx.fill()
+
         if(shape.hightlighted){
-            this.ctx.fillStyle = "red";
+            this.ctx.lineWidth = 3;
+            this.ctx.strokeStyle = "red";
+            this.ctx.stroke()
         }
 
-        this.ctx.fill()
+        
+       
     }
 
 }

@@ -76,9 +76,7 @@ export class MoveTool extends Tool{
 
 export class PaintTool extends Tool{
 
-    public color:String = "blue"
-
-
+    public color:string = "blue"
 
     action(action_para:ActionParam) : boolean{
         action_para.objects_sel.forEach(element => {

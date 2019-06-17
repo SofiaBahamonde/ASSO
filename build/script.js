@@ -66,9 +66,7 @@ zoomMinusBtn.addEventListener("click", () => {
 });
 const shapes = document.getElementById("shape-dropdown");
 shapes.addEventListener("change", () => {
-    if (shapes.value != "none") {
-        sdd.selectShape(shapes.value);
-    }
+    sdd.selectShape(shapes.value);
     update();
 });
 const views = document.getElementById("views-dropdown");

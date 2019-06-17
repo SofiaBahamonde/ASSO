@@ -1,7 +1,7 @@
 
 export abstract class Shape {
  
-    public color:String = "black"
+    public color:string = "black"
     public hightlighted = false
 
     constructor(public points: Array<number>) { }

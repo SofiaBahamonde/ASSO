@@ -49,7 +49,11 @@ class MoveTool extends Tool {
         return true;
     }
     sendInput(x, y, sh) {
+<<<<<<< HEAD
         this.sdd.translate(this.init_shape.getID(), x - this.init_shape.points[0], y - this.init_shape.points[1]);
+=======
+        this.sdd.translate(this.init_shape.getID(), x, y);
+>>>>>>> a1b871cf8bd9e2554f5df4f1f49e16e76a28348b
         return true;
     }
 }

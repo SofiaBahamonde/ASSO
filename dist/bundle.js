@@ -266,6 +266,29 @@ class SimpleDrawDocument {
     clicked_tool(tool_name) {
         this.getToolbox().clicked_tool(tool_name, this.getSelShape());
     }
+    nextLayer() {
+        let current_sel = this.getSelLayer();
+        let html_layers = document.getElementById("layers");
+        let active = html_layers.getElementsByClassName("active")[0];
+        active.className = active.className.replace(/(?:^|\s)active(?!\S)/g, '');
+        html_layers.children[((current_sel + 1) % this.getLayers().getLayers().length) + 1].className += " active";
+    }
+    prevLayer() {
+        let current_sel = this.getSelLayer();
+        let html_layers = document.getElementById("layers");
+        let active = html_layers.getElementsByClassName("active")[0];
+        active.className = active.className.replace(/(?:^|\s)active(?!\S)/g, '');
+        html_layers.children[((current_sel - 1) % this.getLayers().getLayers().length) + 1].className += " active";
+    }
+    setLayersListeners() {
+        let doc = this;
+        document.getElementById("nextlayer").addEventListener("click", function () {
+            doc.nextLayer();
+        });
+        document.getElementById("prevlayer").addEventListener("click", function () {
+            doc.prevLayer();
+        });
+    }
     setToolListeners() {
         var tools = document.getElementById("tools");
         let doc = this;
@@ -277,6 +300,7 @@ class SimpleDrawDocument {
                 doc.update();
             });
         }
+        this.setLayersListeners();
     }
 }
 exports.SimpleDrawDocument = SimpleDrawDocument;
@@ -599,7 +623,7 @@ class InterfaceRender {
             else if (elem instanceof layer_1.Layers) {
                 console.log("Drawing Layers");
                 var layers_elem = document.getElementById('layers');
-                let layers_html = "<li class=\"page-item disabled\"> <a class=\"page-link\" href=\"#\">&laquo;</a> </li>";
+                let layers_html = "<li id=\"nextlayer\" class=\"page-item\"> <a class=\"page-link\" href=\"#\">&raquo;</a> </li>";
                 let active_numb = 1;
                 for (let layer_it = 0; layer_it < elem.getLayers().length; layer_it++) {
                     if (layer_it == active_numb)
@@ -607,7 +631,7 @@ class InterfaceRender {
                     else
                         layers_html += "<li class=\"page-item\"> <a class=\"page-link\" href=\"#\"> " + elem.getLayers()[layer_it].pos + " </a> </li>";
                 }
-                layers_elem.innerHTML = layers_html + " <li class=\"page-item\"> <a class=\"page-link\" href=\"#\">&raquo;</a> </li> ";
+                layers_elem.innerHTML = layers_html; //+ " <li id=\"prevlayer\" class=\"page-item\"> <a class=\"page-link\" href=\"#\">&raquo;</a> </li> "
             }
         }
     }
@@ -677,18 +701,18 @@ class SVGAPI {
 class SVGWireframeAPI extends SVGAPI {
     setStyle(shape, element) {
         if (shape.hightlighted)
-            element.setAttribute('style', 'stroke: red; fill: white');
+            element.setAttribute('style', 'stroke: ' + shape.color + '; stroke-width: 0.8%; fill: white');
         else
-            element.setAttribute('style', 'stroke: black; fill: white');
+            element.setAttribute('style', 'stroke: ' + shape.color + '; fill: white');
     }
 }
 exports.SVGWireframeAPI = SVGWireframeAPI;
 class SVGFillAPI extends SVGAPI {
     setStyle(shape, element) {
         if (shape.hightlighted)
-            element.setAttribute('style', 'stroke: red; fill: red');
+            element.setAttribute('style', 'stroke: red; stroke-width: 0.8%; fill:  ' + shape.color);
         else
-            element.setAttribute('style', 'stroke: black; fill: black');
+            element.setAttribute('style', 'stroke: ' + shape.color + '; fill:  ' + shape.color);
     }
 }
 exports.SVGFillAPI = SVGFillAPI;
@@ -729,11 +753,12 @@ class CanvasAPI {
 }
 class CanvasWireframeAPI extends CanvasAPI {
     drawShape(shape) {
+        this.ctx.strokeStyle = shape.color;
         if (shape.hightlighted) {
-            this.ctx.strokeStyle = "red";
+            this.ctx.lineWidth = 3;
         }
         else {
-            this.ctx.strokeStyle = "black";
+            this.ctx.lineWidth = 1;
         }
         this.ctx.stroke();
     }
@@ -741,10 +766,13 @@ class CanvasWireframeAPI extends CanvasAPI {
 exports.CanvasWireframeAPI = CanvasWireframeAPI;
 class CanvasFillAPI extends CanvasAPI {
     drawShape(shape) {
-        if (shape.hightlighted) {
-            this.ctx.fillStyle = "red";
-        }
+        this.ctx.fillStyle = shape.color;
         this.ctx.fill();
+        if (shape.hightlighted) {
+            this.ctx.lineWidth = 3;
+            this.ctx.strokeStyle = "red";
+            this.ctx.stroke();
+        }
     }
 }
 exports.CanvasFillAPI = CanvasFillAPI;
@@ -818,9 +846,7 @@ zoomMinusBtn.addEventListener("click", () => {
 });
 const shapes = document.getElementById("shape-dropdown");
 shapes.addEventListener("change", () => {
-    if (shapes.value != "none") {
-        sdd.selectShape(shapes.value);
-    }
+    sdd.selectShape(shapes.value);
     update();
 });
 const views = document.getElementById("views-dropdown");
@@ -1027,7 +1053,11 @@ class MoveTool extends Tool {
         return true;
     }
     sendInput(x, y, sh) {
+<<<<<<< HEAD
         this.sdd.translate(this.init_shape.getID(), x - this.init_shape.points[0], y - this.init_shape.points[1]);
+=======
+        this.sdd.translate(this.init_shape.getID(), x, y);
+>>>>>>> a1b871cf8bd9e2554f5df4f1f49e16e76a28348b
         return true;
     }
 }
