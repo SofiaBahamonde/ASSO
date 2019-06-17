@@ -47,7 +47,7 @@ export namespace Interpreter {
                     let zoomExpression = new ZoomExpression(context.command[1]);
                     zoomExpression.interpret(context);
                 case 'fill':
-                    let fillExpression = new fillExpression(contex.command);
+                    let fillExpression = new FillExpression(context.command);
                     fillExpression.interpret(context)
                 default:
                     break;
@@ -205,9 +205,9 @@ export namespace Interpreter {
         private color: string;
         private shape_id : string;
         
-        constructor(shape_id : string, color: string){
-            this.color = color;
-            this.shape_id = shape_id;
+        constructor(command: Array<string>){
+            this.color = command[2];
+            this.shape_id = command[3];
         }
 
         interpret(context : Context){
