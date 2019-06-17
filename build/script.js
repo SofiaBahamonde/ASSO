@@ -74,19 +74,19 @@ shapes.addEventListener("change", () => {
 var importbtn = document.getElementById("import");
 var exportbtn = document.getElementById("export");
 var format_box = document.getElementById("format-dropbox");
-var BMPexp = new fileio_1.BMP(100, 100);
+var TXTexp = new fileio_1.TXT(100, 100);
 var XMLexp = new fileio_1.XML();
 var option = document.createElement("OPTION");
-option.setAttribute("value", "BMP");
-option.innerHTML = "BMP";
+option.setAttribute("value", "TXT");
+option.innerHTML = "TXT";
 format_box.appendChild(option);
 var option = document.createElement("OPTION");
 option.setAttribute("value", "XML");
 option.innerHTML = "XML";
 format_box.appendChild(option);
 function retFileIO(name) {
-    if (name == "BMP")
-        return BMPexp;
+    if (name == "TXT")
+        return TXTexp;
     else if (name == "XML")
         return XMLexp;
     return null;

@@ -4,7 +4,7 @@ import {Interpreter} from './interperter';
 import { ToolBox } from './toolbox';
 import { MoveTool, PaintTool } from './tool';
 import { Layers } from './layer';
-import { BMP, XML, FileIO } from './fileio';
+import { TXT, XML, FileIO } from './fileio';
 
 const sdd = new SimpleDrawDocument(update)
 
@@ -101,12 +101,12 @@ var importbtn = <HTMLButtonElement> document.getElementById("import");
 var exportbtn = <HTMLButtonElement> document.getElementById("export");
 var format_box = <HTMLButtonElement> document.getElementById("format-dropbox");
 
-var BMPexp = new BMP(100, 100)
+var TXTexp = new TXT(100, 100)
 var XMLexp = new XML()
 
 var option = document.createElement("OPTION");
-option.setAttribute("value","BMP");
-option.innerHTML = "BMP";
+option.setAttribute("value","TXT");
+option.innerHTML = "TXT";
 format_box.appendChild(option);
 
 var option = document.createElement("OPTION");
@@ -116,8 +116,8 @@ format_box.appendChild(option);
 
 function retFileIO(name:String): FileIO{
     
-    if(name == "BMP")
-        return BMPexp
+    if(name == "TXT")
+        return TXTexp
     else if (name == "XML")
         return XMLexp
     
