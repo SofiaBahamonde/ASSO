@@ -71,7 +71,10 @@ class SVGAPI {
         for (const shape of objs) {
             if (shape instanceof shape_1.Rectangle) {
                 const e = document.createElementNS(xmlns, "rect");
-                e.setAttribute('style', 'stroke: black; fill: white');
+                if (shape.hightlighted)
+                    e.setAttribute('style', 'stroke: red; fill: white');
+                else
+                    e.setAttribute('style', 'stroke: black; fill: white');
                 e.setAttribute('x', shape.points[0].toString());
                 e.setAttribute('y', shape.points[1].toString());
                 e.setAttribute('width', shape.width.toString());
@@ -80,7 +83,10 @@ class SVGAPI {
             }
             else if (shape instanceof shape_1.Circle) {
                 const c = document.createElementNS(xmlns, "circle");
-                c.setAttribute('style', 'stroke: black; fill: white');
+                if (shape.hightlighted)
+                    c.setAttribute('style', 'stroke: red; fill: white');
+                else
+                    c.setAttribute('style', 'stroke: black; fill: white');
                 c.setAttribute("cx", shape.points[0].toString());
                 c.setAttribute("cy", shape.points[1].toString());
                 c.setAttribute("r", shape.radius.toString());
@@ -111,10 +117,22 @@ class WireFrameAPI {
                 this.ctx.beginPath();
                 this.ctx.arc(shape.points[0], shape.points[1], shape.radius, 0, 2 * Math.PI);
                 this.ctx.closePath();
+                if (shape.hightlighted) {
+                    this.ctx.strokeStyle = "red";
+                }
                 this.ctx.stroke();
+                if (shape.hightlighted) {
+                    this.ctx.strokeStyle = "black";
+                }
             }
             else if (shape instanceof shape_1.Rectangle) {
+                if (shape.hightlighted) {
+                    this.ctx.strokeStyle = "red";
+                }
                 this.ctx.strokeRect(shape.points[0], shape.points[0], shape.width, shape.height);
+                if (shape.hightlighted) {
+                    this.ctx.strokeStyle = "grey";
+                }
             }
             else if (shape instanceof shape_1.Polygon) {
                 this.ctx.beginPath();
@@ -123,7 +141,13 @@ class WireFrameAPI {
                     this.ctx.lineTo(shape.points[item], shape.points[item + 1]);
                 }
                 this.ctx.closePath();
+                if (shape.hightlighted) {
+                    this.ctx.strokeStyle = "red";
+                }
                 this.ctx.stroke();
+                if (shape.hightlighted) {
+                    this.ctx.strokeStyle = "grey";
+                }
             }
         }
     }

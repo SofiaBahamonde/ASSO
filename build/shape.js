@@ -4,6 +4,7 @@ class Shape {
     constructor(points) {
         this.points = points;
         this.color = "Grey";
+        this.hightlighted = false;
     }
     //translation with array of points 
     translate(xd, yd) {
@@ -29,6 +30,9 @@ class Shape {
             this.points[item] = xr + xc;
             this.points[item + 1] = yr + yc;
         }
+    }
+    setHighlight(value) {
+        this.hightlighted = value;
     }
 }
 exports.Shape = Shape;

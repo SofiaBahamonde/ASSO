@@ -1,7 +1,8 @@
 
 export abstract class Shape {
-
+ 
     public color:String = "Grey"
+    public hightlighted = false
 
     constructor(public points: Array<number>) { }
 
@@ -39,6 +40,10 @@ export abstract class Shape {
             this.points[item] = xr + xc
             this.points[item+1] = yr + yc             
         }
+    }
+
+    setHighlight(value : boolean) {
+        this.hightlighted = value;
     }
 
     abstract getID() : string;

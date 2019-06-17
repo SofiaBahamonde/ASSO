@@ -111,6 +111,9 @@ class SVGAPI implements DrawAPI{
            
             if (shape instanceof Rectangle) {
                 const e = document.createElementNS(xmlns, "rect")
+                if(shape.hightlighted)
+                e.setAttribute('style', 'stroke: red; fill: white')
+                else
                 e.setAttribute('style', 'stroke: black; fill: white')
                 e.setAttribute('x', shape.points[0].toString())
                 e.setAttribute('y', shape.points[1].toString())
@@ -119,6 +122,9 @@ class SVGAPI implements DrawAPI{
                 svg.appendChild(e)
             } else if(shape instanceof Circle){
                 const c = document.createElementNS(xmlns, "circle")
+                if(shape.hightlighted)
+                c.setAttribute('style', 'stroke: red; fill: white')
+                else
                 c.setAttribute('style', 'stroke: black; fill: white')
                 c.setAttribute("cx",shape.points[0].toString())
                 c.setAttribute("cy",shape.points[1].toString())
@@ -163,9 +169,21 @@ export class WireFrameAPI implements DrawAPI{
                 this.ctx.beginPath();
                 this.ctx.arc(shape.points[0], shape.points[1], shape.radius, 0, 2 * Math.PI);
                 this.ctx.closePath()
+                if(shape.hightlighted){
+                    this.ctx.strokeStyle = "red";
+                }
                 this.ctx.stroke()
+                if(shape.hightlighted){
+                    this.ctx.strokeStyle = "black";
+                }
             } else if (shape instanceof Rectangle) {
+                if(shape.hightlighted){
+                    this.ctx.strokeStyle = "red";
+                }
                 this.ctx.strokeRect(shape.points[0], shape.points[0], shape.width, shape.height)   
+                if(shape.hightlighted){
+                    this.ctx.strokeStyle = "grey";
+                }
             } else if (shape instanceof Polygon) {
 
                 this.ctx.beginPath()
@@ -173,7 +191,13 @@ export class WireFrameAPI implements DrawAPI{
                 for( var item = 2 ; item < shape.points.length-1 ; item+=2 )
                 {this.ctx.lineTo( shape.points[item] , shape.points[item+1] )}
                 this.ctx.closePath()
+                if(shape.hightlighted){
+                    this.ctx.strokeStyle = "red";
+                }
                 this.ctx.stroke()
+                if(shape.hightlighted){
+                    this.ctx.strokeStyle = "grey";
+                }
             }
         }
     }
