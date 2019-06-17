@@ -89,7 +89,7 @@ export abstract class Render {
 
 class SVGAPI implements DrawAPI{
 
-    factor: number = 300;
+    factor: number = 400;
 
     draw(...objs: Array<Shape>): void {
         var svg =  <HTMLElement>document.getElementById('svgcanvas');
@@ -97,8 +97,8 @@ class SVGAPI implements DrawAPI{
             
         var svgElem = document.createElementNS (xmlns, "svg");
         svgElem.setAttributeNS (null, "id", "svgcanvas");
-        svgElem.setAttributeNS (null, "width", '300');
-        svgElem.setAttributeNS (null, "height", '300');
+        svgElem.setAttributeNS (null, "width", '400');
+        svgElem.setAttributeNS (null, "height", '400');
         svgElem.setAttributeNS (null, "style", "border: 2px solid black; border-radius: 5px 5px 5px 5px/25px 25px 25px 5px;");
         svgElem.setAttributeNS (null, "viewBox", "0 0 " + this.factor + " " + this.factor)
 
@@ -138,7 +138,7 @@ class SVGAPI implements DrawAPI{
     zoom(factor: number, positive : boolean){
 
         if(positive)
-            this.factor = 300/factor;
+            this.factor = 400/factor;
         else    
             this.factor = this.factor * factor;
     }
