@@ -132,7 +132,10 @@ class SVGAPI implements DrawAPI{
                 svg.appendChild(c)
             }else if (shape instanceof Polygon) {
                 const polygon =  document.createElementNS(xmlns, "polygon")
-                polygon.setAttribute('style', 'stroke: black; fill: white')      
+                if(shape.hightlighted)
+                polygon.setAttribute('style', 'stroke: red; fill: white')
+                else
+                polygon.setAttribute('style', 'stroke: black; fill: white') 
                 var textPoints = ''                
                 for ( var item = 0 ; item < shape.points.length-1 ; item+=2 ) 
                     textPoints +=  shape.points[item] + ',' + shape.points[item+1] + ' '
@@ -191,7 +194,7 @@ export class WireFrameAPI implements DrawAPI{
                 }
                 this.ctx.strokeRect(shape.points[0], shape.points[0], shape.width, shape.height)   
                 if(shape.hightlighted){
-                    this.ctx.strokeStyle = "grey";
+                    this.ctx.strokeStyle = "black";
                 }
             } else if (shape instanceof Polygon) {
 
@@ -205,7 +208,7 @@ export class WireFrameAPI implements DrawAPI{
                 }
                 this.ctx.stroke()
                 if(shape.hightlighted){
-                    this.ctx.strokeStyle = "grey";
+                    this.ctx.strokeStyle = "black";
                 }
             }
         }

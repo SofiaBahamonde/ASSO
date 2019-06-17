@@ -46,6 +46,9 @@ export namespace Interpreter {
                 case 'zoom':
                     let zoomExpression = new ZoomExpression(context.command[1]);
                     zoomExpression.interpret(context);
+                case 'fill':
+                    let fillExpression = new fillExpression(contex.command);
+                    fillExpression.interpret(context)
                 default:
                     break;
             }
@@ -195,6 +198,20 @@ export namespace Interpreter {
         public interpret(context: Context): void{
             
             context.document.zoom([context.svg, context.canvas], this.factor);
+        }
+    }
+
+    class FillExpression implements Expression{
+        private color: string;
+        private shape_id : string;
+        
+        constructor(shape_id : string, color: string){
+            this.color = color;
+            this.shape_id = shape_id;
+        }
+
+        interpret(context : Context){
+            
         }
     }
 
