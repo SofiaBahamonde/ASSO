@@ -149,6 +149,7 @@ export class WireFrameAPI implements DrawAPI{
 
     ctx: CanvasRenderingContext2D
     canvas : any
+    factor: number
 
     draw(...objs: Array<Shape>) {
 
@@ -180,12 +181,17 @@ export class WireFrameAPI implements DrawAPI{
     zoom(factor: number, positive : boolean){
         console.log(factor)
         console.log(1/factor)
-        if(positive)
-            this.ctx.scale(factor, factor);
+        if(positive){
+            this.ctx.scale(1/this.factor, 1/this.factor);
+            this.ctx.scale(factor,factor);
+        }
         else{
-            console.log(" undo scaling!")
             this.ctx.scale(1/factor,1/factor);
         }
+
+        this.factor = factor;
+
+
     }
 }
 

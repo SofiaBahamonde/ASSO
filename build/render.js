@@ -130,12 +130,14 @@ class WireFrameAPI {
     zoom(factor, positive) {
         console.log(factor);
         console.log(1 / factor);
-        if (positive)
+        if (positive) {
+            this.ctx.scale(1 / this.factor, 1 / this.factor);
             this.ctx.scale(factor, factor);
+        }
         else {
-            console.log(" undo scaling!");
             this.ctx.scale(1 / factor, 1 / factor);
         }
+        this.factor = factor;
     }
 }
 exports.WireFrameAPI = WireFrameAPI;

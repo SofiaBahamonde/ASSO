@@ -616,12 +616,14 @@ class WireFrameAPI {
     zoom(factor, positive) {
         console.log(factor);
         console.log(1 / factor);
-        if (positive)
+        if (positive) {
+            this.ctx.scale(1 / this.factor, 1 / this.factor);
             this.ctx.scale(factor, factor);
+        }
         else {
-            console.log(" undo scaling!");
             this.ctx.scale(1 / factor, 1 / factor);
         }
+        this.factor = factor;
     }
 }
 exports.WireFrameAPI = WireFrameAPI;
@@ -665,10 +667,13 @@ sdd.addUIElem(layerui);
 var consoleBtn = document.getElementById("submit");
 var undoBtn = document.getElementById("undo");
 var redoBtn = document.getElementById("redo");
+var zoomPlusBtn = document.getElementById("zoom-plus");
+var zoomMinusBtn = document.getElementById("zoom-minus");
 var importbtn = document.getElementById("import");
 var exportbtn = document.getElementById("export");
 var format_box = document.getElementById("format-dropbox");
 var input = document.getElementById("console-input");
+var zoomFactor = document.getElementById("zoom-factor");
 consoleBtn.addEventListener("click", () => {
     let command = input.value;
     let context = new interperter_1.Interpreter.Context(sdd, canvasrender, svgrender, command);
@@ -682,6 +687,22 @@ undoBtn.addEventListener("click", () => {
 redoBtn.addEventListener("click", () => {
     sdd.redo();
     update();
+});
+zoomPlusBtn.addEventListener("click", () => {
+    var factor = parseFloat(zoomFactor.innerHTML);
+    factor = Math.round((factor + 0.2) * 10) / 10;
+    sdd.zoom([svgrender, canvasrender], factor);
+    zoomFactor.innerHTML = factor.toString();
+    update();
+});
+zoomMinusBtn.addEventListener("click", () => {
+    var factor = parseFloat(zoomFactor.innerHTML);
+    factor = Math.round((factor - 0.2) * 10) / 10;
+    if (factor > 0) {
+        sdd.zoom([svgrender, canvasrender], factor);
+        zoomFactor.innerHTML = factor.toString();
+        update();
+    }
 });
 var BMPexp = new fileio_1.BMP(100, 100);
 var XMLexp = new fileio_1.XML();
