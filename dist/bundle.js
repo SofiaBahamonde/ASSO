@@ -286,7 +286,8 @@ exports.SimpleDrawDocument = SimpleDrawDocument;
 },{"./actions":1,"./layer":5,"./toolbox":10,"./undo":11}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-class BMP {
+const shape_1 = require("./shape");
+class TXT {
     constructor(sizex, sizey) {
         console.log("Init of BMP FileIO");
     }
@@ -295,13 +296,31 @@ class BMP {
         return Array();
     }
     export(shapes) {
-        console.log("Exporting Many shapes in BMP");
+        var fileData = '';
+        for (var shape in shapes) {
+            var shapeName = '';
+            if (shapes[shape] instanceof shape_1.Rectangle)
+                shapeName = "Rectangle";
+            else if (shapes[shape] instanceof shape_1.Circle)
+                shapeName = "Circle";
+            else if (shapes[shape] instanceof shape_1.Polygon)
+                shapeName = "Polygon";
+            fileData += shapes[shape].getID() + ' ' + shapes[shape].color + ' ' + shapeName + ' ' + shapes[shape].points + shapes[shape].getUnique() + '\n';
+        }
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(fileData));
+        element.setAttribute('download', 'save.txt');
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
         return true;
     }
 }
-exports.BMP = BMP;
+exports.TXT = TXT;
 class XML {
     constructor() {
+        this.doc = document.implementation.createDocument('', '', null);
         console.log("Init of XML FileIO");
     }
     import(fileloc) {
@@ -309,13 +328,41 @@ class XML {
         return Array();
     }
     export(shapes) {
-        console.log("Exporting Many shapes in XML");
+        let xmlData = this.doc.createElement('objects');
+        for (var shape in shapes) {
+            var shapeName = '';
+            if (shapes[shape] instanceof shape_1.Rectangle) {
+                var e = this.doc.createElement('rect');
+                shapeName = "Rectangle";
+            }
+            if (shapes[shape] instanceof shape_1.Circle) {
+                var e = this.doc.createElement('circ');
+                shapeName = "Circle";
+            }
+            if (shapes[shape] instanceof shape_1.Polygon) {
+                var e = this.doc.createElement('poly');
+                shapeName = "Polygon";
+            }
+            e.setAttribute('id', shapes[shape].getID());
+            e.setAttribute('color', shapes[shape].color.toString());
+            e.setAttribute('name', shapeName.toString());
+            e.setAttribute('points', shapes[shape].points.toString());
+            e.setAttribute('unique', shapes[shape].getUnique());
+            xmlData.appendChild(e);
+        }
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(xmlData)));
+        element.setAttribute('download', 'save.xml');
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
         return true;
     }
 }
 exports.XML = XML;
 
-},{}],4:[function(require,module,exports){
+},{"./shape":8}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Interpreter;
@@ -787,19 +834,19 @@ views.addEventListener("change", () => {
 var importbtn = document.getElementById("import");
 var exportbtn = document.getElementById("export");
 var format_box = document.getElementById("format-dropbox");
-var BMPexp = new fileio_1.BMP(100, 100);
+var TXTexp = new fileio_1.TXT(100, 100);
 var XMLexp = new fileio_1.XML();
 var option = document.createElement("OPTION");
-option.setAttribute("value", "BMP");
-option.innerHTML = "BMP";
+option.setAttribute("value", "TXT");
+option.innerHTML = "TXT";
 format_box.appendChild(option);
 var option = document.createElement("OPTION");
 option.setAttribute("value", "XML");
 option.innerHTML = "XML";
 format_box.appendChild(option);
 function retFileIO(name) {
-    if (name == "BMP")
-        return BMPexp;
+    if (name == "TXT")
+        return TXTexp;
     else if (name == "XML")
         return XMLexp;
     return null;
@@ -886,6 +933,9 @@ class Rectangle extends Shape {
     getID() {
         return "rect_" + this.id;
     }
+    getUnique() {
+        return ' ' + this.width + ' ' + this.height;
+    }
 }
 Rectangle.idCounter = 0;
 exports.Rectangle = Rectangle;
@@ -899,6 +949,9 @@ class Circle extends Shape {
     getID() {
         return "circle_" + this.id;
     }
+    getUnique() {
+        return ' ' + this.radius;
+    }
 }
 Circle.idCounter = 0;
 exports.Circle = Circle;
@@ -910,6 +963,9 @@ class Polygon extends Shape {
     }
     getID() {
         return "polygon_" + this.id;
+    }
+    getUnique() {
+        return ' ';
     }
 }
 Polygon.idCounter = 0;

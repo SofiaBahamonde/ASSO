@@ -52,6 +52,9 @@ class Rectangle extends Shape {
     getID() {
         return "rect_" + this.id;
     }
+    getUnique() {
+        return ' ' + this.width + ' ' + this.height;
+    }
 }
 Rectangle.idCounter = 0;
 exports.Rectangle = Rectangle;
@@ -65,6 +68,9 @@ class Circle extends Shape {
     getID() {
         return "circle_" + this.id;
     }
+    getUnique() {
+        return ' ' + this.radius;
+    }
 }
 Circle.idCounter = 0;
 exports.Circle = Circle;
@@ -76,6 +82,9 @@ class Polygon extends Shape {
     }
     getID() {
         return "polygon_" + this.id;
+    }
+    getUnique() {
+        return ' ';
     }
 }
 Polygon.idCounter = 0;
