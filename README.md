@@ -73,7 +73,7 @@ During the coding of SimpleDraw we consired the following points important for u
 
 The basis of SimpleDraw is a MVC (Model View Controller), the view is done on render.ts, the model are the layers and shapes and (layer.ts and shape.ts) and the controller is the document, document.ts
 
-![UML](https://raw.githubusercontent.com/sofia-bahamonde/feup-asso/master/MVC.jpg?token=AES7A2QGCMY24YSTBT6YR5K5BAGAW)
+![UML](https://raw.githubusercontent.com/sofia-bahamonde/feup-asso/master/MVC.jpg)
 
 
 ### Behavioral & Structural
@@ -83,7 +83,7 @@ The basis of SimpleDraw is a MVC (Model View Controller), the view is done on re
 In order to render the shapes into the canvas we used the bridge design pattern.
 Each canvas has a renderer, that contains methods for zoom and drawing, drawing on ther other hand is done by APIs each representing a different view style.
 
-![UML](https://raw.githubusercontent.com/sofia-bahamonde/feup-asso/master/bridge.jpg?token=AES7A2U2QB4ARQOCOOOPFNK5BADJY)
+![UML](https://raw.githubusercontent.com/sofia-bahamonde/feup-asso/master/bridge.jpg)
 
 #### Interpreter
 
