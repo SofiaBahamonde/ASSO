@@ -120,7 +120,6 @@ class SimpleDrawDocument {
         for (var shape of this.getElemsToDraw()) {
             if (shape.getID() == shape_id) {
                 shape.setHighlight(true);
-                this.selectedShape = shape;
             }
             else {
                 shape.setHighlight(false);
@@ -151,7 +150,6 @@ class SimpleDrawDocument {
                 child.remove();
             }
         }
-        //this.objects = this.objects.filter(o => o !== shape)
         this.getLayers().removeObject(shape);
     }
     do(a) {
@@ -689,6 +687,9 @@ class CanvasWireframeAPI extends CanvasAPI {
         if (shape.hightlighted) {
             this.ctx.strokeStyle = "red";
         }
+        else {
+            this.ctx.strokeStyle = "black";
+        }
         this.ctx.stroke();
     }
 }
@@ -723,8 +724,8 @@ function update() {
     sdd.drawUI(uirender);
 }
 var toolbox = new toolbox_1.ToolBox();
-const movetool = new tool_1.MoveTool("Move Tool", "movetool.png");
-const painttool = new tool_1.PaintTool("Red", "Paint Tool", "painttool.png");
+const movetool = new tool_1.MoveTool("Move Tool", sdd);
+const painttool = new tool_1.PaintTool("Red", sdd);
 toolbox.add(movetool);
 toolbox.add(painttool);
 sdd.addUIElem(toolbox);
@@ -929,9 +930,9 @@ class ActionParam {
 }
 exports.ActionParam = ActionParam;
 class Tool {
-    constructor(name, img_loc) {
+    constructor(name, sdd) {
         this.name = name;
-        this.img_loc = img_loc;
+        this.sdd = sdd;
         this.init_shape = null;
     }
     action(action_para) {
@@ -966,16 +967,15 @@ class MoveTool extends Tool {
         return true;
     }
     sendInput(x, y, sh) {
-        this.init_shape.translate(x, y);
+        this.sdd.translate(this.init_shape.getID(), x, y);
+        //    this.init_shape.translate(x, y)
         return true;
     }
 }
 exports.MoveTool = MoveTool;
 class PaintTool extends Tool {
-    constructor(color, name, img_loc) {
-        super(name, img_loc);
-        this.name = name;
-        this.img_loc = img_loc;
+    constructor() {
+        super(...arguments);
         this.color = "blue";
     }
     action(action_para) {

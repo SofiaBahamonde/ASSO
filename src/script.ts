@@ -20,8 +20,8 @@ function update(){
 
 var toolbox = new ToolBox()
 
-const movetool = new MoveTool("Move Tool", "movetool.png")
-const painttool = new PaintTool("Red", "Paint Tool", "painttool.png")
+const movetool = new MoveTool("Move Tool", sdd)
+const painttool = new PaintTool("Red", sdd)
 
 toolbox.add(movetool)
 toolbox.add(painttool)

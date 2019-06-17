@@ -17,8 +17,8 @@ function update() {
     sdd.drawUI(uirender);
 }
 var toolbox = new toolbox_1.ToolBox();
-const movetool = new tool_1.MoveTool("Move Tool", "movetool.png");
-const painttool = new tool_1.PaintTool("Red", "Paint Tool", "painttool.png");
+const movetool = new tool_1.MoveTool("Move Tool", sdd);
+const painttool = new tool_1.PaintTool("Red", sdd);
 toolbox.add(movetool);
 toolbox.add(painttool);
 sdd.addUIElem(toolbox);

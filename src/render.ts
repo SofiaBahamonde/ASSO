@@ -219,6 +219,8 @@ export class CanvasWireframeAPI extends CanvasAPI{
 
         if(shape.hightlighted){
             this.ctx.strokeStyle = "red";
+        }else{
+            this.ctx.strokeStyle = "black"
         }
 
         this.ctx.stroke()

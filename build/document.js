@@ -30,7 +30,6 @@ class SimpleDrawDocument {
         for (var shape of this.getElemsToDraw()) {
             if (shape.getID() == shape_id) {
                 shape.setHighlight(true);
-                this.selectedShape = shape;
             }
             else {
                 shape.setHighlight(false);
@@ -61,7 +60,6 @@ class SimpleDrawDocument {
                 child.remove();
             }
         }
-        //this.objects = this.objects.filter(o => o !== shape)
         this.getLayers().removeObject(shape);
     }
     do(a) {
