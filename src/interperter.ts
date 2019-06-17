@@ -193,8 +193,8 @@ export namespace Interpreter {
         }
 
         public interpret(context: Context): void{
-            context.document.zoom(context.canvas, this.factor);
-            context.document.zoom(context.svg, this.factor);
+            
+            context.document.zoom([context.svg, context.canvas], this.factor);
         }
     }
 
