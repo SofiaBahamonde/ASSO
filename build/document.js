@@ -22,7 +22,6 @@ class SimpleDrawDocument {
         uiRender.draw(...this.uielems);
     }
     draw(render) {
-        console.log(this.objects);
         // this.objects.forEach(o => o.draw(ctx))
         render.draw(this.getElemsToDraw());
     }
@@ -30,6 +29,9 @@ class SimpleDrawDocument {
         var e = document.getElementById("layers");
         var str_value = e.getElementsByClassName("active")[0].children[0].innerHTML;
         return parseInt(str_value, 10);
+    }
+    zoom(render, factor) {
+        render.zoom(factor);
     }
     add(r) {
         var option = document.createElement("OPTION");

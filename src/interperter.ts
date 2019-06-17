@@ -43,6 +43,9 @@ export namespace Interpreter {
                     let rotateExpression = new RotateExpression(context.command);
                     rotateExpression.interpret(context);
                     break;
+                case 'zoom':
+                    let zoomExpression = new ZoomExpression(context.command[1]);
+                    zoomExpression.interpret(context);
                 default:
                     break;
             }
@@ -181,6 +184,19 @@ export namespace Interpreter {
         }
     }
 
+    class ZoomExpression implements Expression{
+
+        private factor : number;
+
+        constructor(factor_str : string){
+            this.factor = parseInt(factor_str);
+        }
+
+        public interpret(context: Context): void{
+            context.document.zoom(context.canvas, this.factor);
+            context.document.zoom(context.svg, this.factor);
+        }
+    }
 
 
 }
