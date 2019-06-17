@@ -75,7 +75,7 @@ export class MoveTool extends Tool{
 
 export class PaintTool extends Tool{
 
-    public color:String = "Blue"
+    public color:String = "blue"
 
     constructor(color:String, public name:String, public img_loc:String ){
         super(name, img_loc)
@@ -94,4 +94,10 @@ export class PaintTool extends Tool{
 
         return true;
     }
+
+
+    initclick(sh:Shape){
+        sh.color = this.color
+    }
+
 }

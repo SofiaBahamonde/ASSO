@@ -189,7 +189,8 @@ export class WireFrameAPI implements DrawAPI{
                 }
                 this.ctx.stroke()
                 if(shape.hightlighted){
-                    this.ctx.strokeStyle = "grey";
+                    //this.ctx.strokeStyle = "grey";
+                    this.ctx.strokeStyle = shape.color.toString();
                 }
             }
         }

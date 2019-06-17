@@ -59,17 +59,32 @@ export class Layers implements InterfaceObj{
         return this.layers
     }
 
+    removeObject(sh_toremove:Shape): void{
+        this.layers.forEach(layer => {
+            layer.getShapes().forEach(sh =>{
+                if(sh.getID() == sh_toremove.getID())
+                layer.getShapes().filter(o => o !== sh)
+                return
+            })
+        });
+    }
+
     getSortedShapes(): Array<Shape>{
 
         let objs = Array<Shape>()
 
-        for (let layer_it = this.layers.length -1; layer_it <= 0 ; layer_it--) {
+        for (let layer_it = this.layers.length -1; layer_it >= 0 ; layer_it--) {
             
+            console.log("Getting Sorted Shapes: " + this.layers[layer_it].getShapes())
+
             this.layers[layer_it].getShapes().forEach(obj => {
                 objs.push(obj)
             });
             
         }
+
+
+        //console.log("Getting Sorted Shapes: " + this.layers[1].getShapes())
 
         return objs
 

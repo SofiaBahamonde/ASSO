@@ -43,7 +43,7 @@ export class SimpleDrawDocument {
   }
 
   selectShape(shape_id: string) {
-    for(var shape of this.objects){
+    for(var shape of this.getElemsToDraw()){
 
       if(shape.getID() == shape_id){
         shape.setHighlight(true);
@@ -72,7 +72,9 @@ export class SimpleDrawDocument {
     option.innerHTML = r.getID();
     this.shapeDropbox.appendChild(option);
 
-    this.objects.push(r)
+    this.getLayers().addShape(r, this.getSelLayer())
+
+    //this.objects.push(r)
   }
 
   remove(shape: Shape) {
@@ -86,7 +88,8 @@ export class SimpleDrawDocument {
       
     }
 
-    this.objects = this.objects.filter(o => o !== shape)
+    //this.objects = this.objects.filter(o => o !== shape)
+    this.getLayers().removeObject(shape)
   }
 
 
@@ -159,14 +162,16 @@ export class SimpleDrawDocument {
 
     //Figure out if the concept of layers exists, if not just return objects vector
 
+    let shapes_draw:Array<Shape> = null 
+
     this.uielems.forEach(element => {
 
       if (element instanceof Layers) {
-        return element.getSortedShapes()
+        shapes_draw = element.getSortedShapes()
       }
     })
 
-    return this.objects
+    return shapes_draw
 
   }
 
@@ -209,6 +214,21 @@ export class SimpleDrawDocument {
 
   }
 
+
+  getLayers(): Layers{
+
+    let f_layers:Layers = null
+
+    this.uielems.forEach(element => {
+
+      if (element instanceof Layers) {
+          f_layers = element
+
+      }
+    })
+
+    return f_layers
+  }
 
   canvasNotification(x:number, y:number){
 
@@ -279,6 +299,8 @@ export class SimpleDrawDocument {
     }
 
   }
+
+
 
   /*
   setToolBox(newtoolbox:ToolBox){
