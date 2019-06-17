@@ -104,7 +104,7 @@ class SVGAPI implements DrawAPI{
 
         svg.remove();
         document.getElementById("all_canvas").appendChild(svgElem);
-        svg = <HTMLElement>document.getElementById('svgcanvas')
+        svg= document.getElementById('svgcanvas')
 
         
         for (const shape of objs) {
@@ -124,6 +124,15 @@ class SVGAPI implements DrawAPI{
                 c.setAttribute("cy",shape.points[1].toString())
                 c.setAttribute("r",shape.radius.toString())
                 svg.appendChild(c)
+            }else if (shape instanceof Polygon) {
+                const polygon =  document.createElementNS(xmlns, "polygon")
+                polygon.setAttribute('style', 'stroke: black; fill: white')      
+                var textPoints = ''                
+                for ( var item = 0 ; item < shape.points.length-1 ; item+=2 ) 
+                    textPoints +=  shape.points[item] + ',' + shape.points[item+1] + ' '
+                polygon.setAttribute('points', textPoints)    
+                svg.appendChild(polygon)
+                
             }
         }
     }

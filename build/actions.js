@@ -46,14 +46,10 @@ class TranslateAction {
         this.yd = yd;
     }
     do() {
-        //this.oldX = this.shape.x
-        //this.oldY = this.shape.y
         this.shape.translate(this.xd, this.yd);
     }
     undo() {
-        // this.shape.x = this.oldX
-        // this.shape.y = this.oldY
-        // this.shape.translate(-this.xd, -this.yd)
+        this.shape.translate(-this.xd, -this.yd);
     }
 }
 exports.TranslateAction = TranslateAction;
@@ -67,9 +63,7 @@ class RotationAction {
         this.shape.rotate(this.angle);
     }
     undo() {
-        // this.shape.x = this.oldX
-        // this.shape.y = this.oldY
-        // this.shape.translate(-this.xd, -this.yd)
+        this.shape.rotate(-this.angle);
     }
 }
 exports.RotationAction = RotationAction;

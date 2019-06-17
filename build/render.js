@@ -86,6 +86,25 @@ class SVGAPI {
                 c.setAttribute("r", shape.radius.toString());
                 svg.appendChild(c);
             }
+            else if (shape instanceof shape_1.Polygon) {
+                //const polygon = <SVGPolygonElement> document.createElementNS(xmlns, "polygon")
+                const polygon = document.createElementNS(xmlns, "polygon");
+                polygon.setAttribute('style', 'stroke: black; fill: white');
+                var textPoints = '';
+                for (var item = 0; item < shape.points.length - 1; item += 2) {
+                    textPoints += shape.points[item] + ',' + shape.points[item + 1] + ' ';
+                }
+                console.log(textPoints);
+                polygon.setAttribute('points', textPoints);
+                // let newPolygn: SVGSVGElement;
+                // for ( var item = 0 ; item < shape.points.length-1 ; item+=2 ) {
+                //     var point = newPolygn.createSVGPoint()
+                //     point.x = shape.points[item]
+                //     point.y = shape.points[item+1]
+                //     polygon.points.appendItem(point)
+                // }
+                svg.appendChild(polygon);
+            }
         }
     }
     zoom(factor) {
