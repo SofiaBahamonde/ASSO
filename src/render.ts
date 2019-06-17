@@ -109,22 +109,14 @@ class SVGAPI implements DrawAPI{
         
         for (const shape of objs) {
            
-            if (shape instanceof Rectangle) {
-                const e = document.createElementNS(xmlns, "rect")
-                e.setAttribute('style', 'stroke: black; fill: white')
-                e.setAttribute('x', shape.points[0].toString())
-                e.setAttribute('y', shape.points[1].toString())
-                e.setAttribute('width', shape.width.toString())
-                e.setAttribute('height', shape.height.toString())
-                svg.appendChild(e)
-            } else if(shape instanceof Circle){
+            if(shape instanceof Circle){
                 const c = document.createElementNS(xmlns, "circle")
                 c.setAttribute('style', 'stroke: black; fill: white')
                 c.setAttribute("cx",shape.points[0].toString())
                 c.setAttribute("cy",shape.points[1].toString())
                 c.setAttribute("r",shape.radius.toString())
                 svg.appendChild(c)
-            }else if (shape instanceof Polygon) {
+            }else if (shape instanceof Polygon || shape instanceof Rectangle) {
                 const polygon =  document.createElementNS(xmlns, "polygon")
                 polygon.setAttribute('style', 'stroke: black; fill: white')      
                 var textPoints = ''                
@@ -172,11 +164,8 @@ export class WireFrameAPI implements DrawAPI{
                 this.ctx.beginPath();
                 this.ctx.arc(shape.points[0], shape.points[1], shape.radius, 0, 2 * Math.PI);
                 this.ctx.closePath()
-                this.ctx.stroke()
-            } else if (shape instanceof Rectangle) {
-                this.ctx.strokeRect(shape.points[0], shape.points[0], shape.width, shape.height)   
-            } else if (shape instanceof Polygon) {
-
+                this.ctx.stroke()  
+            } else if (shape instanceof Polygon || shape instanceof Rectangle) {
                 this.ctx.beginPath()
                 this.ctx.moveTo(shape.points[0], shape.points[1])
                 for( var item = 2 ; item < shape.points.length-1 ; item+=2 )

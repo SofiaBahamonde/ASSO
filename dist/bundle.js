@@ -549,16 +549,7 @@ class SVGAPI {
         document.getElementById("all_canvas").appendChild(svgElem);
         svg = document.getElementById('svgcanvas');
         for (const shape of objs) {
-            if (shape instanceof shape_1.Rectangle) {
-                const e = document.createElementNS(xmlns, "rect");
-                e.setAttribute('style', 'stroke: black; fill: white');
-                e.setAttribute('x', shape.points[0].toString());
-                e.setAttribute('y', shape.points[1].toString());
-                e.setAttribute('width', shape.width.toString());
-                e.setAttribute('height', shape.height.toString());
-                svg.appendChild(e);
-            }
-            else if (shape instanceof shape_1.Circle) {
+            if (shape instanceof shape_1.Circle) {
                 const c = document.createElementNS(xmlns, "circle");
                 c.setAttribute('style', 'stroke: black; fill: white');
                 c.setAttribute("cx", shape.points[0].toString());
@@ -566,23 +557,13 @@ class SVGAPI {
                 c.setAttribute("r", shape.radius.toString());
                 svg.appendChild(c);
             }
-            else if (shape instanceof shape_1.Polygon) {
-                //const polygon = <SVGPolygonElement> document.createElementNS(xmlns, "polygon")
+            else if (shape instanceof shape_1.Polygon || shape instanceof shape_1.Rectangle) {
                 const polygon = document.createElementNS(xmlns, "polygon");
                 polygon.setAttribute('style', 'stroke: black; fill: white');
                 var textPoints = '';
-                for (var item = 0; item < shape.points.length - 1; item += 2) {
+                for (var item = 0; item < shape.points.length - 1; item += 2)
                     textPoints += shape.points[item] + ',' + shape.points[item + 1] + ' ';
-                }
-                console.log(textPoints);
                 polygon.setAttribute('points', textPoints);
-                // let newPolygn: SVGSVGElement;
-                // for ( var item = 0 ; item < shape.points.length-1 ; item+=2 ) {
-                //     var point = newPolygn.createSVGPoint()
-                //     point.x = shape.points[item]
-                //     point.y = shape.points[item+1]
-                //     polygon.points.appendItem(point)
-                // }
                 svg.appendChild(polygon);
             }
         }
@@ -612,10 +593,7 @@ class WireFrameAPI {
                 this.ctx.closePath();
                 this.ctx.stroke();
             }
-            else if (shape instanceof shape_1.Rectangle) {
-                this.ctx.strokeRect(shape.points[0], shape.points[0], shape.width, shape.height);
-            }
-            else if (shape instanceof shape_1.Polygon) {
+            else if (shape instanceof shape_1.Polygon || shape instanceof shape_1.Rectangle) {
                 this.ctx.beginPath();
                 this.ctx.moveTo(shape.points[0], shape.points[1]);
                 for (var item = 2; item < shape.points.length - 1; item += 2) {
@@ -769,7 +747,6 @@ class Shape {
         this.points = points;
         this.color = "Grey";
     }
-    //translation with array of points 
     translate(xd, yd) {
         for (var item = 0; item < this.points.length - 1; item += 2) {
             this.points[item] += xd;
@@ -788,8 +765,8 @@ class Shape {
         for (var item = 0; item < this.points.length - 1; item += 2) {
             var xt = this.points[item] - xc;
             var yt = this.points[item + 1] - yc;
-            var xr = xt * Math.cos(angle) - yt * Math.sin(angle);
-            var yr = xt * Math.sin(angle) + yt * Math.cos(angle);
+            var xr = xt * Math.cos(angle * Math.PI / 180) - yt * Math.sin(angle * Math.PI / 180);
+            var yr = xt * Math.sin(angle * Math.PI / 180) + yt * Math.cos(angle * Math.PI / 180);
             this.points[item] = xr + xc;
             this.points[item + 1] = yr + yc;
         }
@@ -803,6 +780,12 @@ class Rectangle extends Shape {
         this.width = width;
         this.height = height;
         this.id = Circle.idCounter++;
+        points.push(points[0]);
+        points.push(points[1] + height);
+        points.push(points[0] + width);
+        points.push(points[1] + height);
+        points.push(points[0] + width);
+        points.push(points[1]);
     }
     getID() {
         return "rect_" + this.id;

@@ -62,8 +62,6 @@ export class SimpleDrawDocument {
     this.shapeDropbox.appendChild(option);
 
 
-
-
     this.objects.push(r)
   }
 

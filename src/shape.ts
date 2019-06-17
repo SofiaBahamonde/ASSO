@@ -5,8 +5,6 @@ export abstract class Shape {
 
     constructor(public points: Array<number>) { }
 
-//translation with array of points 
-
     translate(xd: number, yd: number): void {
 
         for( var item = 0 ; item < this.points.length-1 ; item+=2 ){
@@ -33,15 +31,15 @@ export abstract class Shape {
             var xt= this.points[item] - xc
             var yt= this.points[item+1] - yc
 
-            var xr = xt*Math.cos(angle) - yt*Math.sin(angle)
-            var yr = xt*Math.sin(angle) + yt*Math.cos(angle)
+            var xr = xt*Math.cos(angle*Math.PI/180) - yt*Math.sin(angle*Math.PI/180)
+            var yr = xt*Math.sin(angle*Math.PI/180) + yt*Math.cos(angle*Math.PI/180)
 
             this.points[item] = xr + xc
             this.points[item+1] = yr + yc             
         }
     }
 
-    abstract getID() : string;
+    abstract getID() : string
  
 }
 
@@ -51,39 +49,45 @@ export class Rectangle extends Shape{
 
     constructor(public points: Array<number>, public width: number, public height: number) {
         super(points)
-        this.id = Circle.idCounter++;
+        this.id = Circle.idCounter++
+        points.push(points[0])
+        points.push(points[1]+height)
+        points.push(points[0]+width)
+        points.push(points[1]+height)
+        points.push(points[0]+width)
+        points.push(points[1])
     }
 
     getID(): string {
-        return "rect_" + this.id;
+        return "rect_" + this.id
      }
 
 }
 
 export class Circle extends Shape {
-    static idCounter: number =0;
-    id: number;
+    static idCounter: number =0
+    id: number
 
     constructor(public points: Array<number>, public radius: number) {
-        super(points);
-        this.id = Circle.idCounter++;
+        super(points)
+        this.id = Circle.idCounter++
     }
 
     getID(): string {
-        return "circle_" + this.id;
+        return "circle_" + this.id
      }
 }
 
 export class Polygon extends Shape {
-    static idCounter: number =0;
-    id: number;
+    static idCounter: number =0
+    id: number
 
     constructor(public points: Array<number>) {
         super(points)
-        this.id = Circle.idCounter++;
+        this.id = Circle.idCounter++
     }
 
     getID(): string {
-        return "polygon_" + this.id;
+        return "polygon_" + this.id
      }
 }

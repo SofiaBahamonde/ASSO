@@ -5,7 +5,6 @@ class Shape {
         this.points = points;
         this.color = "Grey";
     }
-    //translation with array of points 
     translate(xd, yd) {
         for (var item = 0; item < this.points.length - 1; item += 2) {
             this.points[item] += xd;
@@ -24,8 +23,8 @@ class Shape {
         for (var item = 0; item < this.points.length - 1; item += 2) {
             var xt = this.points[item] - xc;
             var yt = this.points[item + 1] - yc;
-            var xr = xt * Math.cos(angle) - yt * Math.sin(angle);
-            var yr = xt * Math.sin(angle) + yt * Math.cos(angle);
+            var xr = xt * Math.cos(angle * Math.PI / 180) - yt * Math.sin(angle * Math.PI / 180);
+            var yr = xt * Math.sin(angle * Math.PI / 180) + yt * Math.cos(angle * Math.PI / 180);
             this.points[item] = xr + xc;
             this.points[item + 1] = yr + yc;
         }
@@ -39,6 +38,12 @@ class Rectangle extends Shape {
         this.width = width;
         this.height = height;
         this.id = Circle.idCounter++;
+        points.push(points[0]);
+        points.push(points[1] + height);
+        points.push(points[0] + width);
+        points.push(points[1] + height);
+        points.push(points[0] + width);
+        points.push(points[1]);
     }
     getID() {
         return "rect_" + this.id;
