@@ -99,12 +99,7 @@ Each canvas has a renderer, that contains methods for zoom and drawing, drawing 
 
 #### Interpreter
 
-For the commands written in the command line we used the Interpretator pattern. A pattern that specifies how to evaluate sentences in a language. The basic idea is to have a class for each symbol (terminal or nonterminal) in a specialized computer language and make it simpler for the user to interact with the program. Also allows us to easily implement the Import function since we only need to build an interface between the file and our Interpreter.
-
-#### Memento
-
-For the undo and redo operations our implementation makes use of the Memento design pattern. 
-((TIVA FAz ESTE ))
+For the commands written in the command line we used the Interpretator pattern. A pattern that specifies how to evaluate sentences in a language. The basic idea is to have a class for each symbol (terminal or nonterminal) in a specialized computer language and make it simpler for the user to interact with the program. This pattern also allowed us to easily implement the Import functionality since we only needed to build an interface between the strutured file inforamtion and our Interpreter.
 
 #### State
 
@@ -121,8 +116,7 @@ For the FileIO, exporting in different formats we used the strategy pattern, the
 
 Template method has a recurrent apperance, used in the definition of the various polygons, tools and also rendereres.
 
-
-
+As for the undo and redo operations we based our solution in the partialy implement project that was provided to us.
 
 
 
